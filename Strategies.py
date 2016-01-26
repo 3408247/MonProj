@@ -4,7 +4,7 @@ Created on Mon Jan 25 16:45:44 2016
 
 @author: 3408247
 """
-
+import math
 import soccersimulator
 from soccersimulator.settings import  *
 from soccersimulator import BaseStrategy, SoccerAction
@@ -15,6 +15,8 @@ from Outils import *
 SEUIL_BALL_FAR = 30
 SEUIL_BALL_CLOSE = 20
 SEUIL_BALL_TOO_CLOSE = 10
+
+DCERCLE_RAYON = 7
 
 class SousStrat(BaseStrategy):
     def __init__(self,sous_strat):
@@ -28,31 +30,42 @@ def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'op
 	return me.aller(me.ball_position())+me.shoot(me.but_position_adv())
 
 """LE GOALKEEPER"""
-def goalkeeper_revenir_au_but(me): #faire me revenir a la position milieu but 
+def revenir_au_but(me): #faire me revenir a la position milieu but 
 
 		if(me.key[0]==1):
    			return me.aller(me.but_position()+Vector2D(x=3.,y=0))
 		if(me.key[0]==2):
 			return me.aller(me.but_position()-Vector2D(x=3.,y=0))	
 
-	return SoccerAction()
+		return SoccerAction()
 
-def goalkeeper_alligne_a_balle(me): #faire me s'alligner avec la balle 
+def alligne_sur_demi_cercle(me):
+	
+	if(me.key[0]==1):
+		position=(me.but_position()+Vector2D(x=3.,y=0))
+	if(me.key[0]==2):
+		position=(me.but_position()-Vector2D(x=3.,y=0))
 
+	if (pente(me.ball_position(),position)!=0):
+		nouvelle_position=intersection_demicercle_et_ligne(position.x,position.y,DCERCLE_RAYON,pente)
+		return me.aller(nouvelle_position)
+	else:
+		return SoccerAction()
 	
 		
-def goalkeeper(me):
+#def goalkeeper(me):
 
-	 """Faire me s'alligner avec la balle quand elle est loin"""
-	if me.dist(me.my_position(),me.ball_position())>SEUIL_BALL_FAR: 
-		return goalkeeper_revenir_au_but(me)
+	 #Faire me s'alligner avec la balle quand elle est loin
+	#if me.dist(me.my_position(),me.ball_position())>SEUIL_BALL_FAR: 
+		#return goalkeeper_revenir_au_but(me)"""
 
 	
-	"""if (me.dist(me.my_position(),me.ball_position())>SEUIL_BALL_TOO_CLOSE)and(me.dist(me.my_position(),me.ball_position())<SEUIL_BALL_CLOSE):"""
+	#"""if (me.dist(me.my_position(),me.ball_position())>SEUIL_BALL_TOO_CLOSE)and(me.dist(me.my_position(),me.ball_position())<SEUIL_BALL_CLOSE):""" 
 			
 
 FonceurStrat = SousStrat(fonceur)
-GkStrat = SousStrat(goalkeeper_revenir_au_but)
+GkStrat = SousStrat(revenir_au_but)
+AllignerStrat = SousStrat(alligne_sur_demi_cercle)
 
 
 class RandomStrategy(BaseStrategy):
