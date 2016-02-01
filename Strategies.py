@@ -13,10 +13,10 @@ from soccersimulator import Vector2D, Player, SoccerTournament
 
 from Outils import *
 SEUIL_BALL_FAR = 40
-SEUIL_BALL_CLOSE = GAME_WIDTH/2
-SEUIL_BALL_TOO_CLOSE = 5
+SEUIL_BALL_CLOSE = 74
+SEUIL_BALL_TOO_CLOSE = 10
 
-DCERCLE_RAYON = 7
+DCERCLE_RAYON = 5
 
 class SousStrat(BaseStrategy):
     def __init__(self,sous_strat):
@@ -40,20 +40,22 @@ def revenir_au_but(me): #faire me revenir a la position milieu but
 
 def alligne_sur_demi_cercle(me): #faire alligner sur demi_cercle et balle
 
-	vect_bouger=Vector2D( angle=(me.ball_position()-me.my_position()).angle,norm=DCERCLE_RAYON)
+	vect_bouger=Vector2D( angle=(me.ball_position()-me.but_position()).angle,norm=DCERCLE_RAYON)
 	return me.aller(vect_bouger)
 
 	
 def pos_sur_demi_cercle(me):
 
 	
-	if (me.dist(me.my_position(),me.ball_position())<SEUIL_BALL_CLOSE):
-	 	if (me.dist(me.my_position(),me.ball_position())<SEUIL_BALL_TOO_CLOSE):
-	 		return revenir_au_but(me)
-
-		return alligne_sur_demi_cercle(me)
+	if (me.dist(me.but_position(),me.ball_position())<SEUIL_BALL_CLOSE):
+	 	if (me.dist(me.but_position(),me.ball_position())<SEUIL_BALL_TOO_CLOSE):
+			return revenir_au_but(me)
+		else:
+			return alligne_sur_demi_cercle(me)
 	else:
 		return SoccerAction()
+
+
 	
 	
 
@@ -87,15 +89,18 @@ class RandomStrategy(BaseStrategy):
 """FonceurStrat =  SousStrat(fonceur ) ---> FonceurStrat.strat == fonceur,
  FonceurStrat.compute_strategy(state,idtema,idplayer) <--> fonceur(MyState(state,id_team,idplayer))
 
-class FonceurStrat(BaseStrategy):
-	def __init__(self):
-		BaseStrategy.__init__(self,"fonceur")
+class Strat(BaseStrategy):
+	def __init__(self,decideur):
+		BaseStrategy.__init__(self,decideur.__name__)
+		self.decideur = decideur
 	def compute_strategy():
-		return fonceur(MyState(state,id_team,idplayer)
+		return self.decideur(MyState(state,id_team,idplayer)
 
+
+Fonceur = Strat(defenseur)
 
 def defenseur(me):
-		.....
+		return SoccerAction().....
 
 def startComplexce(me):
 	if me...:

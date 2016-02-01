@@ -48,6 +48,8 @@ class MyState(object):
     def aller(self,p): #"self->vector2D, p->vector2D" #retourne SoccerAction->faire bouger self jusqu'a p ; pas de shoot
         return SoccerAction(p-self.my_position(),Vector2D())
 
+    def test_peut_shooter(self,p):
+	
         
     def shoot(self,p): #pas de mouvement; faire shooter dans la direction p - self
         return SoccerAction(Vector2D(),p-self.my_position())
