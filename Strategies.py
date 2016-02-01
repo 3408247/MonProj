@@ -12,9 +12,9 @@ from soccersimulator import SoccerTeam, SoccerMatch
 from soccersimulator import Vector2D, Player, SoccerTournament
 
 from Outils import *
-SEUIL_BALL_FAR = 30
-SEUIL_BALL_CLOSE = 20
-SEUIL_BALL_TOO_CLOSE = 10
+SEUIL_BALL_FAR = 40
+SEUIL_BALL_CLOSE = GAME_WIDTH/2
+SEUIL_BALL_TOO_CLOSE = 5
 
 DCERCLE_RAYON = 7
 
@@ -29,7 +29,6 @@ class SousStrat(BaseStrategy):
 def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'opposant
 	return me.aller(me.ball_position())+me.shoot(me.but_position_adv())
 
-"""LE GOALKEEPER"""
 def revenir_au_but(me): #faire me revenir a la position milieu but 
 
 		if(me.key[0]==1):
@@ -39,33 +38,29 @@ def revenir_au_but(me): #faire me revenir a la position milieu but
 
 		return SoccerAction()
 
-def alligne_sur_demi_cercle(me):
-	
-	if(me.key[0]==1):
-		position=(me.but_position()+Vector2D(x=3.,y=0))
-	if(me.key[0]==2):
-		position=(me.but_position()-Vector2D(x=3.,y=0))
+def alligne_sur_demi_cercle(me): #faire alligner sur demi_cercle et balle
 
-	if (pente(me.ball_position(),position)!=0):
-		nouvelle_position=intersection_demicercle_et_ligne(position.x,position.y,DCERCLE_RAYON,pente)
-		return me.aller(nouvelle_position)
+	vect_bouger=Vector2D( angle=(me.ball_position()-me.my_position()).angle,norm=DCERCLE_RAYON)
+	return me.aller(vect_bouger)
+
+	
+def pos_sur_demi_cercle(me):
+
+	
+	if (me.dist(me.my_position(),me.ball_position())<SEUIL_BALL_CLOSE):
+	 	if (me.dist(me.my_position(),me.ball_position())<SEUIL_BALL_TOO_CLOSE):
+	 		return revenir_au_but(me)
+
+		return alligne_sur_demi_cercle(me)
 	else:
 		return SoccerAction()
 	
-		
-#def goalkeeper(me):
-
-	 #Faire me s'alligner avec la balle quand elle est loin
-	#if me.dist(me.my_position(),me.ball_position())>SEUIL_BALL_FAR: 
-		#return goalkeeper_revenir_au_but(me)"""
-
 	
-	#"""if (me.dist(me.my_position(),me.ball_position())>SEUIL_BALL_TOO_CLOSE)and(me.dist(me.my_position(),me.ball_position())<SEUIL_BALL_CLOSE):""" 
-			
 
 FonceurStrat = SousStrat(fonceur)
 GkStrat = SousStrat(revenir_au_but)
-AllignerStrat = SousStrat(alligne_sur_demi_cercle)
+AllignerStrat = SousStrat(pos_sur_demi_cercle)
+
 
 
 class RandomStrategy(BaseStrategy):
