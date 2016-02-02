@@ -29,6 +29,9 @@ class SousStrat(BaseStrategy):
 def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'opposant
 	return me.aller(me.ball_position)+me.shoot(me.but_position_adv)
 
+def fonceur_bis(me):
+	return me.aller_vers_ball + me.shoot_avec_angle_puissance(3.14,1)
+
 def revenir_au_but(me): #faire me revenir a la position milieu but 
 
 		if(me.key[0]==1):
@@ -59,7 +62,7 @@ def pos_sur_demi_cercle(me):
 	
 	
 
-FonceurStrat = SousStrat(fonceur)
+FonceurStrat = SousStrat(fonceur_bis)
 GkStrat = SousStrat(revenir_au_but)
 AllignerStrat = SousStrat(pos_sur_demi_cercle)
 

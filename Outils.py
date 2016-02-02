@@ -18,6 +18,8 @@ class MyState(object):
         self.state = state
         self.key = (idteam,idplayer)
 
+	
+
 ##############################################################################################################
 ## POSITIONS #################################################################################################
 ##############################################################################################################
@@ -72,18 +74,59 @@ class MyState(object):
         return SoccerAction(p-self.my_position,Vector2D())
 
     @property
-    def test_peut_shooter(self):
-	return (dist(self.my_position,self.ball_position)<BALL_RADIUS+PLAYER_RADIUS)
-		
+    def aller_vers_but_adv(self):
+	return self.aller(self.but_position_adv)
+
+    @property
+    def aller_vers_ball(self):
+        return self.aller(self.ball_position)
+            
+    def aller_avec_angle_norme(self,theta,norme):
+	dep=Vector2D(angle=theta,norm=norme)
+	return SoccerAction(dep,Vector2D())
+   		
 ##############################################################################################################
 ## SHOOTS ####################################################################################################
 ##############################################################################################################
-	
+    @property
+    def test_peut_shooter_dist(self):
+	return (dist(self.my_position,self.ball_position)<BALL_RADIUS+PLAYER_RADIUS)
+
+    #def test_peut_shooter_tours(self):
         
     def shoot(self,p): #pas de mouvement; faire shooter dans la direction p - self
         return SoccerAction(Vector2D(),p-self.my_position)
-
+    
+    @property
     def shoot_alea(self):
 	angleu=uniform(0.,shootRandomAngle)
 	normeu=uniform(1.,maxBallAcceleration)
-        return SoccerAction(Vector2D(angle=angleu,norm=normeu))
+        return SoccerAction(Vector2D(),Vector2D(angle=angleu,norm=normeu))
+
+    #comment shooter tres fort aleatoirement ? Decorateur thingy ? Specialisation ?
+  
+    @property
+    def shoot_vers_but_adv(self):
+         return self.shoot(self.but_position_adv)
+
+    def shoot_avec_angle_puissance(self,theta,puissance):
+	shot=Vector2D(angle=theta,norm=puissance)
+	return SoccerAction(Vector2D(),shot)
+
+   
+ 
+##############################################################################################################
+## MIROIRS ###################################################################################################
+##############################################################################################################
+
+    @property
+    def miroir_pos(self):
+	x_mod=GAME_WIDTH-self.my_position.x
+	return SoccerAction(Vector2D(x_mod,self.my_position.y),Vector2D())
+
+   #@property
+  # def miroir_vect(self)
+       
+		
+
+
