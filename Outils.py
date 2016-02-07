@@ -35,18 +35,18 @@ class MyState(object):
     @property
     def but_position(self): #retourne Vector2D->la position_milieu du but 
 	if (self.key[0]==1):	
-		return Vector2D(x=0,y=GAME_HEIGHT/2)
+		return Vector2D(x=3,y=GAME_HEIGHT/2)
 
 	if (self.key[0]==2):
-		return Vector2D(x=GAME_WIDTH,y=GAME_HEIGHT/2)
+		return Vector2D(x=GAME_WIDTH-3,y=GAME_HEIGHT/2)
 
     @property   
     def but_position_adv(self): #retourne Vector2D->la position_milieu du but de l'adversaire
 	if (self.key[0]==2):	
-		return Vector2D(x=0,y=GAME_HEIGHT/2)
+		return Vector2D(x=3,y=GAME_HEIGHT/2)
 
 	if (self.key[0]==1):
-		return Vector2D(x=GAME_WIDTH,y=GAME_HEIGHT/2)
+		return Vector2D(x=GAME_WIDTH-3,y=GAME_HEIGHT/2)
 
 ##############################################################################################################
 ## DISTANCES #################################################################################################
@@ -119,14 +119,42 @@ class MyState(object):
 ## MIROIRS ###################################################################################################
 ##############################################################################################################
 
-    @property
-    def miroir_pos(self):
-	x_mod=GAME_WIDTH-self.my_position.x
-	return SoccerAction(Vector2D(x_mod,self.my_position.y),Vector2D())
+  
+    def miroir_pos(u):
+	x_mod=GAME_WIDTH-u.my_position.x
+	return SoccerAction(Vector2D(x_mod,u.my_position.y),Vector2D())
 
-   #@property
-  # def miroir_vect(self)
-       
+  
+    def miroir_vect(u):
+  	x_mod=-u.my_position.x
+       	return SoccerAction(Vector2D(x_mod,u.my_position.y),Vector2D())
 		
+##############################################################################################################
+## ANGLES ###################################################################################################
+##############################################################################################################
+
+
+    def angle_ball_but(self):
+
+	if (self.key[0]==1):
+
+		vecteur_ball_but_position_bis=self.ball_position-self.but_position
+
+	else:
+		vecteur_ball_but_position_bis=self.ball_position-miroir_pos(self.but_position)
+
+	return vecteur_point_but_position_bis.angle
+
+
+    def angle_player_but(self):
+	
+	if (self.key[0]==1):
+		vecteur_player_but_position_bis=self.my_position-self.but_position
+
+	else:
+		vecteur_player_but_position_bis=self.my_position-miroir_pos(self.but_position)
+
+	return vecteur_point_but_position_bis.angle
+
 
 

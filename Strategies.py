@@ -35,16 +35,22 @@ def fonceur_bis(me):
 def revenir_au_but(me): #faire me revenir a la position milieu but 
 
 		if(me.key[0]==1):
-   			return me.aller(me.but_position+Vector2D(x=3.,y=0))
+   			return me.aller(me.but_position)
 		if(me.key[0]==2):
-			return me.aller(me.but_position-Vector2D(x=3.,y=0))	
+			return me.aller(me.but_position)	
 
 		return SoccerAction()
 
 def alligne_sur_demi_cercle(me): #faire alligner sur demi_cercle et balle
-
-	vect_bouger=Vector2D( angle=(me.ball_position-me.but_position).angle,norm=DCERCLE_RAYON)
-	return me.aller(vect_bouger)
+	
+	#ERROR: Type Error: Unsupported operand type(s) * for float and instancemethod
+		
+	ux=(math.cos(me.angle_ball_but))*(DCERCLE_RAYON)
+	uy=(math.sin(me.angle_ball_but))*(DCERCLE_RAYON)
+	
+	pos_x=me.but_position.x+ux
+	pos_y=me.but_position.y+uy
+	return me.aller(Vector2D(pos_x,pos_y))
 
 	
 def pos_sur_demi_cercle(me):
@@ -62,7 +68,7 @@ def pos_sur_demi_cercle(me):
 	
 	
 
-FonceurStrat = SousStrat(fonceur_bis)
+FonceurStrat = SousStrat(fonceur)
 GkStrat = SousStrat(revenir_au_but)
 AllignerStrat = SousStrat(pos_sur_demi_cercle)
 
