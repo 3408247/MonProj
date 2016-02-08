@@ -4,7 +4,7 @@ Created on Mon Jan 25 16:38:24 2016
 
 @author: 3408247
 """
-
+import math
 import soccersimulator
 from soccersimulator.settings import  *
 from soccersimulator import BaseStrategy, SoccerAction
@@ -12,17 +12,19 @@ from soccersimulator import SoccerTeam, SoccerMatch
 from soccersimulator import Vector2D, Player, SoccerTournament
 from random import uniform
 
+DCERCLE_RAYON = 10
+
+
+def dist(u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u et v
+	return u.distance(v)
 
 class MyState(object):
     def __init__(self,state,idteam,idplayer):
-        self.state = state
+        self.state = state    #ajouter le miroir ici option 1
         self.key = (idteam,idplayer)
 
-	
+### POSITIONS ###
 
-##############################################################################################################
-## POSITIONS #################################################################################################
-##############################################################################################################
     @property
     def my_position(self): #retourne Vector2D->la position de self (ici joueur)
         return self.state.player_state(self.key[0],self.key[1]).position
@@ -48,15 +50,15 @@ class MyState(object):
 	if (self.key[0]==1):
 		return Vector2D(x=GAME_WIDTH-3,y=GAME_HEIGHT/2)
 
-##############################################################################################################
-## DISTANCES #################################################################################################
-##############################################################################################################
 
-    def dist(self,u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u et v
-	return u.distance(v)
+### DISTANCES ###
 
-    def dist_player_ball(self,player,ball): #distance entre player et ball
-	return dist(self.my_position,ball_position)
+   # def dist(self,u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u et v
+	#return u.distance(v)
+    
+    @property
+    def dist_player_ball(self): #distance entre player et ball
+	return dist(self.my_position,self.ball_position)
 
     @property
     def dist_but_ball(self): #distance entre but et ball
@@ -65,10 +67,25 @@ class MyState(object):
     @property
     def dist_but_adv_ball(self): #distance entre but_adv et ball
 	return dist(self.but_position_adv,ball_position)
+
+### ANGLES ###
+
+    @property
+    def angle_ball_but(self):
+
+	vecteur=self.ball_position-(self.but_position)
+
+	return vecteur.angle
+
+    @property
+    def angle_player_but(self):
+
+	vecteur=self.my_position-(self.but_position)
+
+	return vecteur.angle
         
-##############################################################################################################
-## MOUVEMENTS ################################################################################################
-##############################################################################################################
+
+### MOUVEMENTS ###
 
     def aller(self,p): #"self->vector2D, p->vector2D" #retourne SoccerAction->faire bouger self jusqu'a p ; pas de shoot
         return SoccerAction(p-self.my_position,Vector2D())
@@ -84,13 +101,26 @@ class MyState(object):
     def aller_avec_angle_norme(self,theta,norme):
 	dep=Vector2D(angle=theta,norm=norme)
 	return SoccerAction(dep,Vector2D())
-   		
-##############################################################################################################
-## SHOOTS ####################################################################################################
-##############################################################################################################
+
     @property
-    def test_peut_shooter_dist(self):
-	return (dist(self.my_position,self.ball_position)<BALL_RADIUS+PLAYER_RADIUS)
+    def alligne_sur_demi_cercle(self):
+	ux=(math.cos(self.angle_ball_but))*(DCERCLE_RAYON)
+	uy=(math.sin(self.angle_ball_but))*(DCERCLE_RAYON)
+	
+	pos_x=self.but_position.x+ux
+	pos_y=self.but_position.y+uy
+	return self.aller(Vector2D(pos_x,pos_y))
+	
+    #@property
+    #def alligner_entre_ball_but(self):
+	
+	
+
+### SHOOTS ###
+
+    @property 
+    def test_peut_shooter(self):
+	return ((self.dist_player_ball)<BALL_RADIUS+PLAYER_RADIUS)
 
     #def test_peut_shooter_tours(self):
         
@@ -99,7 +129,7 @@ class MyState(object):
     
     @property
     def shoot_alea(self):
-	angleu=uniform(0.,shootRandomAngle)
+	angleu=uniform(-3.14,3.14)
 	normeu=uniform(1.,maxBallAcceleration)
         return SoccerAction(Vector2D(),Vector2D(angle=angleu,norm=normeu))
 
@@ -113,48 +143,15 @@ class MyState(object):
 	shot=Vector2D(angle=theta,norm=puissance)
 	return SoccerAction(Vector2D(),shot)
 
-   
- 
-##############################################################################################################
-## MIROIRS ###################################################################################################
-##############################################################################################################
+    @property
+    def shoot_intercepter_contrecarE(self):
+	vect_input=self.state.ball.vitesse
+	vect_output_x=-vect_input.x
+	vect_output_y=-vect_input.y
+	vect_output=Vector2D(vect_output_x,vect_output_y)
 
-  
-    def miroir_pos(u):
-	x_mod=GAME_WIDTH-u.my_position.x
-	return SoccerAction(Vector2D(x_mod,u.my_position.y),Vector2D())
+	return SoccerAction(Vector2D(),vect_output)
 
-  
-    def miroir_vect(u):
-  	x_mod=-u.my_position.x
-       	return SoccerAction(Vector2D(x_mod,u.my_position.y),Vector2D())
-		
-##############################################################################################################
-## ANGLES ###################################################################################################
-##############################################################################################################
-
-
-    def angle_ball_but(self):
-
-	if (self.key[0]==1):
-
-		vecteur_ball_but_position_bis=self.ball_position-self.but_position
-
-	else:
-		vecteur_ball_but_position_bis=self.ball_position-miroir_pos(self.but_position)
-
-	return vecteur_point_but_position_bis.angle
-
-
-    def angle_player_but(self):
-	
-	if (self.key[0]==1):
-		vecteur_player_but_position_bis=self.my_position-self.but_position
-
-	else:
-		vecteur_player_but_position_bis=self.my_position-miroir_pos(self.but_position)
-
-	return vecteur_point_but_position_bis.angle
-
-
-
+    @property
+    def shoot_intercepter_notgreat(self):  
+	return SoccerAction(Vector2D(),Vector2D(angle=0.,norm=0.000001))

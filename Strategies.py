@@ -13,24 +13,28 @@ from soccersimulator import Vector2D, Player, SoccerTournament
 
 from Outils import *
 SEUIL_BALL_FAR = 40
-SEUIL_BALL_CLOSE = 74
+SEUIL_BALL_CLOSE = 30
 SEUIL_BALL_TOO_CLOSE = 10
 
-DCERCLE_RAYON = 5
 
 class SousStrat(BaseStrategy):
     def __init__(self,sous_strat):
         BaseStrategy.__init__(self,sous_strat.__name__)
         self.strat=sous_strat 
-    def compute_strategy(self,state,idteam,idplayer):
+    def compute_strategy(self,state,idteam,idplayer): #ou faire miroir ici 
         return self.strat(MyState(state,idteam,idplayer))   
     
+
+### ATTAQUANT ###
+
 
 def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'opposant
 	return me.aller(me.ball_position)+me.shoot(me.but_position_adv)
 
-def fonceur_bis(me):
-	return me.aller_vers_ball + me.shoot_avec_angle_puissance(3.14,1)
+def fonceur_alea(me):
+	return me.aller_vers_ball + me.shoot_alea
+
+### GARDIEN ###
 
 def revenir_au_but(me): #faire me revenir a la position milieu but 
 
@@ -41,36 +45,53 @@ def revenir_au_but(me): #faire me revenir a la position milieu but
 
 		return SoccerAction()
 
-def alligne_sur_demi_cercle(me): #faire alligner sur demi_cercle et balle
 	
-	#ERROR: Type Error: Unsupported operand type(s) * for float and instancemethod
-		
-	ux=(math.cos(me.angle_ball_but))*(DCERCLE_RAYON)
-	uy=(math.sin(me.angle_ball_but))*(DCERCLE_RAYON)
-	
-	pos_x=me.but_position.x+ux
-	pos_y=me.but_position.y+uy
-	return me.aller(Vector2D(pos_x,pos_y))
+def gardien_mouvement(me):
 
 	
-def pos_sur_demi_cercle(me):
+	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_CLOSE):
+		print "a"
+	 	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_TOO_CLOSE):
+			print "b"
+			return me.aller_vers_ball
+		else:
+			print "c"
+			return me.alligne_sur_demi_cercle
+	print "d"
+	return revenir_au_but(me)
+
+def gardien_shoot(me):
+	
+	if me.test_peut_shooter:
+		return me.shoot_intercepter_contrecarE + me.shoot_alea
+
+	else:
+		return SoccerAction()
+		
+def gardien_complexe(me):
+	return gardien_mouvement(me) + gardien_shoot(me)	
+
+
+def gardien_2(me):
 
 	
 	if (me.dist(me.but_position,me.ball_position)<SEUIL_BALL_CLOSE):
 	 	if (me.dist(me.but_position,me.ball_position)<SEUIL_BALL_TOO_CLOSE):
 			return revenir_au_but(me)
 		else:
-			return alligne_sur_demi_cercle(me)
+			return me.alligne_sur_demi_cercle
 	else:
-		return SoccerAction()
+		if me.test_peut_shooter:
+			return me.shoot_intercepter_contrecarE
 
-
+		else:
+			return me.aller_vers_ball + me.shoot_alea
 	
 	
 
 FonceurStrat = SousStrat(fonceur)
-GkStrat = SousStrat(revenir_au_but)
-AllignerStrat = SousStrat(pos_sur_demi_cercle)
+GkStrat = SousStrat(gardien_complexe)
+AllignerStrat = SousStrat(gardien_complexe)
 
 
 
