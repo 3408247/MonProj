@@ -50,6 +50,13 @@ class MyState(object):
 	if (self.key[0]==1):
 		return Vector2D(x=GAME_WIDTH-3,y=GAME_HEIGHT/2)
 
+    @property 
+    def def_defaut_pos(self):
+	x_=GAME_WIDTH/4
+	y_=self.ball_position.y
+	return Vector2D(x=x_,y=y_)
+
+
 
 ### DISTANCES ###
 
@@ -67,6 +74,8 @@ class MyState(object):
     @property
     def dist_but_adv_ball(self): #distance entre but_adv et ball
 	return dist(self.but_position_adv,ball_position)
+
+	
 
 ### ANGLES ###
 
@@ -110,6 +119,10 @@ class MyState(object):
 	pos_x=self.but_position.x+ux
 	pos_y=self.but_position.y+uy
 	return self.aller(Vector2D(pos_x,pos_y))
+
+    @property
+    def def_positionnement_defaut(self):
+	return self.aller(self.def_defaut_pos)
 	
     #@property
     #def alligner_entre_ball_but(self):
@@ -155,3 +168,5 @@ class MyState(object):
     @property
     def shoot_intercepter_notgreat(self):  
 	return SoccerAction(Vector2D(),Vector2D(angle=0.,norm=0.000001))
+
+

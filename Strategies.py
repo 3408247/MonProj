@@ -34,6 +34,47 @@ def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'op
 def fonceur_alea(me):
 	return me.aller_vers_ball + me.shoot_alea
 
+### DEFENSEUR ###
+def def_position_defaut(me):
+	x_=GAME_WIDTH/4
+	y_=me.ball_position.y
+	return me.aller(Vector2D(x=x_,y=y_))
+
+
+#def def_mouvement_et_shoot_alea(me):
+#	if (me.ball_position.x<GAME_WIDTH):
+#		if me.test_peut_shooter:
+#			return me.shoot_intercepter_contrecarE + me.shoot_alea
+#			
+#		else:
+#			return me.aller_vers_ball + me.shoot_intercepter_contrecarE + me.shoot_alea
+#	else:
+#		def_position_defaut(me)
+
+def def_mouvement_et_shoot(me):
+	action = Vector2D()
+	if (me.ball_position.x<GAME_WIDTH/2):
+		print "motier inf"
+
+		if me.test_peut_shooter:
+			print "peut shooter"
+				
+			return me.shoot_intercepter_contrecarE + me.shoot_vers_but_adv
+		else:
+			print "peut pas shooter"
+				
+			return me.aller_vers_ball + me.shoot_intercepter_contrecarE + me.shoot_vers_but_adv
+
+	else:	
+		print "motier sup pos defaut"
+		return me.def_positionnement_defaut
+
+
+
+#def def_mouvement_et_shoot_centre(me):
+
+
+
 ### GARDIEN ###
 
 def revenir_au_but(me): #faire me revenir a la position milieu but 
@@ -50,17 +91,17 @@ def gardien_mouvement(me):
 
 	
 	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_CLOSE):
-		print "a"
+		#print "a"
 	 	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_TOO_CLOSE):
-			print "b"
+			#print "b"
 			return me.aller_vers_ball
 		else:
-			print "c"
+			#print "c"
 			return me.alligne_sur_demi_cercle
-	print "d"
+	#print "d"
 	return revenir_au_but(me)
 
-def gardien_shoot(me):
+def gardien_shoot_alea(me):
 	
 	if me.test_peut_shooter:
 		return me.shoot_intercepter_contrecarE + me.shoot_alea
@@ -69,7 +110,7 @@ def gardien_shoot(me):
 		return SoccerAction()
 		
 def gardien_complexe(me):
-	return gardien_mouvement(me) + gardien_shoot(me)	
+	return gardien_mouvement(me) + gardien_shoot_alea(me)	
 
 
 def gardien_2(me):
@@ -92,6 +133,7 @@ def gardien_2(me):
 FonceurStrat = SousStrat(fonceur)
 GkStrat = SousStrat(gardien_complexe)
 AllignerStrat = SousStrat(gardien_complexe)
+DefStrat = SousStrat(def_mouvement_et_shoot)
 
 
 
