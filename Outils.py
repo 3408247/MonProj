@@ -50,13 +50,6 @@ class MyState(object):
 	if (self.key[0]==1):
 		return Vector2D(x=GAME_WIDTH-3,y=GAME_HEIGHT/2)
 
-    @property 
-    def def_defaut_pos(self):
-	x_=GAME_WIDTH/4
-	y_=self.ball_position.y
-	return Vector2D(x=x_,y=y_)
-
-
 
 ### DISTANCES ###
 
@@ -74,6 +67,10 @@ class MyState(object):
     @property
     def dist_but_adv_ball(self): #distance entre but_adv et ball
 	return dist(self.but_position_adv,ball_position)
+
+    @property
+    def dist_player_equipier(self,num):
+	return dist(self.my_position,self.state.player(1,num).position)
 
 	
 
@@ -120,9 +117,30 @@ class MyState(object):
 	pos_y=self.but_position.y+uy
 	return self.aller(Vector2D(pos_x,pos_y))
 
-    @property
+
+    def placer_entre_ball_but(self,x_):
+	vecteur_but_ball=self.ball_position-self.but_position
+	y_=(((vecteur_but_ball.y)/(vecteur_but_ball.x))*(x_-self.ball_position.x))+self.ball_position.y	
+	vect=Vector2D(x=x_,y=y_)
+   
+        return self.aller(vect)
+
+    @property 
     def def_positionnement_defaut(self):
-	return self.aller(self.def_defaut_pos)
+	return self.placer_entre_ball_but(GAME_WIDTH/4)
+	
+    
+  #  @property 
+   # def def_defaut_pos(self):   #placer defenseur entre ball et but sur x_fixe GAME_WIDTH/4
+#	x_=GAME_WIDTH/4
+#	vecteur_but_ball=self.ball_position-self.but_position
+#	y_=(((vecteur_but_ball.y)/(vecteur_but_ball.x))*(x_-self.ball_position.x))+self.ball_position.y	
+#
+#	return Vector2D(x=x_,y=y_)
+
+#    @property
+  #  def def_positionnement_defaut(self):
+#	return self.aller(self.def_defaut_pos)
 	
     #@property
     #def alligner_entre_ball_but(self):
@@ -165,8 +183,20 @@ class MyState(object):
 
 	return SoccerAction(Vector2D(),vect_output)
 
-    @property
-    def shoot_intercepter_notgreat(self):  
-	return SoccerAction(Vector2D(),Vector2D(angle=0.,norm=0.000001))
+### RADAR ###
+
+    def pos_equipier_plus_proche(self):
+	d_min=999
+	vecteur=Vector2D(0,0)
+	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==1 and id!=self.key[1])] 
+	for p in liste_equipiers:
+		d=self.dist_player_equipier(self,p[1])
+		if d<d_min:
+	           d_min=d
+                   vecteur=self.state.player(1,p[1]).position 
+	
+	return vecteur
+
+	
 
 

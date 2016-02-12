@@ -35,11 +35,6 @@ def fonceur_alea(me):
 	return me.aller_vers_ball + me.shoot_alea
 
 ### DEFENSEUR ###
-def def_position_defaut(me):
-	x_=GAME_WIDTH/4
-	y_=me.ball_position.y
-	return me.aller(Vector2D(x=x_,y=y_))
-
 
 #def def_mouvement_et_shoot_alea(me):
 #	if (me.ball_position.x<GAME_WIDTH):
@@ -54,19 +49,20 @@ def def_position_defaut(me):
 def def_mouvement_et_shoot(me):
 	action = Vector2D()
 	if (me.ball_position.x<GAME_WIDTH/2):
-		print "motier inf"
+		#print "motier inf"
 
 		if me.test_peut_shooter:
-			print "peut shooter"
+			#print "peut shooter"
 				
-			return me.shoot_intercepter_contrecarE + me.shoot_vers_but_adv
+			return me.shoot_vers_but_adv
 		else:
-			print "peut pas shooter"
+			#print "peut pas shooter"
+			
 				
 			return me.aller_vers_ball + me.shoot_intercepter_contrecarE + me.shoot_vers_but_adv
 
 	else:	
-		print "motier sup pos defaut"
+		#print "motier sup pos defaut"
 		return me.def_positionnement_defaut
 
 
@@ -108,9 +104,19 @@ def gardien_shoot_alea(me):
 
 	else:
 		return SoccerAction()
+
+def gardien_shoot_vers_but(me):
+	if me.test_peut_shooter:
+		return me.shoot_intercepter_contrecarE + me.shoot_vers_but_adv
+
+	else:
+		return SoccerAction()
 		
-def gardien_complexe(me):
+def gardien_complexe_1(me):
 	return gardien_mouvement(me) + gardien_shoot_alea(me)	
+
+def gardien_complexe_2(me):
+	return gardien_mouvement(me) + gardien_shoot_vers_but(me)
 
 
 def gardien_2(me):
@@ -131,8 +137,8 @@ def gardien_2(me):
 	
 
 FonceurStrat = SousStrat(fonceur)
-GkStrat = SousStrat(gardien_complexe)
-AllignerStrat = SousStrat(gardien_complexe)
+GkStrat = SousStrat(gardien_complexe_2)
+AllignerStrat = SousStrat(gardien_complexe_2)
 DefStrat = SousStrat(def_mouvement_et_shoot)
 
 
