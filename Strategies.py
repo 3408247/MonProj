@@ -7,7 +7,7 @@ Created on Mon Jan 25 16:45:44 2016
 import math
 import soccersimulator
 from soccersimulator.settings import  *
-from soccersimulator import BaseStrategy, SoccerAction
+from soccersimulator import BaseStrategy, SoccerAction, KeyboardStrategy
 from soccersimulator import SoccerTeam, SoccerMatch
 from soccersimulator import Vector2D, Player, SoccerTournament
 
@@ -21,18 +21,39 @@ class SousStrat(BaseStrategy):
     def __init__(self,sous_strat):
         BaseStrategy.__init__(self,sous_strat.__name__)
         self.strat=sous_strat 
-    def compute_strategy(self,state,idteam,idplayer): #ou faire miroir ici 
-        return self.strat(MyState(state,idteam,idplayer))   
+    def compute_strategy(self,state,idteam,idplayer): #ou faire miroir ici
+	self.state = state
+     
+        action=self.strat(MyState(self.state,idteam,idplayer))
+
+        if(idteam!=1):
+	   return miroir_action(action)
+
+ 
+        return action
     
+
+
 
 ### ATTAQUANT ###
 
 
 def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'opposant
+	#print("Fonceur", me.shoot_vers_but_adv, me.state._configs[(me.key[0],me.key[1])]._last_shoot)
 	return me.aller(me.ball_position)+me.shoot(me.but_position_adv)
 
 def fonceur_alea(me):
 	return me.aller_vers_ball + me.shoot_alea
+
+def fonceur_pass(me):
+	#print(me.aller(me.ball_position))
+	#print(me.shoot_vers_equipier_proche())
+
+        if me.test_peut_shooter:
+ 	   return me.shoot_vers_equipier_proche
+
+	else:
+	   return me.aller(me.ball_position)
 
 ### DEFENSEUR ###
 
@@ -47,22 +68,21 @@ def fonceur_alea(me):
 #		def_position_defaut(me)
 
 def def_mouvement_et_shoot(me):
+	print me.state._configs[(me.key[0],me.key[1])]._last_shoot
 	action = Vector2D()
 	if (me.ball_position.x<GAME_WIDTH/2):
-		#print "motier inf"
+	
 
 		if me.test_peut_shooter:
-			#print "peut shooter"
-				
+		
+			
 			return me.shoot_vers_but_adv
 		else:
-			#print "peut pas shooter"
-			
-				
-			return me.aller_vers_ball + me.shoot_intercepter_contrecarE + me.shoot_vers_but_adv
+									
+			return me.aller_vers_ball 
 
 	else:	
-		#print "motier sup pos defaut"
+		
 		return me.def_positionnement_defaut
 
 
@@ -75,48 +95,43 @@ def def_mouvement_et_shoot(me):
 
 def revenir_au_but(me): #faire me revenir a la position milieu but 
 
-		if(me.key[0]==1):
+		#if(me.key[0]==1):
    			return me.aller(me.but_position)
-		if(me.key[0]==2):
-			return me.aller(me.but_position)	
+		#if(me.key[0]==2):
+			#return me.aller(me.but_position)	
 
-		return SoccerAction()
+		#return SoccerAction()
 
 	
 def gardien_mouvement(me):
 
 	
 	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_CLOSE):
-		#print "a"
+		
 	 	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_TOO_CLOSE):
-			#print "b"
+			
 			return me.aller_vers_ball
 		else:
-			#print "c"
+			
 			return me.alligne_sur_demi_cercle
-	#print "d"
+
 	return revenir_au_but(me)
 
 def gardien_shoot_alea(me):
 	
 	if me.test_peut_shooter:
-		return me.shoot_intercepter_contrecarE + me.shoot_alea
+		return  me.shoot_alea
 
 	else:
-		return SoccerAction()
+		return gardien_mouvement(me)
 
 def gardien_shoot_vers_but(me):
 	if me.test_peut_shooter:
-		return me.shoot_intercepter_contrecarE + me.shoot_vers_but_adv
+		return me.shoot_vers_but_adv
 
 	else:
-		return SoccerAction()
+		return gardien_mouvement(me)
 		
-def gardien_complexe_1(me):
-	return gardien_mouvement(me) + gardien_shoot_alea(me)	
-
-def gardien_complexe_2(me):
-	return gardien_mouvement(me) + gardien_shoot_vers_but(me)
 
 
 def gardien_2(me):
@@ -136,10 +151,24 @@ def gardien_2(me):
 	
 	
 
-FonceurStrat = SousStrat(fonceur)
-GkStrat = SousStrat(gardien_complexe_2)
-AllignerStrat = SousStrat(gardien_complexe_2)
+FonceurStrat = SousStrat(fonceur_pass)
+Gard_shoot_but = SousStrat(gardien_shoot_vers_but)
+Gard_shoot_alea = SousStrat(gardien_shoot_alea)
 DefStrat = SousStrat(def_mouvement_et_shoot)
+
+keystrat1 = KeyboardStrategy()
+keystrat1.add("a", Gard_shoot_alea)
+keystrat1.add("b", Gard_shoot_but)
+
+keystrat2= KeyboardStrategy()
+keystrat2.add("c", FonceurStrat)
+keystrat2.add("d", DefStrat)
+
+milieustrat = KeyboardStrategy()
+milieustrat.add("x", FonceurStrat)
+milieustrat.add("w", DefStrat)
+
+
 
 
 

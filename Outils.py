@@ -14,6 +14,26 @@ from random import uniform
 
 DCERCLE_RAYON = 10
 
+def miroir_pos(p):
+    return Vector2D(GAME_WIDTH-p.x,p.y)
+
+def miroir_vect(v):
+    return Vector2D(-v.x,v.y)
+
+def miroir_action(act):
+    return SoccerAction(miroir_vect(act.acceleration),miroir_vect(act.shoot))
+
+def miroir_state(etat):
+    etatcpy=etat.copy()
+
+    etatcpy.ball.position=miroir_pos(etat.ball.position)
+    etatcpy.ball.vitesse=miroir_vect(etat.ball.vitesse)
+
+    for(idt,idp) in etat.players:
+	etatcpy.player(idt,idp).position=miroir_pos(etat.player(idt,idp).position)
+	etatcpy.player(idt,idp).vitesse=miroir_vect(etat.player(idt,idp).vitesse)
+    
+    return etatcpy
 
 def dist(u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u et v
 	return u.distance(v)
@@ -22,6 +42,10 @@ class MyState(object):
     def __init__(self,state,idteam,idplayer):
         self.state = state    #ajouter le miroir ici option 1
         self.key = (idteam,idplayer)
+ 
+        if (idteam!=1):
+	    self.state=miroir_state(self.state)
+
 
 ### POSITIONS ###
 
@@ -36,25 +60,19 @@ class MyState(object):
 
     @property
     def but_position(self): #retourne Vector2D->la position_milieu du but 
-	if (self.key[0]==1):	
+	
 		return Vector2D(x=3,y=GAME_HEIGHT/2)
 
-	if (self.key[0]==2):
-		return Vector2D(x=GAME_WIDTH-3,y=GAME_HEIGHT/2)
 
     @property   
     def but_position_adv(self): #retourne Vector2D->la position_milieu du but de l'adversaire
-	if (self.key[0]==2):	
-		return Vector2D(x=3,y=GAME_HEIGHT/2)
 
-	if (self.key[0]==1):
 		return Vector2D(x=GAME_WIDTH-3,y=GAME_HEIGHT/2)
 
 
 ### DISTANCES ###
 
-   # def dist(self,u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u et v
-	#return u.distance(v)
+  
     
     @property
     def dist_player_ball(self): #distance entre player et ball
@@ -68,7 +86,7 @@ class MyState(object):
     def dist_but_adv_ball(self): #distance entre but_adv et ball
 	return dist(self.but_position_adv,ball_position)
 
-    @property
+
     def dist_player_equipier(self,num):
 	return dist(self.my_position,self.state.player(1,num).position)
 
@@ -145,6 +163,35 @@ class MyState(object):
     #@property
     #def alligner_entre_ball_but(self):
 	
+
+### RADAR ###
+
+    @property
+    def pos_equipier_plus_proche(self):
+	d_min=999
+	vecteur=Vector2D(0,0)
+	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
+	for p in liste_equipiers:
+		d=self.dist_player_equipier(p[1])
+		if d<d_min:
+	           d_min=d
+                   vecteur=self.state.player(it,p[1]).position 
+	
+	return vecteur
+
+
+    @property
+    def pos_adv_plus_proche(self):
+	d_min=999
+	vecteur=Vector2D(0,0)
+	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
+	for p in liste_equipiers:
+		d=self.dist_player_equipier(p[1])
+		if d<d_min:
+	           d_min=d
+                   vecteur=self.state.player(it,p[1]).position 
+	
+	return vecteur
 	
 
 ### SHOOTS ###
@@ -160,7 +207,7 @@ class MyState(object):
     
     @property
     def shoot_alea(self):
-	angleu=uniform(-3.14,3.14)
+	angleu=uniform(-3.14/2,3.14/2)
 	normeu=uniform(1.,maxBallAcceleration)
         return SoccerAction(Vector2D(),Vector2D(angle=angleu,norm=normeu))
 
@@ -183,20 +230,7 @@ class MyState(object):
 
 	return SoccerAction(Vector2D(),vect_output)
 
-### RADAR ###
-
-    def pos_equipier_plus_proche(self):
-	d_min=999
-	vecteur=Vector2D(0,0)
-	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==1 and id!=self.key[1])] 
-	for p in liste_equipiers:
-		d=self.dist_player_equipier(self,p[1])
-		if d<d_min:
-	           d_min=d
-                   vecteur=self.state.player(1,p[1]).position 
-	
-	return vecteur
-
-	
-
-
+    @property 
+    def shoot_vers_equipier_proche(self):
+	return self.shoot(self.pos_equipier_plus_proche)
+    
