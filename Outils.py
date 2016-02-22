@@ -90,6 +90,7 @@ class MyState(object):
     def dist_player_equipier(self,num):
 	return dist(self.my_position,self.state.player(1,num).position)
 
+
 	
 
 ### ANGLES ###
@@ -176,21 +177,6 @@ class MyState(object):
     def def_positionnement_defaut(self):
 	return self.placer_entre_ball_but(GAME_WIDTH/4)
 	
-    
-  #  @property 
-   # def def_defaut_pos(self):   #placer defenseur entre ball et but sur x_fixe GAME_WIDTH/4
-#	x_=GAME_WIDTH/4
-#	vecteur_but_ball=self.ball_position-self.but_position
-#	y_=(((vecteur_but_ball.y)/(vecteur_but_ball.x))*(x_-self.ball_position.x))+self.ball_position.y	
-#
-#	return Vector2D(x=x_,y=y_)
-
-#    @property
-  #  def def_positionnement_defaut(self):
-#	return self.aller(self.def_defaut_pos)
-	
-    #@property
-    #def alligner_entre_ball_but(self):
 	
 
 ### RADAR ###
@@ -264,27 +250,32 @@ class MyState(object):
 	return self.shoot(self.pos_equipier_plus_proche)
 
     #pour 1_VS_1
-    @property
-    def shoot_malin(self):
 
-	#Informations sur adversaire... il y aura un seul 
+    @property
+    def pos_adv(self): #Informations sur adversaire... il y aura un seul 
 	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])]
 	adv=liste_adv[0]
 	it_adv=adv[0]
 	ip_adv=adv[1]
 
 	pos_adv=self.state.player(it_adv,ip_adv).position
-	pos_y_adv=pos_adv.y
+	return pos_adv
+	
+    @property
+    def shoot_malin(self):
 
-	#Si je suis dans moitier nord et adv_goal en moitier sud, OU si je suis moitier sud et adv_goal en moitier sud, ALORS tirer dans moitier nord du but
-	if((self.my_position.y>=GAME_HEIGHT/2)and(self.state.player(it_adv,ip_adv).position.y<=GAME_HEIGHT/2))or((self.my_position.y<GAME_HEIGHT/2)and(self.state.player(it_adv,ip_adv).position.y<GAME_HEIGHT/2)):
+
+	#Si je suis dans moitier nord et adv en moitier sud, OU si je suis moitier sud et adv en moitier sud, ALORS tirer dans moitier nord du but
+	if((self.my_position.y>=GAME_HEIGHT/2)and(self.pos_adv.y<=GAME_HEIGHT/2))or((self.my_position.y<GAME_HEIGHT/2)and(self.pos_adv.y<GAME_HEIGHT/2)):
 
 	   #y_=uniform(GAME_GOAL_HEIGHT-1+GAME_HEIGHT/2,GAME_HEIGHT/2)
 	   y_=(GAME_GOAL_HEIGHT)-1+(GAME_HEIGHT/2)
 	else:
 	   #y_=uniform(GAME_HEIGHT/2-1-(GAME_GOAL_HEIGHT),GAME_HEIGHT/2)
 	   y_=(GAME_HEIGHT/2)-1-(GAME_GOAL_HEIGHT)
+
 	u=Vector2D(x=GAME_WIDTH,y=y_)
+	u.norm=2.5
 
 	return self.shoot(u)
 
@@ -296,4 +287,26 @@ class MyState(object):
 	vecteur=self.but_position_adv-self.ball_position
 	vecteur.norm=1.2
 	return SoccerAction(Vector2D(),vecteur)
+
+    @property
+    def shoot_degager(self):
+	ang=uniform(-3.14/2,3.14/2)
+	nor=10;
+	s=Vector2D(angle=ang,norm=nor)
+	return SoccerAction(Vector2D(),s)
+
+
+# QUI A LA BALLE
+
+    @property
+    def a_la_balle(self):
+    
+    	if dist(self.pos_adv,self.ball_position)<BALL_RADIUS+PLAYER_RADIUS: #ADV ou ADV et MOI
+		return 2
+
+	if self.test_peut_shooter==True: # QUE MOI
+		return 1
+
+	else: # PERSONNE
+		return 0
     

@@ -25,11 +25,11 @@ class SousStrat(BaseStrategy):
 	self.state = state
      
         action=self.strat(MyState(self.state,idteam,idplayer))
-
+	print action
         if(idteam!=1):
-	   return miroir_action(action)
+	   action= miroir_action(action)
 
- 
+        print action
         return action
     
 
@@ -69,12 +69,18 @@ def fonceur_pass(me):
 	else:
 	   return me.aller(me.ball_position)
 
+
 #Attaquant 1_VS_1
 def shooteur_malin(me):
     if me.test_peut_shooter:
+
 	if (me.dist_but_adv_ball>30):
-		
-		return me.shoot_dribble
+
+		if dist(me.my_position,me.pos_adv)<15:
+			return me.shoot_malin
+		else:
+			return me.shoot_dribble
+
 	else:
 	 	return me.shoot_malin
 
@@ -85,14 +91,14 @@ def shooteur_malin(me):
 ### DEFENSEUR ###
 
 # 1_VS_1 #
-#def defenseur(me):
-    
 
-# 
+	
+    
+ 
 
 def def_mouvement_et_shoot(me):
 	#print me.state._configs[(me.key[0],me.key[1])]._last_shoot
-	action = Vector2D()
+
 	if (me.ball_position.x<GAME_WIDTH/2):
 	
 
@@ -160,8 +166,8 @@ def gardien_shoot_vers_but(me):
 def gardien_2(me):
 
 	
-	if (me.dist(me.but_position,me.ball_position)<SEUIL_BALL_CLOSE):
-	 	if (me.dist(me.but_position,me.ball_position)<SEUIL_BALL_TOO_CLOSE):
+	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_CLOSE):
+	 	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_TOO_CLOSE):
 			return revenir_au_but(me)
 		else:
 			return me.alligne_sur_demi_cercle
@@ -171,9 +177,26 @@ def gardien_2(me):
 
 		else:
 			return me.aller_vers_ball + me.shoot_alea
+
+
+## SPECIALISATION DES JOUEURS POUR LES TOURNOIS ##	
+
+def j_1vs1(me):
 	
+	if (me.ball_position.x<GAME_WIDTH/2):
+
+		if me.a_la_balle==2:
+			if me.test_peut_shooter:
+				return me.shoot_degager
+			else:
+				return me.courir_vers_ball
+		else: # A COMPLETER 
+
+	else:
+		return shooteur_malin(me)
+
 	
-Fonceur_1vs1_Strat = SousStrat(shooteur_malin)
+Joueur_1vs1_Strat = SousStrat(j_1vs1)
 FonceurStrat = SousStrat(fonceur)
 Gard_shoot_but = SousStrat(gardien_shoot_vers_but)
 Gard_shoot_alea = SousStrat(gardien_shoot_alea)
