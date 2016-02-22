@@ -67,7 +67,7 @@ class MyState(object):
     @property   
     def but_position_adv(self): #retourne Vector2D->la position_milieu du but de l'adversaire
 
-		return Vector2D(x=GAME_WIDTH-3,y=GAME_HEIGHT/2)
+		return Vector2D(x=GAME_WIDTH,y=GAME_HEIGHT/2)
 
 
 ### DISTANCES ###
@@ -80,11 +80,11 @@ class MyState(object):
 
     @property
     def dist_but_ball(self): #distance entre but et ball
-	return dist(self.but_position,ball_position)
+	return dist(self.but_position,self.ball_position)
 
     @property
     def dist_but_adv_ball(self): #distance entre but_adv et ball
-	return dist(self.but_position_adv,ball_position)
+	return dist(self.but_position_adv,self.ball_position)
 
 
     def dist_player_equipier(self,num):
@@ -94,10 +94,21 @@ class MyState(object):
 
 ### ANGLES ###
 
+    def angle_player_point(self,pos_point):
+	vecteur=pos_point-self.my_position
+	return vecteur.angle
+
     @property
     def angle_ball_but(self):
 
 	vecteur=self.ball_position-(self.but_position)
+
+	return vecteur.angle
+
+    @property
+    def angle_player_but_adv(self):
+
+	vecteur=self.my_position-(self.but_position_adv)
 
 	return vecteur.angle
 
@@ -107,6 +118,14 @@ class MyState(object):
 	vecteur=self.my_position-(self.but_position)
 
 	return vecteur.angle
+
+
+    @property
+    def angle_player_ball(self):
+
+	vecteur=self.ball_position-(self.my_position)
+
+	return vecteur.angle
         
 
 ### MOUVEMENTS ###
@@ -114,17 +133,27 @@ class MyState(object):
     def aller(self,p): #"self->vector2D, p->vector2D" #retourne SoccerAction->faire bouger self jusqu'a p ; pas de shoot
         return SoccerAction(p-self.my_position,Vector2D())
 
+    def aller_avec_angle_norme(self,theta,norme):
+	dep=Vector2D(angle=theta,norm=norme)
+	return SoccerAction(dep,Vector2D())
+
     @property
     def aller_vers_but_adv(self):
 	return self.aller(self.but_position_adv)
 
     @property
+    def courir_vers_but_adv(self):
+        return self.aller_avec_angle_norme(self.angle_player_but,10.)
+
+    @property
     def aller_vers_ball(self):
         return self.aller(self.ball_position)
             
-    def aller_avec_angle_norme(self,theta,norme):
-	dep=Vector2D(angle=theta,norm=norme)
-	return SoccerAction(dep,Vector2D())
+  
+
+    @property
+    def courir_vers_ball(self):
+	return self.aller_avec_angle_norme(self.angle_player_ball,10)
 
     @property
     def alligne_sur_demi_cercle(self):
@@ -233,4 +262,38 @@ class MyState(object):
     @property 
     def shoot_vers_equipier_proche(self):
 	return self.shoot(self.pos_equipier_plus_proche)
+
+    #pour 1_VS_1
+    @property
+    def shoot_malin(self):
+
+	#Informations sur adversaire... il y aura un seul 
+	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])]
+	adv=liste_adv[0]
+	it_adv=adv[0]
+	ip_adv=adv[1]
+
+	pos_adv=self.state.player(it_adv,ip_adv).position
+	pos_y_adv=pos_adv.y
+
+	#Si je suis dans moitier nord et adv_goal en moitier sud, OU si je suis moitier sud et adv_goal en moitier sud, ALORS tirer dans moitier nord du but
+	if((self.my_position.y>=GAME_HEIGHT/2)and(self.state.player(it_adv,ip_adv).position.y<=GAME_HEIGHT/2))or((self.my_position.y<GAME_HEIGHT/2)and(self.state.player(it_adv,ip_adv).position.y<GAME_HEIGHT/2)):
+
+	   #y_=uniform(GAME_GOAL_HEIGHT-1+GAME_HEIGHT/2,GAME_HEIGHT/2)
+	   y_=(GAME_GOAL_HEIGHT)-1+(GAME_HEIGHT/2)
+	else:
+	   #y_=uniform(GAME_HEIGHT/2-1-(GAME_GOAL_HEIGHT),GAME_HEIGHT/2)
+	   y_=(GAME_HEIGHT/2)-1-(GAME_GOAL_HEIGHT)
+	u=Vector2D(x=GAME_WIDTH,y=y_)
+
+	return self.shoot(u)
+
+	
+
+    @property
+    def shoot_dribble(self):
+	
+	vecteur=self.but_position_adv-self.ball_position
+	vecteur.norm=1.2
+	return SoccerAction(Vector2D(),vecteur)
     

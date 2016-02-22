@@ -2,7 +2,7 @@ from Strategies import*
 from soccersimulator import SoccerTeam, Player
 
 #### Mes tests
-Priya_1a = SoccerTeam("Priya_1a",[Player("f1",FonceurStrat)])
+Priya_1a = SoccerTeam("Priya_1a",[Player("f1",Fonceur_1vs1_Strat)])
 Priya_1b =SoccerTeam("Priya_1b",[Player("GARDIEN",Gard_shoot_but)])
 
 Priya_2a = SoccerTeam("Priya_2a",[Player("1DEFa",DefStrat),Player("GARDIENa",Gard_shoot_but)])
@@ -13,6 +13,6 @@ Priya_4b =SoccerTeam("Priya_4b",[Player("1ATTb",FonceurStrat),Player("GARDIENb",
 
 
 ### Pour le tournoi
-team1 = SoccerTeam("team1",[Player("f1",FonceurStrat)])
+team1 = SoccerTeam("team1",[Player("f1",Fonceur_1vs1_Strat)])
 team2 = SoccerTeam("team2",[Player("ATT1",FonceurStrat),Player("GARD",Gard_shoot_but)])
 team4 = SoccerTeam("team4",[Player("ATT1",FonceurStrat),Player("gk2",Gard_shoot_but),Player("ATT2",FonceurStrat),Player("DEF1",DefStrat)])

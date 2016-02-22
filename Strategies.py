@@ -40,7 +40,21 @@ class SousStrat(BaseStrategy):
 
 def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'opposant
 	#print("Fonceur", me.shoot_vers_but_adv, me.state._configs[(me.key[0],me.key[1])]._last_shoot)
-	return me.aller(me.ball_position)+me.shoot(me.but_position_adv)
+	if me.test_peut_shooter:
+	   return me.shoot(me.but_position_adv)
+	else:
+	   return me.aller(me.ball_position)
+
+def fonceur_bis(me):
+    if me.test_peut_shooter:
+	return me.shoot_avec_angle_puissance(me.angle_player_but,10.)
+
+    else:
+	return me.courir_vers_ball
+
+
+	
+
 
 def fonceur_alea(me):
 	return me.aller_vers_ball + me.shoot_alea
@@ -55,20 +69,29 @@ def fonceur_pass(me):
 	else:
 	   return me.aller(me.ball_position)
 
+#Attaquant 1_VS_1
+def shooteur_malin(me):
+    if me.test_peut_shooter:
+	if (me.dist_but_adv_ball>30):
+		
+		return me.shoot_dribble
+	else:
+	 	return me.shoot_malin
+
+    else:
+	return me.courir_vers_ball 
+
+
 ### DEFENSEUR ###
 
-#def def_mouvement_et_shoot_alea(me):
-#	if (me.ball_position.x<GAME_WIDTH):
-#		if me.test_peut_shooter:
-#			return me.shoot_intercepter_contrecarE + me.shoot_alea
-#			
-#		else:
-#			return me.aller_vers_ball + me.shoot_intercepter_contrecarE + me.shoot_alea
-#	else:
-#		def_position_defaut(me)
+# 1_VS_1 #
+#def defenseur(me):
+    
+
+# 
 
 def def_mouvement_et_shoot(me):
-	print me.state._configs[(me.key[0],me.key[1])]._last_shoot
+	#print me.state._configs[(me.key[0],me.key[1])]._last_shoot
 	action = Vector2D()
 	if (me.ball_position.x<GAME_WIDTH/2):
 	
@@ -150,8 +173,8 @@ def gardien_2(me):
 			return me.aller_vers_ball + me.shoot_alea
 	
 	
-
-FonceurStrat = SousStrat(fonceur_pass)
+Fonceur_1vs1_Strat = SousStrat(shooteur_malin)
+FonceurStrat = SousStrat(fonceur)
 Gard_shoot_but = SousStrat(gardien_shoot_vers_but)
 Gard_shoot_alea = SousStrat(gardien_shoot_alea)
 DefStrat = SousStrat(def_mouvement_et_shoot)

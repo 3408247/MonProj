@@ -5,5 +5,5 @@ from Strategies import *
 from team import *
 
    
-match = SoccerMatch(Priya_4a,Priya_2b)
+match = SoccerMatch(Priya_1a,Priya_1b)
 soccersimulator.show(match)
