@@ -25,11 +25,11 @@ class SousStrat(BaseStrategy):
 	self.state = state
      
         action=self.strat(MyState(self.state,idteam,idplayer))
-	print action
+	#print action
         if(idteam!=1):
 	   action= miroir_action(action)
 
-        print action
+        #print action
         return action
     
 
@@ -70,21 +70,21 @@ def fonceur_pass(me):
 	   return me.aller(me.ball_position)
 
 
-#Attaquant 1_VS_1
+#Attaquant 1_VS_1 ou 2_VS_2
 def shooteur_malin(me):
     if me.test_peut_shooter:
 
-	if (me.dist_but_adv_ball>30):
+	if (me.dist_but_adv_ball>30):  #JE SUIS PRES DES BUTS ADV
 
-		if dist(me.my_position,me.pos_adv)<15:
-			return me.shoot_malin
+		if dist(me.my_position,me.pos_adv)<25:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
+			return me.shoot_malin  #SHOOT 
 		else:
-			return me.shoot_dribble
+			return me.shoot_dribble  # CONTINUE A S'APPROCHER DES BUTS
 
-	else:
-	 	return me.shoot_malin
+	else: # JE SUIS LOIN DES BUTS
+	 	return me.shoot_dribble  
 
-    else:
+    else: # PEUT PAS SHOOTER
 	return me.courir_vers_ball 
 
 
@@ -183,20 +183,60 @@ def gardien_2(me):
 
 def j_1vs1(me):
 	
-	if (me.ball_position.x<GAME_WIDTH/2):
+	if (me.ball_position.x<GAME_WIDTH/2): #SI DANS MA MOITIER DE TERRAIN
 
-		if me.a_la_balle==2:
+		if me.a_la_balle==2:  # SI ADV A LA BALLE
 			if me.test_peut_shooter:
-				return me.shoot_degager
+				return me.shoot_degager 
 			else:
 				return me.courir_vers_ball
-		else: # A COMPLETER 
+		else:
+			return shooteur_malin(me)  
 
-	else:
+	else: # DANS MOITIER ADV
 		return shooteur_malin(me)
+
+def j_2vs2(me):
+	flag = me.key[0]==1 
+	print me.state.step,me.key[1]
+	if(me.ball_position.x<GAME_WIDTH/2): # DANS MA MOITIER
+		print "la1"
+		if me.a_la_balle==2:  # SI ADV A LA BALLE
+
+			if me.test_peut_shooter:
+				return me.shoot_vers_but_adv 
+
+			else:
+				print "la", me.courir_vers_ball
+				return me.courir_vers_ball
+
+		if me.a_la_balle==1: #JAI LA BALLE
+
+			print "labis"
+			if dist(me.my_position,me.pos_adv_plus_proche)<7:  #ADV FONCE SUR MOI
+				return me.shoot_vers_equipier_proche # FAIRE PASSE
+			else:
+				return shooteur_malin(me) # CONTINUER NORMAL 
+
+		else: #PERSONNE N'A LA BALLE 
+
+			return shooteur_malin(me)
+	else:
+		print "later",me.my_position,me.pos_adv_plus_proche
+		if dist(me.my_position,me.pos_adv_plus_proche)<7: #ADV FONCE SUR MOI
+			return me.shoot_vers_equipier_proche # FAIRE PASSE
+		else:
+			print "ici",shooteur_malin(me)
+			return shooteur_malin(me) # CONTINUER NORMAL 
 
 	
 Joueur_1vs1_Strat = SousStrat(j_1vs1)
+
+Joueur_2vs2_Strat = SousStrat(j_2vs2)
+Joueur_2vs2_Strat_bis= SousStrat(j_2vs2)
+Hello = SousStrat(j_2vs2)
+Hey = SousStrat(j_2vs2)
+
 FonceurStrat = SousStrat(fonceur)
 Gard_shoot_but = SousStrat(gardien_shoot_vers_but)
 Gard_shoot_alea = SousStrat(gardien_shoot_alea)

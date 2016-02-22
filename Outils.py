@@ -87,14 +87,10 @@ class MyState(object):
 	return dist(self.but_position_adv,self.ball_position)
 
 
-    def dist_player_equipier(self,num):
-	return dist(self.my_position,self.state.player(1,num).position)
+    def dist_player(self,no_team,no_player):
+	return dist(self.my_position,self.state.player(no_team,no_player).position)
 
-
-	
-
-### ANGLES ###
-
+    ### ANGLES ###
     def angle_player_point(self,pos_point):
 	vecteur=pos_point-self.my_position
 	return vecteur.angle
@@ -187,7 +183,7 @@ class MyState(object):
 	vecteur=Vector2D(0,0)
 	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
 	for p in liste_equipiers:
-		d=self.dist_player_equipier(p[1])
+		d=self.dist_player(p[0],p[1])
 		if d<d_min:
 	           d_min=d
                    vecteur=self.state.player(it,p[1]).position 
@@ -199,12 +195,12 @@ class MyState(object):
     def pos_adv_plus_proche(self):
 	d_min=999
 	vecteur=Vector2D(0,0)
-	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
-	for p in liste_equipiers:
-		d=self.dist_player_equipier(p[1])
+	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
+	for p in liste_adv:
+		d=self.dist_player(p[0],p[1])
 		if d<d_min:
 	           d_min=d
-                   vecteur=self.state.player(it,p[1]).position 
+                   vecteur=self.state.player(p[0],p[1]).position 
 	
 	return vecteur
 	
@@ -269,13 +265,13 @@ class MyState(object):
 	if((self.my_position.y>=GAME_HEIGHT/2)and(self.pos_adv.y<=GAME_HEIGHT/2))or((self.my_position.y<GAME_HEIGHT/2)and(self.pos_adv.y<GAME_HEIGHT/2)):
 
 	   #y_=uniform(GAME_GOAL_HEIGHT-1+GAME_HEIGHT/2,GAME_HEIGHT/2)
-	   y_=(GAME_GOAL_HEIGHT)-1+(GAME_HEIGHT/2)
+	   y_=(GAME_GOAL_HEIGHT)+(GAME_HEIGHT/2)
 	else:
 	   #y_=uniform(GAME_HEIGHT/2-1-(GAME_GOAL_HEIGHT),GAME_HEIGHT/2)
-	   y_=(GAME_HEIGHT/2)-1-(GAME_GOAL_HEIGHT)
+	   y_=(GAME_HEIGHT/2)-(GAME_GOAL_HEIGHT)
 
 	u=Vector2D(x=GAME_WIDTH,y=y_)
-	u.norm=2.5
+	u.norm=2.0
 
 	return self.shoot(u)
 
@@ -300,9 +296,14 @@ class MyState(object):
 
     @property
     def a_la_balle(self):
+
+	#ADV ou ADV et MOI
+	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])]
+
+	for p in liste_adv:
+		if dist(self.ball_position, self.state.player(p[0],p[1]).position)<BALL_RADIUS+PLAYER_RADIUS:
+			return 2
     
-    	if dist(self.pos_adv,self.ball_position)<BALL_RADIUS+PLAYER_RADIUS: #ADV ou ADV et MOI
-		return 2
 
 	if self.test_peut_shooter==True: # QUE MOI
 		return 1
