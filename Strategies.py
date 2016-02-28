@@ -228,12 +228,18 @@ def j_2vs2(me):
 		else:
 			print "ici",shooteur_malin(me)
 			return shooteur_malin(me) # CONTINUER NORMAL 
+def test(me):
+	if me.test_peut_shooter:
+		return me.shoot_vers_but_adv
+	else:
+		return me.courir_vers_ball
 
 	
-Joueur_1vs1_Strat = SousStrat(j_1vs1)
+J_1vs1_Strat = SousStrat(j_1vs1)
+Test_Strat = SousStrat(test)
 
-Joueur_2vs2_Strat = SousStrat(j_2vs2)
-Joueur_2vs2_Strat_bis= SousStrat(j_2vs2)
+J_2vs2_Strat = SousStrat(j_2vs2)
+J_2vs2_Strat_bis= SousStrat(j_2vs2)
 Hello = SousStrat(j_2vs2)
 Hey = SousStrat(j_2vs2)
 

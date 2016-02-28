@@ -69,11 +69,13 @@ class MyState(object):
 
 		return Vector2D(x=GAME_WIDTH,y=GAME_HEIGHT/2)
 
+    @property  
+    def centre(self):
+		return Vector2D(x=GAME_WIDTH/2,y=GAME_HEIGHT/2)
+
 
 ### DISTANCES ###
 
-  
-    
     @property
     def dist_player_ball(self): #distance entre player et ball
 	return dist(self.my_position,self.ball_position)
@@ -210,8 +212,6 @@ class MyState(object):
     @property 
     def test_peut_shooter(self):
 	return ((self.dist_player_ball)<BALL_RADIUS+PLAYER_RADIUS)
-
-    #def test_peut_shooter_tours(self):
         
     def shoot(self,p): #pas de mouvement; faire shooter dans la direction p - self
         return SoccerAction(Vector2D(),p-self.my_position)
@@ -222,7 +222,6 @@ class MyState(object):
 	normeu=uniform(1.,maxBallAcceleration)
         return SoccerAction(Vector2D(),Vector2D(angle=angleu,norm=normeu))
 
-    #comment shooter tres fort aleatoirement ? Decorateur thingy ? Specialisation ?
   
     @property
     def shoot_vers_but_adv(self):
@@ -261,13 +260,13 @@ class MyState(object):
     def shoot_malin(self):
 
 
-	#Si je suis dans moitier nord et adv en moitier sud, OU si je suis moitier sud et adv en moitier sud, ALORS tirer dans moitier nord du but
+	#Si je suis dans moitier nord et adv en moitier sud, OU si je suis moitier sud et adv en moitier sud, 		ALORS tirer dans moitier nord du but
 	if((self.my_position.y>=GAME_HEIGHT/2)and(self.pos_adv.y<=GAME_HEIGHT/2))or((self.my_position.y<GAME_HEIGHT/2)and(self.pos_adv.y<GAME_HEIGHT/2)):
 
-	   #y_=uniform(GAME_GOAL_HEIGHT-1+GAME_HEIGHT/2,GAME_HEIGHT/2)
+	   
 	   y_=(GAME_GOAL_HEIGHT)+(GAME_HEIGHT/2)
 	else:
-	   #y_=uniform(GAME_HEIGHT/2-1-(GAME_GOAL_HEIGHT),GAME_HEIGHT/2)
+	   
 	   y_=(GAME_HEIGHT/2)-(GAME_GOAL_HEIGHT)
 
 	u=Vector2D(x=GAME_WIDTH,y=y_)
@@ -285,14 +284,23 @@ class MyState(object):
 	return SoccerAction(Vector2D(),vecteur)
 
     @property
+    def dribbler(self):
+	if self.test_peut_shooter:
+		return self.shoot_dribble
+	else:
+		return self.courir_vers_ball 
+
+    @property
     def shoot_degager(self):
-	ang=uniform(-3.14/2,3.14/2)
-	nor=10;
-	s=Vector2D(angle=ang,norm=nor)
+	#ang=uniform(-3.14/2,3.14/2)
+	s=self.centre-self.my_position
+	s.norm=10;
+	
+	#s=Vector2D(angle=ang,norm=nor)
 	return SoccerAction(Vector2D(),s)
 
 
-# QUI A LA BALLE
+### QUI A LA BALLE ###
 
     @property
     def a_la_balle(self):
@@ -302,12 +310,19 @@ class MyState(object):
 
 	for p in liste_adv:
 		if dist(self.ball_position, self.state.player(p[0],p[1]).position)<BALL_RADIUS+PLAYER_RADIUS:
-			return 2
-    
+			return 3
 
-	if self.test_peut_shooter==True: # QUE MOI
+	# J'AI LA BALLE, QUE MOI 
+	if self.test_peut_shooter==True: 
 		return 1
 
-	else: # PERSONNE
-		return 0
+	# MON EQUIPE A LA BALLE
+	liste_eq=[(it, ip) for (it, ip) in self.state.players if (it==self.key[0])]
+
+	for q in liste_eq:
+		if dist(self.ball_position, self.state.player(q[0],q[1]).position)<BALL_RADIUS+PLAYER_RADIUS:
+			return 2    
+
+		else: # PERSONNE
+			return 0
     
