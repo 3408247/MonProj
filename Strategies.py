@@ -228,15 +228,27 @@ def j_2vs2(me):
 		else:
 			print "ici",shooteur_malin(me)
 			return shooteur_malin(me) # CONTINUER NORMAL 
-def test(me):
+
+
+## POUR ARBRE
+
+def dribbler(me):
+    if me.test_peut_shooter:
+	return me.shoot_dribble
+    else:
+	return me.courir_vers_ball
+
+def shooter(me):
 	if me.test_peut_shooter:
 		return me.shoot_vers_but_adv
 	else:
 		return me.courir_vers_ball
 
+
+
 	
 J_1vs1_Strat = SousStrat(j_1vs1)
-Test_Strat = SousStrat(test)
+#Test_Strat = SousStrat(test)
 
 J_2vs2_Strat = SousStrat(j_2vs2)
 J_2vs2_Strat_bis= SousStrat(j_2vs2)
@@ -248,17 +260,22 @@ Gard_shoot_but = SousStrat(gardien_shoot_vers_but)
 Gard_shoot_alea = SousStrat(gardien_shoot_alea)
 DefStrat = SousStrat(def_mouvement_et_shoot)
 
-keystrat1 = KeyboardStrategy()
-keystrat1.add("a", Gard_shoot_alea)
-keystrat1.add("b", Gard_shoot_but)
+#keystrat1 = KeyboardStrategy()
+#keystrat1.add("a", Gard_shoot_alea)
+#keystrat1.add("b", Gard_shoot_but)
 
-keystrat2= KeyboardStrategy()
-keystrat2.add("c", FonceurStrat)
-keystrat2.add("d", DefStrat)
+#keystrat2= KeyboardStrategy()
+#keystrat2.add("c", FonceurStrat)
+#keystrat2.add("d", DefStrat)
 
-milieustrat = KeyboardStrategy()
-milieustrat.add("x", FonceurStrat)
-milieustrat.add("w", DefStrat)
+#milieustrat = KeyboardStrategy()
+#milieustrat.add("x", FonceurStrat)
+#milieustrat.add("w", DefStrat)
+
+Strat_dribble = SousStrat(dribbler)
+Strat_shoot = SousStrat(shooter)
+
+
 
 
 
