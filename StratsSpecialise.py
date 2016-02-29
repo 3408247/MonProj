@@ -8,23 +8,8 @@ from Strategies import *
 
 from Outils import *
 
-class SousStrat(BaseStrategy):
-    def __init__(self,sous_strat):
-        BaseStrategy.__init__(self,sous_strat.__name__)
-        self.strat=sous_strat 
-    def compute_strategy(self,state,idteam,idplayer): #ou faire miroir ici
-	self.state = state
-     
-        action=self.strat(MyState(self.state,idteam,idplayer))
-	#print action
-        if(idteam!=1):
-	   action= miroir_action(action)
 
-        #print action
-        return action
-
-
-# SPECIALISATION DES JOUEURS POUR LES TOURNOIS ##	
+# SPECIALISATION DES JOUEURS POUR LES TOURNOIS #	
 
 # 1vs1#
 
@@ -80,6 +65,17 @@ def j_2vs2(me):
 		else:
 			print "ici",shooteur_malin(me)
 			return shooteur_malin(me) # CONTINUER NORMAL 
+
+
+
+J_1vs1_Strat = SousStrat(j_1vs1)
+#Test_Strat = SousStrat(test)
+
+J_2vs2_Strat = SousStrat(j_2vs2)
+J_2vs2_Strat_bis= SousStrat(j_2vs2)
+Hello = SousStrat(j_2vs2)
+Hey = SousStrat(j_2vs2)
+
 
 
 

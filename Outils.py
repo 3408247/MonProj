@@ -152,7 +152,7 @@ class MyState(object):
 
     @property
     def courir_vers_ball(self):
-	return self.aller_avec_angle_norme(self.angle_player_ball,10)
+	return self.aller_avec_angle_norme(self.angle_player_ball,100)
 
     @property
     def alligne_sur_demi_cercle(self):
@@ -174,6 +174,55 @@ class MyState(object):
     @property 
     def def_positionnement_defaut(self):
 	return self.placer_entre_ball_but(GAME_WIDTH/4)
+
+    @property
+    def dans_zone_de_tir(self):
+	
+	x=self.but_position_adv.x
+	y=self.but_position_adv.y
+	
+	#zone 1, rectangle délimité par le goal
+	x_1=GAME_WIDTH
+	x_2=GAME_WIDTH-GAME_WIDTH/8
+	
+	y_1=self.but_position_adv.y-GAME_GOAL_HEIGHT/2
+	y_2=self.but_position_adv.y+GAME_GOAL_HEIGHT/2
+
+
+	dans_zone_1=(self.my_position.x>=x_2)and(self.my_position<=x_1)and(self.my_position.y>=y_1)and(self.my_position.y<=y_2)
+
+	#zone 2, rectangle plus loin et plus grand
+	X_1=GAME_WIDTH-GAME_WIDTH/8
+	X_2=GAME_WIDTH-GAME_WIDTH/4
+	
+	Y_1=GAME_HEIGHT/4
+	Y_2=3*GAME_HEIGHT/4
+
+	dans_zone_2=(self.my_position.x>=X_2)and(self.my_position<X_1)and(self.my_position.y>=Y_1)and(self.my_position.y<=Y_2)
+
+	return (self.dans_zone_1) and (self.dans_zone_2)
+
+	
+    @property
+    def aller_dans_zone_tir(self):
+	x_1=GAME_WIDTH
+	x_2=GAME_WIDTH-GAME_WIDTH/8
+	y_1=self.but_position_adv.y-GAME_GOAL_HEIGHT/2
+	y_2=self.but_position_adv.y+GAME_GOAL_HEIGHT/2
+
+	zone_1_centre=Vector2D(x=(x_2-x_1)/2,y=(y_2-y_1)/2)
+	
+	X_1=GAME_WIDTH-GAME_WIDTH/8
+	X_2=GAME_WIDTH-GAME_WIDTH/4
+	
+	Y_1=GAME_HEIGHT/4
+	Y_2=3*GAME_HEIGHT/4
+
+	zone_2_centre=Vector2D(x=(X_2-X_1)/2,y=(Y_2-Y_1)/2)
+
+	if (dist(self.my_position,zone_1_centre)< dist(self.my_position,zone_2_centre)):
+		return 
+
 	
 	
 
@@ -215,6 +264,12 @@ class MyState(object):
         
     def shoot(self,p): #pas de mouvement; faire shooter dans la direction p - self
         return SoccerAction(Vector2D(),p-self.my_position)
+
+    def shoot_norm(self,p,n):
+	v=p-self.my_position
+	v.norm=n
+
+	return SoccerAction(Vector2D(),v)
     
     @property
     def shoot_alea(self):
@@ -264,18 +319,17 @@ class MyState(object):
 	if((self.my_position.y>=GAME_HEIGHT/2)and(self.pos_adv.y<=GAME_HEIGHT/2))or((self.my_position.y<GAME_HEIGHT/2)and(self.pos_adv.y<GAME_HEIGHT/2)):
 
 	   
-	   y_=(GAME_GOAL_HEIGHT)+(GAME_HEIGHT/2)
+	   y_=(GAME_GOAL_HEIGHT/2)+(GAME_HEIGHT/2)
 	else:
 	   
-	   y_=(GAME_HEIGHT/2)-(GAME_GOAL_HEIGHT)
+	   y_=(GAME_HEIGHT/2)-(GAME_GOAL_HEIGHT/2)
 
 	u=Vector2D(x=GAME_WIDTH,y=y_)
 	u.norm=2.0
 
 	return self.shoot(u)
 
-	
-
+ 
     @property
     def shoot_dribble(self):
 	
@@ -292,11 +346,9 @@ class MyState(object):
 
     @property
     def shoot_degager(self):
-	#ang=uniform(-3.14/2,3.14/2)
+
 	s=self.centre-self.my_position
 	s.norm=10;
-	
-	#s=Vector2D(angle=ang,norm=nor)
 	return SoccerAction(Vector2D(),s)
 
 

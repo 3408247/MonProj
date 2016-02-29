@@ -13,8 +13,8 @@ team_bad = SoccerTeam("team_bad",[Player("Gard",Gard_shoot_but)])
 
 ## Match d'entrainement et apprentissage de l'arbre
 
-match = SoccerMatch(team_keyb,team_bad,1000)
+match = SoccerMatch(team_keyb,team_bad,1000)  # On peut changer le nombre de Steps
 show(match)
 ## Sauvegarde des exemples, mettre False a True si concatenation des fichiers
-keystrat_test.write("test.tree",False) # METTRE A TRUE FOR APPENDING 
+keystrat_test.write("test.exp",False) # METTRE A TRUE FOR APPENDING 
 

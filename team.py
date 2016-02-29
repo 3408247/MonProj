@@ -1,5 +1,9 @@
 from Strategies import*
+from StratsSpecialise import *
 from soccersimulator import SoccerTeam, Player
+from decisiontree import DTreeStrategy, gen_features
+
+
 
 #### Mes tests
 Priya_1a = SoccerTeam("Priya_1a",[Player("f1",J_1vs1_Strat)])
@@ -18,3 +22,11 @@ Priya_4b =SoccerTeam("Priya_4b",[Player("1ATTb",FonceurStrat),Player("GARDIENb",
 team1 = SoccerTeam("team1",[Player("f1",J_1vs1_Strat)])
 team2 = SoccerTeam("team2",[Player("ATT1",J_2vs2_Strat_bis),Player("GARD",Gard_shoot_but)])
 team4 = SoccerTeam("team4",[Player("ATT1",FonceurStrat),Player("gk2",Gard_shoot_but),Player("ATT2",FonceurStrat),Player("DEF1",DefStrat)])
+
+
+##### IA DecisionTree
+tree = cPickle.load(file("./tree.pkl"))
+dic = {"dribbler": Strat_dribble,"shoot_sud":Strat_shoot_sud, "shoot_nord":Strat_shoot_nord}
+treeIA = DTreeStrategy(tree,dic,gen_features)
+playerIA = Player("IAtree",treeIA)
+teamIA = SoccerTeam
