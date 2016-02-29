@@ -1,0 +1,17 @@
+digraph Tree {
+node [shape=box, style="filled, rounded", color="black", fontname=helvetica] ;
+edge [fontname=helvetica] ;
+0 [label="d_me_ball <= 8.4452\ngini = 0.6036\nsamples = 13\nvalue = [7, 3, 3]\nclass = dribbler", fillcolor="#e5813966"] ;
+1 [label="d_but_ball <= 37.5641\ngini = 0.5\nsamples = 6\nvalue = [0, 3, 3]\nclass = shoot_nord", fillcolor="#39e58100"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label="d_but_ball <= 30.9427\ngini = 0.375\nsamples = 4\nvalue = [0, 3, 1]\nclass = shoot_nord", fillcolor="#39e581aa"] ;
+1 -> 2 ;
+3 [label="gini = 0.5\nsamples = 2\nvalue = [0, 1, 1]\nclass = shoot_nord", fillcolor="#39e58100"] ;
+2 -> 3 ;
+4 [label="gini = 0.0\nsamples = 2\nvalue = [0, 2, 0]\nclass = shoot_nord", fillcolor="#39e581ff"] ;
+2 -> 4 ;
+5 [label="gini = 0.0\nsamples = 2\nvalue = [0, 0, 2]\nclass = shoot_sud", fillcolor="#8139e5ff"] ;
+1 -> 5 ;
+6 [label="gini = 0.0\nsamples = 7\nvalue = [7, 0, 0]\nclass = dribbler", fillcolor="#e58139ff"] ;
+0 -> 6 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+}
