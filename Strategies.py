@@ -21,6 +21,7 @@ class SousStrat(BaseStrategy):
     def __init__(self,sous_strat):
         BaseStrategy.__init__(self,sous_strat.__name__)
         self.strat=sous_strat 
+
     def compute_strategy(self,state,idteam,idplayer): #ou faire miroir ici
 	self.state = state
      
@@ -52,12 +53,6 @@ def fonceur_bis(me):
     else:
 	return me.courir_vers(me.ball_pos)
 
-
-	
-
-
-def fonceur_alea(me):
-	return me.aller_vers_ball + me.shoot_alea
 
 def fonceur_pass(me):
 	#print(me.aller(me.ball_position))
@@ -175,53 +170,3 @@ Gard_shoot_but = SousStrat(gardien_shoot_vers_but)
 
 DefStrat = SousStrat(def_mouvement_et_shoot)
 
-
-
-
-
-class RandomStrategy(BaseStrategy):
-    def __init__(self):
-        BaseStrategy.__init__(self,"Random")
-    def compute_strategy(self,state,id_team,id_player):
-        
-        if id_team==1:
-            position_milieu_but=Vector2D(x=150.,y=45.)
-            
-        if id_team==2:
-            position_milieu_but=Vector2D(x=0.,y=45.)
-            
-        vector_acc=state.ball.position-state.player_state(id_team,id_player).position
-        
-        if (state.ball.position.distance(state.player_state(id_team,id_player).position)<BALL_RADIUS+PLAYER_RADIUS):
-            vector_shoot=position_milieu_but-state.ball.position
-        else:
-            vector_shoot=Vector2D()
-        
-        return SoccerAction(vector_acc,vector_shoot)
-    
-
-"""FonceurStrat =  SousStrat(fonceur ) ---> FonceurStrat.strat == fonceur,
- FonceurStrat.compute_strategy(state,idtema,idplayer) <--> fonceur(MyState(state,id_team,idplayer))
-
-class Strat(BaseStrategy):
-	def __init__(self,decideur):
-		BaseStrategy.__init__(self,decideur.__name__)
-		self.decideur = decideur
-	def compute_strategy():
-		return self.decideur(MyState(state,id_team,idplayer)
-
-
-Fonceur = Strat(defenseur)
-
-def defenseur(me):
-		return SoccerAction().....
-
-def startComplexce(me):
-	if me...:
-		return goal(me)
-	if me....:
-		return defenseur(me)+degager(me)
-
-FonceurStrat = SousStrat(fonceur)
-
-MaStratComplexe = """
