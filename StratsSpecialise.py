@@ -15,7 +15,7 @@ from Outils import *
 
 def j_1vs1(me):
 	
-	if (me.ball_position.x<GAME_WIDTH/2): #SI DANS MA MOITIER DE TERRAIN
+	if (me.ball_pos.x<GAME_WIDTH/2): #SI DANS MA MOITIER DE TERRAIN
 
 		if me.a_la_balle==2:  # SI ADV A LA BALLE
 			if me.test_peut_shooter:
@@ -35,7 +35,7 @@ def j_2vs2(me):
 	flag = me.key[0]==1 
 	print me.state.step,me.key[1]
 
-	if(me.ball_position.x<GAME_WIDTH/2): # DANS MA MOITIER
+	if(me.ball_pos.x<GAME_WIDTH/2): # DANS MA MOITIER
 		print "la1"
 		if me.a_la_balle==2:  # SI ADV A LA BALLE
 
@@ -49,7 +49,7 @@ def j_2vs2(me):
 		if me.a_la_balle==1: #JAI LA BALLE
 
 			print "labis"
-			if dist(me.my_position,me.pos_adv_plus_proche)<7:  #ADV FONCE SUR MOI
+			if dist(me.my_pos,me.pos_adv_plus_proche)<7:  #ADV FONCE SUR MOI
 				return me.shoot_vers_equipier_proche # FAIRE PASSE
 			else:
 				return shooteur_malin(me) # CONTINUER NORMAL 
@@ -59,8 +59,8 @@ def j_2vs2(me):
 			return shooteur_malin(me)
 
 	else:  # DANS SA MOITIER 
-		print "later",me.my_position,me.pos_adv_plus_proche
-		if dist(me.my_position,me.pos_adv_plus_proche)<7: #ADV FONCE SUR MOI
+		print "later",me.my_pos,me.pos_adv_plus_proche
+		if dist(me.my_pos,me.pos_adv_plus_proche)<7: #ADV FONCE SUR MOI
 			return me.shoot_vers_equipier_proche # FAIRE PASSE
 		else:
 			print "ici",shooteur_malin(me)

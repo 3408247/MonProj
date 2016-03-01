@@ -10,26 +10,14 @@ from Outils import *
 
 
 def shoot_nord(me):
-	y_=(GAME_GOAL_HEIGHT/2)+(GAME_HEIGHT/2)
-	v=Vector2D(x=GAME_WIDTH,y=y_)
-
-
-	if me.test_peut_shooter:
-		return me.shoot_norm(v,3.0)
-	else:
-		return me.courir_vers_ball
+	return me.shoot_but_nord
 
 
 def shoot_sud(me):
-	y_=(GAME_HEIGHT/2)-(GAME_GOAL_HEIGHT/2)
+	return me.shoot_but_sud
 
-	v=Vector2D(x=GAME_WIDTH,y=y_)
-	
-	if me.test_peut_shooter:
-	
-		return me.shoot_norm(v,3.0)
-	else:
-		return me.courir_vers_ball
+def shoot_malin(me):
+	return me.shoot_malin
 
 
 def dribbler(me):
@@ -52,5 +40,7 @@ keystrat_test.add("y",Strat_shoot_nord)
 Strat_shoot_sud = SousStrat(shoot_sud)
 keystrat_test.add("h",Strat_shoot_sud)
 
+Strat_shoot_malin = SousStrat(shoot_malin)
+keystrat_test.add("b", Strat_shoot_malin)
 
 

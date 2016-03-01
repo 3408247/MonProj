@@ -41,16 +41,16 @@ class SousStrat(BaseStrategy):
 def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'opposant
 	#print("Fonceur", me.shoot_vers_but_adv, me.state._configs[(me.key[0],me.key[1])]._last_shoot)
 	if me.test_peut_shooter:
-	   return me.shoot(me.but_position_adv)
+	   return me.shoot(me.but_pos_adv)
 	else:
-	   return me.aller(me.ball_position)
+	   return me.aller(me.ball_pos)
 
 def fonceur_bis(me):
     if me.test_peut_shooter:
 	return me.shoot_avec_angle_puissance(me.angle_player_but,10.)
 
     else:
-	return me.courir_vers_ball
+	return me.courir_vers(me.ball_pos)
 
 
 	
@@ -67,7 +67,7 @@ def fonceur_pass(me):
  	   return me.shoot_vers_equipier_proche
 
 	else:
-	   return me.aller(me.ball_position)
+	   return me.aller(me.ball_pos)
 
 
 #Attaquant 1_VS_1 ou 2_VS_2
@@ -76,7 +76,7 @@ def shooteur_malin(me):
 
 	if (me.dist_but_adv_ball>30):  #JE SUIS PRES DES BUTS ADV
 
-		if dist(me.my_position,me.pos_adv)<25:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
+		if dist(me.my_pos,me.pos_adv)<25:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
 			return me.shoot_malin  #SHOOT 
 		else:
 			return me.shoot_dribble  # CONTINUE A S'APPROCHER DES BUTS
@@ -99,7 +99,7 @@ def shooteur_malin(me):
 def def_mouvement_et_shoot(me):
 	#print me.state._configs[(me.key[0],me.key[1])]._last_shoot
 
-	if (me.ball_position.x<GAME_WIDTH/2):
+	if (me.ball_pos.x<GAME_WIDTH/2):
 	
 
 		if me.test_peut_shooter:
@@ -124,15 +124,15 @@ def def_mouvement_et_shoot(me):
 
 def revenir_au_but(me): #faire me revenir a la position milieu but 
 
-  	return me.aller(me.but_position)
+  	return me.aller(me.but_pos)
 	
 	
 def gardien_mouvement(me):
 
 	
-	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_CLOSE):
+	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_CLOSE):
 		
-	 	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_TOO_CLOSE):
+	 	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_TOO_CLOSE):
 			
 			return me.aller_vers_ball
 		else:
@@ -155,8 +155,8 @@ def gardien_shoot_vers_but(me):
 def gardien_2(me):
 
 	
-	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_CLOSE):
-	 	if (dist(me.but_position,me.ball_position)<SEUIL_BALL_TOO_CLOSE):
+	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_CLOSE):
+	 	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_TOO_CLOSE):
 			return revenir_au_but(me)
 		else:
 			return me.alligne_sur_demi_cercle
@@ -170,7 +170,7 @@ def gardien_2(me):
 
 	
 
-FonceurStrat = SousStrat(fonceur)
+FonceurStrat = SousStrat(fonceur_bis)
 Gard_shoot_but = SousStrat(gardien_shoot_vers_but)
 
 DefStrat = SousStrat(def_mouvement_et_shoot)
