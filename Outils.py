@@ -166,7 +166,7 @@ class MyState(object):
 	
 	pos_x=self.but_pos.x+ux
 	pos_y=self.but_pos.y+uy
-	return self.aller(Vector2D(pos_x,pos_y))
+	return self.courir_vers(Vector2D(pos_x,pos_y))
 
 
     def placer_entre_ball_but(self,x_):
@@ -174,7 +174,7 @@ class MyState(object):
 	y_=(((vecteur_but_ball.y)/(vecteur_but_ball.x))*(x_-self.ball_pos.x))+self.ball_pos.y	
 	vect=Vector2D(x=x_,y=y_)
    
-        return self.aller(vect)
+        return self.courir_vers(vect)
 
     @property 
     def def_positionnement_defaut(self):

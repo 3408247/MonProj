@@ -69,17 +69,23 @@ def fonceur_pass(me):
 def shooteur_malin(me):
     if me.test_peut_shooter:
 
-	if (me.dist_but_adv_ball>30):  #JE SUIS PRES DES BUTS ADV
+	if (me.dist_but_adv_ball>GAME_WIDTH/4):  #JE SUIS PRES DES BUTS ADV
 
-		if dist(me.my_pos,me.pos_adv)<25:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
+		if dist(me.my_pos,me.pos_adv)<GAME_WIDTH/8:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
+			print "ici:"
+			print dist(me.my_pos,me.pos_adv)
+
 			return me.shoot_malin  #SHOOT 
 		else:
+			print "la"
 			return me.shoot_dribble  # CONTINUE A S'APPROCHER DES BUTS
 
 	else: # JE SUIS LOIN DES BUTS
+		print "loin des buts"
 	 	return me.shoot_dribble  
 
     else: # PEUT PAS SHOOTER
+	print "peut pas shooter"
 	return me.courir_vers_ball 
 
 
@@ -100,10 +106,10 @@ def def_mouvement_et_shoot(me):
 		if me.test_peut_shooter:
 		
 			
-			return me.shoot_vers_but_adv
+			return me.shoot_degager
 		else:
 									
-			return me.aller_vers_ball 
+			return me.courir_vers_ball
 
 	else:	
 		
