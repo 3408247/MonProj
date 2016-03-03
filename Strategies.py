@@ -67,9 +67,9 @@ def shooteur_malin(me):
 	if (me.dist_but_adv_ball<GAME_WIDTH/4):  #JE SUIS PRES DES BUTS ADV
 		print "Pres des buts"
 
-		if dist(me.ball_pos,me.pos_adv)<12:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
+		if dist(me.ball_pos,me.pos_adv_plus_proche)<12:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
 			print "adv s'approche"
-			print dist(me.my_pos,me.pos_adv)
+			print dist(me.my_pos,me.pos_adv_plus_proche)
 
 			return me.shoot_malin  #SHOOT 
 		else:

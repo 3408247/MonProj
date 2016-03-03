@@ -90,7 +90,7 @@ class MyState(object):
 
 
     def dist_player(self,no_team,no_player):
-	return dist(self.my_pos,self.state.player(no_team,no_player).pos)
+	return dist(self.my_pos,self.state.player(no_team,no_player).position)
 
     ### ANGLES ###
     def angle_player_point(self,pos_point):
@@ -237,32 +237,47 @@ class MyState(object):
     ### RADAR ###
 
     @property
-    def pos_equi_plus_proche(self):
+    def adv_plus_proche(self):
 	d_min=999
-	vecteur=Vector2D(0,0)
-	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
-	for p in liste_equipiers:
-		d=self.dist_player(p[0],p[1])
-		if d<d_min:
-	           d_min=d
-                   vecteur=self.state.player(it,p[1]).position 
-	
-	return vecteur
-
-
-    @property
-    def pos_adv_plus_proche(self):
-	d_min=999
-	vecteur=Vector2D(0,0)
 	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
 	for p in liste_adv:
 		d=self.dist_player(p[0],p[1])
 		if d<d_min:
 	           d_min=d
-                   vecteur=self.state.player(p[0],p[1]).position 
+		   lui=p
 	
-	return vecteur
+	return self.state.player(p[0],p[1]) 
+
+    @property
+    def pos_adv_plus_proche(self):
 	
+	return self.adv_plus_proche.position
+
+    @property
+    def vit_adv_plus_proche(self):
+	return self.adv_plus_proche.vitesse
+
+
+    @property
+    def equi_plus_proche(self):
+	d_min=999
+	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
+	for p in liste_equipiers:
+		d=self.dist_player(p[0],p[1])
+		if d<d_min:
+	           d_min=d
+		   lui=self.state.player(p[0],p[1])
+
+	return lui
+
+    @property
+    def pos_equi_plus_proche(self):
+	
+	return self.equi_plus_proche.position
+   
+
+
+			
 
     ### SHOOTS ###
 
@@ -300,11 +315,11 @@ class MyState(object):
 		return self.courir_vers(self.ball_pos)
 
     @property
-    def shoot_malin(self):
+    def shoot_malin(self):  # ATTENTION ICI POS_ADV EST QUAND ON A UN SEUL ADVERSAIRE ...  FAIRE UN TRUC PLUS GENERAL ..
 
 
 	#Si je suis dans moitier nord et adv en moitier sud, OU si je suis moitier sud et adv en moitier sud, 		ALORS tirer dans moitier nord du but
-	if((self.my_pos.y>=GAME_HEIGHT/2)and(self.pos_adv.y<=GAME_HEIGHT/2))or((self.my_pos.y<GAME_HEIGHT/2)and(self.pos_adv.y<GAME_HEIGHT/2)):
+	if((self.my_pos.y>=GAME_HEIGHT/2)and(self.pos_adv_plus_proche.y<=GAME_HEIGHT/2))or((self.my_pos.y<GAME_HEIGHT/2)and(self.pos_adv_plus_proche.y<GAME_HEIGHT/2)):
 
 	  
 	   return self.shoot_but_nord
@@ -336,7 +351,7 @@ class MyState(object):
 
     #pour 1_VS_1
 
-    @property
+    @property       # A ELIMINER EVENTUELLEMENT 
     def pos_adv(self): #Informations sur adversaire... il y aura un seul 
 	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])]
 	adv=liste_adv[0]
@@ -355,8 +370,13 @@ class MyState(object):
 	vecteur.norm=1.2
 	return SoccerAction(Vector2D(),vecteur)
 
+#    @property
+   # def shoot_dribble_malin(self):  # DRIBBLER TOUT EN EVITANT ADVERSAIRE
+	
+	
+
     @property
-    def dribbler(self):
+    def dribbler(self):   # OPTIMISER DRIBBLER A CE QU'IL EVITE ADVERSAIRE 
 	if self.test_peut_shooter:
 		return self.shoot_dribble
 	else:
@@ -365,9 +385,7 @@ class MyState(object):
     @property
     def shoot_degager(self):
 
-	s=self.centre-self.my_pos
-	s.norm=10;
-	return SoccerAction(Vector2D(),s)
+	return self.shoot_vers_norm(self.centre,6)
 
 
     ### QUI A LA BALLE ###

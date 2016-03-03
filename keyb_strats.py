@@ -40,7 +40,7 @@ keystrat_test.add("y",Strat_shoot_nord)
 Strat_shoot_sud = SousStrat(shoot_sud)
 keystrat_test.add("h",Strat_shoot_sud)
 
-#Strat_shoot_malin = SousStrat(shoot_malin)
-#keystrat_test.add("b", Strat_shoot_malin)
+Strat_shoot_malin = SousStrat(shoot_malin)
+keystrat_test.add("b", Strat_shoot_malin)
 
 
