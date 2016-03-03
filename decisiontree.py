@@ -20,15 +20,17 @@ def gen_features(state,id_team,id_player):
 
     d_me_ball	 = Etat.dist_player_ball
     d_but_ball	 = Etat.dist_but_adv_ball
-    d_me_but_adv = dist(Etat.my_position, Etat.but_position_adv)
+    d_me_but_adv = dist(Etat.my_pos, Etat.but_pos_adv)
+    d_ball_adv   = dist(Etat.ball_pos,Etat.pos_adv)
+    pos_adv      = Etat.pos_adv
 
 
-    return [d_me_ball,d_but_ball,d_me_but_adv]
+    return [d_me_ball,d_but_ball,d_me_but_adv,d_me_but_adv,d_ball_adv,pos_adv]
 
 
 
 #Nom des features (optionel)
-gen_features.names = ["d_me_ball","d_but_ball","d_me_but_adv"]
+gen_features.names = ["d_me_ball","d_but_ball","d_me_but_adv","d_me_but_adv","d_ball_adv","pos_adv"]
 
 # CAN CREATE OTHER GEN FEATURES FUNCTIONS AND HAVE TO CHANGE CERTAIN PARAMETERS (voir plus bas )
 
@@ -84,7 +86,7 @@ if __name__=="__main__":
     train,labels = build_apprentissage(prefix+".exp",gen_features)  # ICI CHOISIR LES FNCTS GEN FEATURES VOULUES
     ## apprentissage de l'arbre
     tree = apprendre_arbre(train,labels)
-    print affiche_arbre(tree)
+    #print affiche_arbre(tree)
     ## sauvegarde de l'arbre
     cPickle.dump(tree,file(prefix+".pkl","w"))
     ## exporter l'arbre en .dot

@@ -44,22 +44,14 @@ def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'op
 	if me.test_peut_shooter:
 	   return me.shoot(me.but_pos_adv)
 	else:
-	   return me.aller(me.ball_pos)
-
-def fonceur_bis(me):
-    if me.test_peut_shooter:
-	return me.shoot_avec_angle_puissance(me.angle_player_but,10.)
-
-    else:
-	return me.courir_vers(me.ball_pos)
-
+	   return me.courir_vers(me.ball_pos)
 
 def fonceur_pass(me):
 	#print(me.aller(me.ball_position))
 	#print(me.shoot_vers_equipier_proche())
 
         if me.test_peut_shooter:
- 	   return me.shoot_vers_equipier_proche
+ 	   return me.shoot_vers_equi_proche
 
 	else:
 	   return me.aller(me.ball_pos)
@@ -67,17 +59,21 @@ def fonceur_pass(me):
 
 #Attaquant 1_VS_1 ou 2_VS_2
 def shooteur_malin(me):
+
+    print "distance ball et adv est"
+    print dist(me.ball_pos,me.pos_adv)
     if me.test_peut_shooter:
 
-	if (me.dist_but_adv_ball>GAME_WIDTH/4):  #JE SUIS PRES DES BUTS ADV
+	if (me.dist_but_adv_ball<GAME_WIDTH/4):  #JE SUIS PRES DES BUTS ADV
+		print "Pres des buts"
 
-		if dist(me.my_pos,me.pos_adv)<GAME_WIDTH/8:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
-			print "ici:"
+		if dist(me.ball_pos,me.pos_adv)<12:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
+			print "adv s'approche"
 			print dist(me.my_pos,me.pos_adv)
 
 			return me.shoot_malin  #SHOOT 
 		else:
-			print "la"
+			print "adversaire encore loin "
 			return me.shoot_dribble  # CONTINUE A S'APPROCHER DES BUTS
 
 	else: # JE SUIS LOIN DES BUTS
@@ -92,10 +88,6 @@ def shooteur_malin(me):
 ### DEFENSEUR ###
 
 # 1_VS_1 #
-
-	
-    
- 
 
 def def_mouvement_et_shoot(me):
 	#print me.state._configs[(me.key[0],me.key[1])]._last_shoot
@@ -125,7 +117,7 @@ def def_mouvement_et_shoot(me):
 
 def revenir_au_but(me): #faire me revenir a la position milieu but 
 
-  	return me.aller(me.but_pos)
+  	return me.courir_vers(me.but_pos)
 	
 	
 def gardien_mouvement(me):
@@ -171,7 +163,7 @@ def gardien_2(me):
 
 	
 
-FonceurStrat = SousStrat(fonceur_bis)
+FonceurStrat = SousStrat(fonceur)
 Gard_shoot_but = SousStrat(gardien_shoot_vers_but)
 
 DefStrat = SousStrat(def_mouvement_et_shoot)

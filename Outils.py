@@ -234,7 +234,7 @@ class MyState(object):
     ### RADAR ###
 
     @property
-    def pos_equipier_plus_proche(self):
+    def pos_equi_plus_proche(self):
 	d_min=999
 	vecteur=Vector2D(0,0)
 	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
@@ -267,10 +267,10 @@ class MyState(object):
     def test_peut_shooter(self):
 	return ((self.dist_player_ball)<BALL_RADIUS+PLAYER_RADIUS)
         
-    def shoot(self,p): #pas de mouvement; faire shooter dans la direction p - self
+    def shoot_vers(self,p): #pas de mouvement; faire shooter dans la direction p - self
         return SoccerAction(Vector2D(),p-self.my_pos)
 
-    def shoot_norm(self,p,n):
+    def shoot_vers_norm(self,p,n):
 	v=p-self.my_pos
 	v.norm=n
 
@@ -282,7 +282,7 @@ class MyState(object):
 	v=Vector2D(x=GAME_WIDTH,y=y_)
 
 	if self.test_peut_shooter:
-		return self.shoot_norm(v,3.0)
+		return self.shoot_vers_norm(v,3.0)
 	else:
 		return self.courir_vers(self.ball_pos)
 
@@ -292,21 +292,27 @@ class MyState(object):
 	v=Vector2D(x=GAME_WIDTH,y=y_)
 
 	if self.test_peut_shooter:
-		return self.shoot_norm(v,3.0)
+		return self.shoot_vers_norm(v,3.0)
 	else:
 		return self.courir_vers(self.ball_pos)
 
+    @property
+    def shoot_malin(self):
+
+
+	#Si je suis dans moitier nord et adv en moitier sud, OU si je suis moitier sud et adv en moitier sud, 		ALORS tirer dans moitier nord du but
+	if((self.my_pos.y>=GAME_HEIGHT/2)and(self.pos_adv.y<=GAME_HEIGHT/2))or((self.my_pos.y<GAME_HEIGHT/2)and(self.pos_adv.y<GAME_HEIGHT/2)):
+
+	  
+	   return self.shoot_but_nord
+	else:
+
+	   return self.shoot_but_sud
+
     
     @property
-    def shoot_alea(self):   # A EFFACER ENVENTUELLEMENT
-	angleu=uniform(-3.14/2,3.14/2)
-	normeu=uniform(1.,maxBallAcceleration)
-        return SoccerAction(Vector2D(),Vector2D(angle=angleu,norm=normeu))
-
-  
-    @property
     def shoot_vers_but_adv(self):
-         return self.shoot(self.but_pos_adv)
+         return self.shoot_vers(self.but_pos_adv)
 
     def shoot_avec_angle_puissance(self,theta,puissance):
 	shot=Vector2D(angle=theta,norm=puissance)
@@ -322,8 +328,8 @@ class MyState(object):
 	return SoccerAction(Vector2D(),vect_output)
 
     @property 
-    def shoot_vers_equipier_proche(self):
-	return self.shoot(self.pos_equipier_plus_proche)
+    def shoot_vers_equi_proche(self):
+	return self.shoot_vers(self.pos_equi_plus_proche)
 
     #pour 1_VS_1
 
@@ -337,18 +343,6 @@ class MyState(object):
 	pos_adv=self.state.player(it_adv,ip_adv).position
 	return pos_adv
 	
-    @property
-    def shoot_malin(self):
-
-
-	#Si je suis dans moitier nord et adv en moitier sud, OU si je suis moitier sud et adv en moitier sud, 		ALORS tirer dans moitier nord du but
-	if((self.my_pos.y>=GAME_HEIGHT/2)and(self.pos_adv.y<=GAME_HEIGHT/2))or((self.my_pos.y<GAME_HEIGHT/2)and(self.pos_adv.y<GAME_HEIGHT/2)):
-
-	   
-	   return self.shoot_but_nord
-	else:
-	   
-	   return self.shoot_but_sud
 	
 
     @property

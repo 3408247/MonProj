@@ -49,8 +49,8 @@ def j_2vs2(me):
 		if me.a_la_balle==1: #JAI LA BALLE
 
 			print "labis"
-			if dist(me.my_pos,me.pos_adv_plus_proche)<7:  #ADV FONCE SUR MOI
-				return me.shoot_vers_equipier_proche # FAIRE PASSE
+			if dist(me.my_pos,me.pos_adv_plus_proche)<BALL_RADIUS+PLAYER_RADIUS+3:  #ADV FONCE SUR MOI
+				return me.shoot_vers(pos_equi_plus_proche) # FAIRE PASSE
 			else:
 				return shooteur_malin(me) # CONTINUER NORMAL 
 
@@ -61,7 +61,7 @@ def j_2vs2(me):
 	else:  # DANS SA MOITIER 
 		print "later",me.my_pos,me.pos_adv_plus_proche
 		if dist(me.my_pos,me.pos_adv_plus_proche)<7: #ADV FONCE SUR MOI
-			return me.shoot_vers_equipier_proche # FAIRE PASSE
+			return me.shoot_vers_equi_proche # FAIRE PASSE
 		else:
 			print "ici",shooteur_malin(me)
 			return shooteur_malin(me) # CONTINUER NORMAL 
