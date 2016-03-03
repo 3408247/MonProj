@@ -168,17 +168,20 @@ class MyState(object):
 	pos_y=self.but_pos.y+uy
 	return self.courir_vers(Vector2D(pos_x,pos_y))
 
+    def placerEntre_A_B_x(self,a,b,x_):
+	vecteur_A_B=a-b
+	y_ = (((vecteur_A_B.y)/(vecteur_A_B.x))*(x_-a.x))+ a.y	
+	vect = Vector2D(x=x_,y=y_)
 
-    def placer_entre_ball_but(self,x_):
+	return self.courir_vers(vect)
+
+    def placer_entre_ball_but(self,x_):  # A SUPPRIMER EVENTUELLEMENT 
 	vecteur_but_ball=self.ball_pos-self.but_pos
 	y_=(((vecteur_but_ball.y)/(vecteur_but_ball.x))*(x_-self.ball_pos.x))+self.ball_pos.y	
 	vect=Vector2D(x=x_,y=y_)
    
         return self.courir_vers(vect)
 
-    @property 
-    def def_positionnement_defaut(self):
-	return self.placer_entre_ball_but(GAME_WIDTH/4)
 
     @property
     def dans_zone_de_tir(self):

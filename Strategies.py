@@ -89,6 +89,10 @@ def shooteur_malin(me):
 
 # 1_VS_1 #
 
+def def_pos_defaut(me):
+	return me.placerEntre_A_B_x(me.ball_pos,me.but_pos,GAME_WIDTH/4)
+	
+
 def def_mouvement_et_shoot(me):
 	#print me.state._configs[(me.key[0],me.key[1])]._last_shoot
 
@@ -105,11 +109,7 @@ def def_mouvement_et_shoot(me):
 
 	else:	
 		
-		return me.def_positionnement_defaut
-
-
-
-#def def_mouvement_et_shoot_centre(me):
+		return def_pos_defaut(me)
 
 
 
