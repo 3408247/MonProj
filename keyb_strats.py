@@ -24,7 +24,7 @@ def dribbler(me):
     if me.test_peut_shooter:
 	return me.shoot_dribble
     else:
-	return me.courir_vers_ball
+	return me.courir_vers(me.ball_pos)
 
 
 

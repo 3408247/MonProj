@@ -1,0 +1,21 @@
+digraph Tree {
+node [shape=box, style="filled, rounded", color="black", fontname=helvetica] ;
+edge [fontname=helvetica] ;
+0 [label="d_me_ball <= 6.0636\ngini = 0.5184\nsamples = 25\nvalue = [16, 6, 3]\nclass = dribbler", fillcolor="#e5813986"] ;
+1 [label="d_but_ball <= 37.7059\ngini = 0.595\nsamples = 11\nvalue = [2, 6, 3]\nclass = shoot_nord", fillcolor="#39e58160"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label="d_me_ball <= 3.2434\ngini = 0.2778\nsamples = 6\nvalue = [1, 5, 0]\nclass = shoot_nord", fillcolor="#39e581cc"] ;
+1 -> 2 ;
+3 [label="gini = 0.5\nsamples = 2\nvalue = [1, 1, 0]\nclass = dribbler", fillcolor="#e5813900"] ;
+2 -> 3 ;
+4 [label="gini = 0.0\nsamples = 4\nvalue = [0, 4, 0]\nclass = shoot_nord", fillcolor="#39e581ff"] ;
+2 -> 4 ;
+5 [label="d_ball_adv <= 37.8429\ngini = 0.56\nsamples = 5\nvalue = [1, 1, 3]\nclass = shoot_sud", fillcolor="#8139e57f"] ;
+1 -> 5 ;
+6 [label="gini = 0.5\nsamples = 2\nvalue = [0, 1, 1]\nclass = shoot_nord", fillcolor="#39e58100"] ;
+5 -> 6 ;
+7 [label="gini = 0.4444\nsamples = 3\nvalue = [1, 0, 2]\nclass = shoot_sud", fillcolor="#8139e57f"] ;
+5 -> 7 ;
+8 [label="gini = 0.0\nsamples = 14\nvalue = [14, 0, 0]\nclass = dribbler", fillcolor="#e58139ff"] ;
+0 -> 8 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+}

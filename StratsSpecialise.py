@@ -22,7 +22,7 @@ def j_1vs1(me):
 			if me.test_peut_shooter:
 				return me.shoot_degager 
 			else:
-				return me.courir_vers_ball
+				return me.courir_vers(self.ball_pos)
 		else:
 			return shooteur_malin(me)  
 
@@ -44,8 +44,8 @@ def j_2vs2(me):
 				return me.shoot_degager
 
 			else:
-				print "la", me.courir_vers_ball
-				return me.courir_vers_ball
+				print "la", me.courir_vers(me.ball_pos)
+				return me.courir_vers(me.ball_pos)
 
 		if me.a_la_balle==1: #JAI LA BALLE
 

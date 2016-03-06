@@ -22,15 +22,16 @@ def gen_features(state,id_team,id_player):
     d_but_ball	 = Etat.dist_but_adv_ball
     d_me_but_adv = dist(Etat.my_pos, Etat.but_pos_adv)
     d_ball_adv   = dist(Etat.ball_pos,Etat.pos_adv)
-    pos_adv      = Etat.pos_adv
+    #pos_adv      = Etat.pos_adv
 
-
-    return [d_me_ball,d_but_ball,d_me_but_adv,d_ball_adv,pos_adv]
+    print "ici"
+    print [d_me_ball,d_but_ball,d_me_but_adv,d_ball_adv]
+    return [d_me_ball,d_but_ball,d_me_but_adv,d_ball_adv]
 
 
 
 #Nom des features (optionel)
-gen_features.names = ["d_me_ball","d_but_ball","d_me_but_adv","d_ball_adv","pos_adv"]
+gen_features.names = ["d_me_ball","d_but_ball","d_me_but_adv","d_ball_adv"]
 
 # CAN CREATE OTHER GEN FEATURES FUNCTIONS AND HAVE TO CHANGE CERTAIN PARAMETERS (voir plus bas )
 

@@ -142,22 +142,6 @@ class MyState(object):
 
 	return self.aller(p)
 
-    @property
-    def aller_vers_but_adv(self):
-	return self.aller(self.but_pos_adv)
-
-    @property
-    def courir_vers_but_adv(self):
-        return self.aller_avec_angle_norme(self.angle_player_but,10.)
-
-    @property
-    def aller_vers_ball(self):
-        return self.aller(self.ball_pos)
-            
-  
-    @property
-    def courir_vers_ball(self):
-	return self.aller_avec_angle_norme(self.angle_player_ball,100)
 
     @property
     def alligne_sur_demi_cercle(self):
@@ -175,13 +159,8 @@ class MyState(object):
 
 	return self.courir_vers(vect)
 
-    def placer_entre_ball_but(self,x_):  # A SUPPRIMER EVENTUELLEMENT 
-	vecteur_but_ball=self.ball_pos-self.but_pos
-	y_=(((vecteur_but_ball.y)/(vecteur_but_ball.x))*(x_-self.ball_pos.x))+self.ball_pos.y	
-	vect=Vector2D(x=x_,y=y_)
-   
-        return self.courir_vers(vect)
 
+    ###  ZONES ###
 
     @property
     def dans_zone_de_tir(self):
@@ -210,28 +189,34 @@ class MyState(object):
 
 	return (self.dans_zone_1) and (self.dans_zone_2)
 
-	
     @property
-    def aller_dans_zone_tir(self):
+    def zone_1_centre(self):
 	x_1=GAME_WIDTH
 	x_2=GAME_WIDTH-GAME_WIDTH/8
 	y_1=self.but_pos_adv.y-GAME_GOAL_HEIGHT/2
 	y_2=self.but_pos_adv.y+GAME_GOAL_HEIGHT/2
 
-	zone_1_centre=Vector2D(x=(x_2-x_1)/2,y=(y_2-y_1)/2)
-	
+	return Vector2D(x=(x_2-x_1)/2,y=(y_2-y_1)/2)
+
+    @property
+    def zone_2_centre(self):
 	X_1=GAME_WIDTH-GAME_WIDTH/8
 	X_2=GAME_WIDTH-GAME_WIDTH/4
 	
 	Y_1=GAME_HEIGHT/4
 	Y_2=3*GAME_HEIGHT/4
 
-	zone_2_centre=Vector2D(x=(X_2-X_1)/2,y=(Y_2-Y_1)/2)
-
-	if (dist(self.my_pos,zone_1_centre)< dist(self.my_pos,zone_2_centre)):
-		return 
-
+	return=Vector2D(x=(X_2-X_1)/2,y=(Y_2-Y_1)/2)
 	
+	
+    @property
+    def aller_dans_zone_tir(self):
+	
+	if (dist(self.my_pos,self.zone_1_centre)< dist(self.my_pos,self.zone_2_centre)):
+		return self.courir_vers(self.zone_1_centre)
+
+	else:
+		return self.courir_vers(self.zone_1_centre)	
 	
 
     ### RADAR ###
@@ -367,7 +352,7 @@ class MyState(object):
     def shoot_dribble(self):
 	
 	vecteur=self.but_pos_adv-self.ball_pos
-	vecteur.norm=1.2
+	vecteur.norm=0.7
 	return SoccerAction(Vector2D(),vecteur)
 
 #    @property
@@ -380,7 +365,7 @@ class MyState(object):
 	if self.test_peut_shooter:
 		return self.shoot_dribble
 	else:
-		return self.courir_vers_ball 
+		return self.courir_vers(self.ball_pos)
 
     @property
     def shoot_degager(self):

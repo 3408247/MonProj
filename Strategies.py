@@ -1,3 +1,9 @@
+
+
+
+
+
+
 # -*- coding: utf-8 -*-
 """
 Created on Mon Jan 25 16:45:44 2016
@@ -82,7 +88,7 @@ def shooteur_malin(me):
 
     else: # PEUT PAS SHOOTER
 	print "peut pas shooter"
-	return me.courir_vers_ball 
+	return me.courir_vers(me.ball_pos) 
 
 
 ### DEFENSEUR ###
@@ -105,7 +111,7 @@ def def_mouvement_et_shoot(me):
 			return me.shoot_degager
 		else:
 									
-			return me.courir_vers_ball
+			return me.courir_vers(me.ball_pos)
 
 	else:	
 		
@@ -127,7 +133,7 @@ def gardien_mouvement(me):
 		
 	 	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_TOO_CLOSE):
 			
-			return me.aller_vers_ball
+			return me.courir_vers(me.ball_pos)
 		else:
 			
 			return me.alligne_sur_demi_cercle
@@ -143,23 +149,6 @@ def gardien_shoot_vers_but(me):
 	else:
 		return gardien_mouvement(me)
 		
-
-
-def gardien_2(me):
-
-	
-	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_CLOSE):
-	 	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_TOO_CLOSE):
-			return revenir_au_but(me)
-		else:
-			return me.alligne_sur_demi_cercle
-	else:
-		if me.test_peut_shooter:
-			return me.shoot_intercepter_contrecarE
-
-		else:
-			return me.aller_vers_ball + me.shoot_alea
-
 
 	
 
