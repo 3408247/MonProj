@@ -22,10 +22,15 @@ def shoot_malin(me):
 
 def dribbler(me):
     if me.test_peut_shooter:
-	return me.shoot_dribble
+	return me.dribbler_vers(me.but_pos_adv)
     else:
 	return me.courir_vers(me.ball_pos)
 
+def courir_malin(me):
+	return me.courir_vers_ball
+
+def rien(me):
+	return SoccerAction()
 
 
 keystrat_test= KeyboardStrategy()
@@ -40,7 +45,11 @@ keystrat_test.add("y",Strat_shoot_nord)
 Strat_shoot_sud = SousStrat(shoot_sud)
 keystrat_test.add("h",Strat_shoot_sud)
 
-Strat_shoot_malin = SousStrat(shoot_malin)
-keystrat_test.add("b", Strat_shoot_malin)
+#Strat_shoot_malin = SousStrat(shoot_malin)
+#keystrat_test.add("b", Strat_shoot_malin)
 
+Strat_courir = SousStrat(courir_malin)
+keystrat_test.add("c",Strat_courir)
 
+Strat_rien = SousStrat(rien)
+keystrat_test.add("a",Strat_rien)

@@ -11,7 +11,7 @@ from soccersimulator import BaseStrategy, SoccerAction
 from soccersimulator import SoccerTeam, SoccerMatch
 from soccersimulator import Vector2D, Player, SoccerTournament
 from random import uniform
-
+from copy import deepcopy
 DCERCLE_RAYON = 10
 
 def miroir_pos(p):
@@ -38,6 +38,11 @@ def miroir_state(etat):
 def dist(u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u et v
 	return u.distance(v)
 
+def qq_entre(src,dest,obs):
+	vsrc_dest=src-dest
+	vsrc_obs=obs-src
+	return ((abs(vsrc_dest.angle-vsrc_obs.angle)<0.2 ) and (dist(src,obs)< dist(src,dest)))
+
 class MyState(object):
     def __init__(self,state,idteam,idplayer):
         self.state = state    #ajouter le miroir ici option 1
@@ -45,6 +50,15 @@ class MyState(object):
  
         if (idteam!=1):
 	    self.state=miroir_state(self.state)
+
+
+    @property
+    def player_moi(self):
+	return self.state.player(1,0)
+
+    @property
+    def balle(self):
+	return self.state.ball
 
 
     ### POSITIONS ###
@@ -141,6 +155,14 @@ class MyState(object):
 	v.norm=100
 
 	return self.aller(p)
+ 
+    @property
+    def courir_vers_ball(self):
+	ball = deepcopy(self.state.ball)
+	for i in range(0,5):
+		ball.next(Vector2D())
+
+	return self.courir_vers(ball.position)
 
 
     @property
@@ -206,7 +228,7 @@ class MyState(object):
 	Y_1=GAME_HEIGHT/4
 	Y_2=3*GAME_HEIGHT/4
 
-	return=Vector2D(x=(X_2-X_1)/2,y=(Y_2-Y_1)/2)
+	return Vector2D(x=(X_2-X_1)/2,y=(Y_2-Y_1)/2)
 	
 	
     @property
@@ -259,8 +281,6 @@ class MyState(object):
     def pos_equi_plus_proche(self):
 	
 	return self.equi_plus_proche.position
-   
-
 
 			
 
@@ -285,9 +305,9 @@ class MyState(object):
 	v=Vector2D(x=GAME_WIDTH,y=y_)
 
 	if self.test_peut_shooter:
-		return self.shoot_vers_norm(v,3.0)
+		return self.shoot_vers_norm(v,4.0)
 	else:
-		return self.courir_vers(self.ball_pos)
+		return self.courir_vers_ball
 
     @property
     def shoot_but_sud(self):
@@ -295,16 +315,16 @@ class MyState(object):
 	v=Vector2D(x=GAME_WIDTH,y=y_)
 
 	if self.test_peut_shooter:
-		return self.shoot_vers_norm(v,3.0)
+		return self.shoot_vers_norm(v,4.0)
 	else:
-		return self.courir_vers(self.ball_pos)
+		return self.courir_vers_ball
 
     @property
-    def shoot_malin(self):  # ATTENTION ICI POS_ADV EST QUAND ON A UN SEUL ADVERSAIRE ...  FAIRE UN TRUC PLUS GENERAL ..
+    def shoot_malin(self): 
 
 
 	#Si je suis dans moitier nord et adv en moitier sud, OU si je suis moitier sud et adv en moitier sud, 		ALORS tirer dans moitier nord du but
-	if((self.my_pos.y>=GAME_HEIGHT/2)and(self.pos_adv_plus_proche.y<=GAME_HEIGHT/2))or((self.my_pos.y<GAME_HEIGHT/2)and(self.pos_adv_plus_proche.y<GAME_HEIGHT/2)):
+	if((self.my_pos.y>=GAME_HEIGHT/2)and(self.pos_adv_plus_proche.y<=GAME_HEIGHT/2))or((self.my_pos.y<=GAME_HEIGHT/2)and(self.pos_adv_plus_proche.y<=GAME_HEIGHT/2)):
 
 	  
 	   return self.shoot_but_nord
@@ -346,26 +366,60 @@ class MyState(object):
 	pos_adv=self.state.player(it_adv,ip_adv).position
 	return pos_adv
 	
-	
 
-    @property
-    def shoot_dribble(self):
-	
-	vecteur=self.but_pos_adv-self.ball_pos
-	vecteur.norm=0.7
-	return SoccerAction(Vector2D(),vecteur)
+    def est_devant(self,moi,lui):
+	return lui.position.x>moi.position.x
 
-#    @property
-   # def shoot_dribble_malin(self):  # DRIBBLER TOUT EN EVITANT ADVERSAIRE
-	
-	
 
-    @property
-    def dribbler(self):   # OPTIMISER DRIBBLER A CE QU'IL EVITE ADVERSAIRE 
+    def est_enhaut(self,moi,lui):
+	return lui.position.y>moi.position.y
+
+   	
+
+    def shoot_dribble_vers(self,p):  # OPTIMISER DRIBBLE A CE QU'IL EVITE ADVERSAIRE 
+	
+	s=p-self.ball_pos
+	s.norm=0.7
+
+	adv=self.adv_plus_proche
+	moi= self.player_moi
+
+
+	if dist(self.ball_pos,self.pos_adv_plus_proche)<6:
+
+	  	if self.est_devant(moi,adv):         #Si adv est devant moi
+			
+			if adv.vitesse.dot(moi.vitesse)<0:  #Si nos vitesses ont direction opposées; il s'approche vers ball
+				
+				if self.est_enhaut(moi,adv):	   # Il vient d'en haut donc moi je shoot un peu vers le bas
+					s.angle=s.angle-0.2
+				else:
+					s.angle=s.angle+0.2 # Il vient d'en bas donc moi je shoote un peu vers le haut
+
+			#S'il s'eloigne on s'en fou
+
+		else: #il est derriere moi
+
+			if adv.vitesse.dot(moi.vitesse)>0: # On a les meme directions de vitesse; il s'approche de derriere
+			
+				s.norm=s.norm+0.4    # shooter un peu plus fort pour l'esquiver    ( cas 1 vs 1 )      TOUT REDEFINIR SI ON VOULAIT FAIRE PASSE ICI ??
+
+	return SoccerAction(Vector2D(),s)
+	
+	
+ 
+    def dribbler_vers(self,p):   
 	if self.test_peut_shooter:
-		return self.shoot_dribble
+
+		print "Mon shoot dribble est"
+		s=self.shoot_dribble_vers(p)
+		print s
+		print s.shoot
+
+	
+		return self.shoot_dribble_vers(p)
 	else:
-		return self.courir_vers(self.ball_pos)
+		return self.courir_vers_ball
 
     @property
     def shoot_degager(self):

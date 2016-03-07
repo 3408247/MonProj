@@ -50,7 +50,7 @@ def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'op
 	if me.test_peut_shooter:
 	   return me.shoot(me.but_pos_adv)
 	else:
-	   return me.courir_vers(me.ball_pos)
+	   return me.courir_vers_ball
 
 def fonceur_pass(me):
 	#print(me.aller(me.ball_position))
@@ -66,29 +66,63 @@ def fonceur_pass(me):
 #Attaquant 1_VS_1 ou 2_VS_2
 def shooteur_malin(me):
 
-    print "distance ball et adv est"
-    print dist(me.ball_pos,me.pos_adv)
     if me.test_peut_shooter:
 
-	if (me.dist_but_adv_ball<GAME_WIDTH/4):  #JE SUIS PRES DES BUTS ADV
-		print "Pres des buts"
+	if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/4):  #JE SUIS TRES PRES DES BUTS ADV
+		print "pres tres pres"
 
 		if dist(me.ball_pos,me.pos_adv_plus_proche)<12:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
-			print "adv s'approche"
-			print dist(me.my_pos,me.pos_adv_plus_proche)
+			print "adv est proche"
 
-			return me.shoot_malin  #SHOOT 
+			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
+				print"qq entre"
+
+				
+
+				return me.shoot_dribble_vers(me.but_pos_adv)
+ 
+
+			else: 
+				print "personne entre donc shoot malin"
+				vecteur=me.but_pos_adv-me.ball_pos
+				ang=vecteur.angle
+				print ang
+
+				return me.shoot_malin  #SHOOT 
 		else:
-			print "adversaire encore loin "
-			return me.shoot_dribble  # CONTINUE A S'APPROCHER DES BUTS
+			print "continier a approcher dribbler"
+			return me.shoot_dribble_vers(me.but_pos_adv)  # CONTINUE A S'APPROCHER DES BUTS
 
-	else: # JE SUIS LOIN DES BUTS
-		print "loin des buts"
-	 	return me.shoot_dribble  
+	else: 
+		if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/2): # JE SUIS ASSEZ PROCHE DES BUTS
+			print "je suis tres proche"
+
+			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
+				print "il y a qq"
+	
+	 			return me.shoot_dribble_vers(me.but_pos_adv)  
+			else:
+				print "il ny q personne"
+
+				vecteur=me.but_pos_adv-me.ball_pos
+				ang=vecteur.angle
+				print "angle but ball"
+				print ang
+
+				vecteu=me.but_pos_adv-me.pos_adv_plus_proche
+				an=vecteu.angle
+				print "angle but adv"
+				print an
+
+				return me.shoot_malin
+
+		else:  # PAS ASSEZ PROCHE
+			print "pas assez proche"
+			return me.shoot_dribble_vers(me.but_pos_adv)
 
     else: # PEUT PAS SHOOTER
-	print "peut pas shooter"
-	return me.courir_vers(me.ball_pos) 
+	#print "peut pas shooter"
+	return me.courir_vers_ball 
 
 
 ### DEFENSEUR ###
@@ -111,7 +145,7 @@ def def_mouvement_et_shoot(me):
 			return me.shoot_degager
 		else:
 									
-			return me.courir_vers(me.ball_pos)
+			return me.courir_vers_ball
 
 	else:	
 		
@@ -133,7 +167,7 @@ def gardien_mouvement(me):
 		
 	 	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_TOO_CLOSE):
 			
-			return me.courir_vers(me.ball_pos)
+			return me.courir_vers_ball
 		else:
 			
 			return me.alligne_sur_demi_cercle
