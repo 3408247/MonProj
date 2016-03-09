@@ -21,6 +21,7 @@
 from soccersimulator import SoccerMatch, show, SoccerTeam,Player,KeyboardStrategy
 import sys
 from Strategies import *
+from StratsSpecialise import *
 from keyb_strats import *
 
 if __name__=="__main__":
@@ -30,7 +31,7 @@ if __name__=="__main__":
 
     team_keyb = SoccerTeam("team_keyb",[Player("KBs", keystrat_test)])
 
-    team_bad = SoccerTeam("team_bad",[Player("Gard",Gard_shoot_but)])    
+    team_bad = SoccerTeam("team_bad",[Player("Gard",J_1vs1_Strat)])    
 
 
     match = SoccerMatch(team_keyb,team_bad,1000)

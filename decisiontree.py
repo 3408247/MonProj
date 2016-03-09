@@ -24,8 +24,8 @@ def gen_features(state,id_team,id_player):
     d_ball_adv   = dist(Etat.ball_pos,Etat.pos_adv)
     #pos_adv      = Etat.pos_adv
 
-    print "ici"
-    print [d_me_ball,d_but_ball,d_me_but_adv,d_ball_adv]
+    #print "ici"
+    #print [d_me_ball,d_but_ball,d_me_but_adv,d_ball_adv]
     return [d_me_ball,d_but_ball,d_me_but_adv,d_ball_adv]
 
 

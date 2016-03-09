@@ -66,6 +66,12 @@ def fonceur_pass(me):
 #Attaquant 1_VS_1 ou 2_VS_2
 def shooteur_malin(me):
 
+    print"ma vitesse?"
+    print me.player_moi.vitesse
+
+    print"adv vitesse"
+    print me.adv_plus_proche.vitesse
+
     if me.test_peut_shooter:
 
 	if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/4):  #JE SUIS TRES PRES DES BUTS ADV
@@ -76,18 +82,11 @@ def shooteur_malin(me):
 
 			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
 				print"qq entre"
-
 				
-
 				return me.shoot_dribble_vers(me.but_pos_adv)
  
-
 			else: 
 				print "personne entre donc shoot malin"
-				vecteur=me.but_pos_adv-me.ball_pos
-				ang=vecteur.angle
-				print ang
-
 				return me.shoot_malin  #SHOOT 
 		else:
 			print "continier a approcher dribbler"
@@ -96,32 +95,24 @@ def shooteur_malin(me):
 	else: 
 		if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/2): # JE SUIS ASSEZ PROCHE DES BUTS
 			print "je suis tres proche"
-
+			
+	
 			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
-				print "il y a qq"
+				print "il y a qq donc continue a dribbler"
 	
 	 			return me.shoot_dribble_vers(me.but_pos_adv)  
 			else:
-				print "il ny q personne"
-
-				vecteur=me.but_pos_adv-me.ball_pos
-				ang=vecteur.angle
-				print "angle but ball"
-				print ang
-
-				vecteu=me.but_pos_adv-me.pos_adv_plus_proche
-				an=vecteu.angle
-				print "angle but adv"
-				print an
+				print "il n y a personne donc shoot malin"
 
 				return me.shoot_malin
 
 		else:  # PAS ASSEZ PROCHE
-			print "pas assez proche"
+			print "pas assez proche donc continue a dribbler"
 			return me.shoot_dribble_vers(me.but_pos_adv)
 
     else: # PEUT PAS SHOOTER
 	#print "peut pas shooter"
+	
 	return me.courir_vers_ball 
 
 

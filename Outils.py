@@ -39,7 +39,7 @@ def dist(u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u 
 	return u.distance(v)
 
 def qq_entre(src,dest,obs):
-	vsrc_dest=src-dest
+	vsrc_dest=dest-src
 	vsrc_obs=obs-src
 	return ((abs(vsrc_dest.angle-vsrc_obs.angle)<0.2 ) and (dist(src,obs)< dist(src,dest)))
 
@@ -289,6 +289,10 @@ class MyState(object):
     @property 
     def test_peut_shooter(self):
 	return ((self.dist_player_ball)<BALL_RADIUS+PLAYER_RADIUS)
+
+    @property
+    def test_peut_shooter_2(self):
+	return ((self.dist_player_ball)<BALL_RADIUS+PLAYER_RADIUS+2)
         
     def shoot_vers(self,p): #pas de mouvement; faire shooter dans la direction p - self
         return SoccerAction(Vector2D(),p-self.my_pos)
@@ -384,17 +388,24 @@ class MyState(object):
 	adv=self.adv_plus_proche
 	moi= self.player_moi
 
-
-	if dist(self.ball_pos,self.pos_adv_plus_proche)<6:
-
+	print"distance"
+	print dist(self.ball_pos,self.pos_adv_plus_proche)
+	if dist(self.ball_pos,self.pos_adv_plus_proche)<14:
+		print"adv devant?"
+		print self.est_devant(moi,adv)
 	  	if self.est_devant(moi,adv):         #Si adv est devant moi
-			
-			if adv.vitesse.dot(moi.vitesse)<0:  #Si nos vitesses ont direction opposées; il s'approche vers ball
+			print"adv vitesse dot ma vitesse"
+			print adv.vitesse.dot(moi.vitesse)
+			if adv.vitesse.dot(moi.vitesse)<=0:  #Si nos vitesses ont direction opposées; il s'approche vers ball
 				
+				print"Adv en haut?"
+				print self.est_enhaut(moi,adv)
 				if self.est_enhaut(moi,adv):	   # Il vient d'en haut donc moi je shoot un peu vers le bas
-					s.angle=s.angle-0.2
+					print"petit shoot en bas"					
+					s.angle=s.angle-0.5
 				else:
-					s.angle=s.angle+0.2 # Il vient d'en bas donc moi je shoote un peu vers le haut
+					print"petit shoot en haut"
+					s.angle=s.angle+0.5 # Il vient d'en bas donc moi je shoote un peu vers le haut
 
 			#S'il s'eloigne on s'en fou
 
@@ -411,12 +422,6 @@ class MyState(object):
     def dribbler_vers(self,p):   
 	if self.test_peut_shooter:
 
-		print "Mon shoot dribble est"
-		s=self.shoot_dribble_vers(p)
-		print s
-		print s.shoot
-
-	
 		return self.shoot_dribble_vers(p)
 	else:
 		return self.courir_vers_ball
@@ -425,6 +430,13 @@ class MyState(object):
     def shoot_degager(self):
 
 	return self.shoot_vers_norm(self.centre,6)
+
+    @property
+    def degager(self):
+	if self.test_peut_shooter:
+		return self.shoot_degager
+	else:
+		return self.courir_vers_ball
 
 
     ### QUI A LA BALLE ###
@@ -436,7 +448,7 @@ class MyState(object):
 	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])]
 
 	for p in liste_adv:
-		if dist(self.ball_pos, self.state.player(p[0],p[1]).position)<BALL_RADIUS+PLAYER_RADIUS:
+		if dist(self.ball_pos, self.state.player(p[0],p[1]).position)<BALL_RADIUS+PLAYER_RADIUS+5:
 			return 3
 
 	# J'AI LA BALLE, QUE MOI 
@@ -447,7 +459,7 @@ class MyState(object):
 	liste_eq=[(it, ip) for (it, ip) in self.state.players if (it==self.key[0])]
 
 	for q in liste_eq:
-		if dist(self.ball_pos, self.state.player(q[0],q[1]).position)<BALL_RADIUS+PLAYER_RADIUS:
+		if dist(self.ball_pos, self.state.player(q[0],q[1]).position)<BALL_RADIUS+PLAYER_RADIUS+5:
 			return 2    
 
 		else: # PERSONNE
