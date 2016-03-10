@@ -80,8 +80,12 @@ def shooteur_malin(me):
 		if dist(me.ball_pos,me.pos_adv_plus_proche)<12:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
 			print "adv est proche"
 
-			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
+			print "qq entre???"
+			print me.qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche) 
+
+			if me.qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
 				print"qq entre"
+				
 				
 				return me.shoot_dribble_vers(me.but_pos_adv)
  
@@ -96,8 +100,10 @@ def shooteur_malin(me):
 		if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/2): # JE SUIS ASSEZ PROCHE DES BUTS
 			print "je suis tres proche"
 			
-	
-			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
+			print "qq entre???"
+			print me.qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche) 
+ 
+			if me.qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
 				print "il y a qq donc continue a dribbler"
 	
 	 			return me.shoot_dribble_vers(me.but_pos_adv)  

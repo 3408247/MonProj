@@ -38,10 +38,10 @@ def miroir_state(etat):
 def dist(u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u et v
 	return u.distance(v)
 
-def qq_entre(src,dest,obs):
-	vsrc_dest=dest-src
-	vsrc_obs=obs-src
-	return ((abs(vsrc_dest.angle-vsrc_obs.angle)<0.2 ) and (dist(src,obs)< dist(src,dest)))
+#def qq_entre(src,dest,obs):
+#	vsrc_dest=dest-src
+#	vsrc_obs=obs-src
+#	return ((abs(vsrc_dest.angle-vsrc_obs.angle)<0.2 ) and (dist(src,obs)< dist(src,dest)))
 
 class MyState(object):
     def __init__(self,state,idteam,idplayer):
@@ -281,6 +281,11 @@ class MyState(object):
     def pos_equi_plus_proche(self):
 	
 	return self.equi_plus_proche.position
+
+    def qq_entre(self,src,dest,obs):
+	vsrc_dest=dest-src
+	vsrc_obs=obs-src
+	return ((abs(vsrc_dest.angle-vsrc_obs.angle)<0.2 ) and (dist(src,obs)< dist(src,dest)))
 
 			
 

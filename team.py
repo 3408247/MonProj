@@ -16,8 +16,8 @@ treeIA = DTreeStrategy(tree,dic,gen_features)
 
 
 #### Mes tests
-Priya_1b = SoccerTeam("Priya_1a",[Player("IA",treeIA)])
-Priya_1a =SoccerTeam("Priya_1b",[Player("j1vs1",J_1vs1_Strat)])
+Priya_1a = SoccerTeam("Priya_1a",[Player("Keystrat",keystrat_test)])
+Priya_1b =SoccerTeam("Priya_1b",[Player("j1vs1",J_1vs1_Strat)])
 
 Priya_2a = SoccerTeam("Priya_2a",[Player("j1",J_2vs2_Strat),Player("j2",Gard_shoot_but)])
 Priya_2b =SoccerTeam("Priya_2b",[Player("1ATTb",FonceurStrat),Player("GARDIENb",Gard_shoot_but)])
