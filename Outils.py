@@ -38,10 +38,11 @@ def miroir_state(etat):
 def dist(u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u et v
 	return u.distance(v)
 
-#def qq_entre(src,dest,obs):
-#	vsrc_dest=dest-src
-#	vsrc_obs=obs-src
-#	return ((abs(vsrc_dest.angle-vsrc_obs.angle)<0.2 ) and (dist(src,obs)< dist(src,dest)))
+def qq_entre(src,dest,obs):
+	vsrc_dest=dest-src
+	vsrc_obs=obs-src
+	return ((abs(vsrc_dest.angle-vsrc_obs.angle)<0.2 ) and (dist(src,obs)< dist(src,dest)))
+
 
 class MyState(object):
     def __init__(self,state,idteam,idplayer):
@@ -54,7 +55,7 @@ class MyState(object):
 
     @property
     def player_moi(self):
-	return self.state.player(1,0)
+	return self.state.player(self.key[0],self.key[1])
 
     @property
     def balle(self):
@@ -90,9 +91,9 @@ class MyState(object):
 
     ### DISTANCES ###
 
-    @property
-    def dist_player_ball(self): #distance entre player et ball
-	return dist(self.my_pos,self.ball_pos)
+    
+    def dist_player_ball(self,player): #distance entre player et ball
+	return dist(player.position,self.ball_pos)
 
     @property
     def dist_but_ball(self): #distance entre but et ball
@@ -102,10 +103,10 @@ class MyState(object):
     def dist_but_adv_ball(self): #distance entre but_adv et ball
 	return dist(self.but_pos_adv,self.ball_pos)
 
-
-    def dist_player(self,no_team,no_player):
+	
+    """def dist_player(self,no_team,no_player):
 	return dist(self.my_pos,self.state.player(no_team,no_player).position)
-
+"""
     ### ANGLES ###
     def angle_player_point(self,pos_point):
 	vecteur=pos_point-self.my_pos
@@ -152,14 +153,14 @@ class MyState(object):
 
     def courir_vers(self,p):
     	v=p-self.my_pos
-	v.norm=100
+	v.norm=1000
 
 	return self.aller(p)
  
     @property
     def courir_vers_ball(self):
 	ball = deepcopy(self.state.ball)
-	for i in range(0,5):
+	for i in range(0,10):
 		ball.next(Vector2D())
 
 	return self.courir_vers(ball.position)
@@ -234,7 +235,7 @@ class MyState(object):
     @property
     def aller_dans_zone_tir(self):
 	
-	if (dist(self.my_pos,self.zone_1_centre)< dist(self.my_pos,self.zone_2_centre)):
+	if (dist(self.ball_pos,self.zone_1_centre)< dist(self.ball_pos,self.zone_2_centre)):
 		return self.courir_vers(self.zone_1_centre)
 
 	else:
@@ -247,13 +248,16 @@ class MyState(object):
     def adv_plus_proche(self):
 	d_min=999
 	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
+
 	for p in liste_adv:
-		d=self.dist_player(p[0],p[1])
+	
+		pl=self.state.player(p[0],p[1])
+		d=self.dist_player_ball(pl)
 		if d<d_min:
 	           d_min=d
-		   lui=p
+		   lui=pl
 	
-	return self.state.player(p[0],p[1]) 
+	return lui
 
     @property
     def pos_adv_plus_proche(self):
@@ -270,10 +274,11 @@ class MyState(object):
 	d_min=999
 	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
 	for p in liste_equipiers:
-		d=self.dist_player(p[0],p[1])
+		pl=self.state.player(p[0],p[1])
+		d=self.dist_player_ball(pl)
 		if d<d_min:
 	           d_min=d
-		   lui=self.state.player(p[0],p[1])
+		   lui=pl
 
 	return lui
 
@@ -281,23 +286,17 @@ class MyState(object):
     def pos_equi_plus_proche(self):
 	
 	return self.equi_plus_proche.position
-
-    def qq_entre(self,src,dest,obs):
-	vsrc_dest=dest-src
-	vsrc_obs=obs-src
-	return ((abs(vsrc_dest.angle-vsrc_obs.angle)<0.2 ) and (dist(src,obs)< dist(src,dest)))
-
 			
 
     ### SHOOTS ###
 
     @property 
     def test_peut_shooter(self):
-	return ((self.dist_player_ball)<BALL_RADIUS+PLAYER_RADIUS)
+	return ((dist(self.my_pos,self.ball_pos))<BALL_RADIUS+PLAYER_RADIUS)
 
     @property
     def test_peut_shooter_2(self):
-	return ((self.dist_player_ball)<BALL_RADIUS+PLAYER_RADIUS+2)
+	return ((dist(self.my_pos,self.ball_pos))<BALL_RADIUS+PLAYER_RADIUS+2)
         
     def shoot_vers(self,p): #pas de mouvement; faire shooter dans la direction p - self
         return SoccerAction(Vector2D(),p-self.my_pos)
@@ -331,49 +330,34 @@ class MyState(object):
     @property
     def shoot_malin(self): 
 
+	#Identifier qui est entre moi et but_adversaire
+	
+	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])]
+	for p in liste_adv:
+		obstacle=self.state.player(p[0],p[1])
 
-	#Si je suis dans moitier nord et adv en moitier sud, OU si je suis moitier sud et adv en moitier sud, 		ALORS tirer dans moitier nord du but
-	if((self.my_pos.y>=GAME_HEIGHT/2)and(self.pos_adv_plus_proche.y<=GAME_HEIGHT/2))or((self.my_pos.y<=GAME_HEIGHT/2)and(self.pos_adv_plus_proche.y<=GAME_HEIGHT/2)):
+		#Si l'obstacle(l'adversaire) se trouve entre ma balle et but_adv
+		if qq_entre(self.ball_pos,self.but_pos_adv,obstacle.position):
 
-	  
-	   return self.shoot_but_nord
-	else:
+			#Si je suis dans moitier nord et adv en moitier sud, OU si je suis moitier sud et adv en moitier sud, 		ALORS tirer dans moitier nord du but
+			if((self.my_pos.y>=GAME_HEIGHT/2)and(obstacle.position.y<=GAME_HEIGHT/2))or((self.my_pos.y<=GAME_HEIGHT/2)and(obstacle.position.y<=GAME_HEIGHT/2)):
+				
+				return self.shoot_but_nord
+			else:
+				
+	  			 return self.shoot_but_sud
 
-	   return self.shoot_but_sud
+		#BAH il n'y a personne on tire vers le centre du but
+		else:
 
+			return self.shoot_vers_norm(self.but_pos_adv,5.0)
     
-    @property
-    def shoot_vers_but_adv(self):
-         return self.shoot_vers(self.but_pos_adv)
 
-    def shoot_avec_angle_puissance(self,theta,puissance):
-	shot=Vector2D(angle=theta,norm=puissance)
-	return SoccerAction(Vector2D(),shot)
-
-    @property
-    def shoot_intercepter_contrecarE(self):
-	vect_input=self.state.ball.vitesse
-	vect_output_x=-vect_input.x
-	vect_output_y=-vect_input.y
-	vect_output=Vector2D(vect_output_x,vect_output_y)
-
-	return SoccerAction(Vector2D(),vect_output)
 
     @property 
     def shoot_vers_equi_proche(self):
 	return self.shoot_vers(self.pos_equi_plus_proche)
 
-    #pour 1_VS_1
-
-    @property       # A ELIMINER EVENTUELLEMENT 
-    def pos_adv(self): #Informations sur adversaire... il y aura un seul 
-	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])]
-	adv=liste_adv[0]
-	it_adv=adv[0]
-	ip_adv=adv[1]
-
-	pos_adv=self.state.player(it_adv,ip_adv).position
-	return pos_adv
 	
 
     def est_devant(self,moi,lui):
@@ -388,28 +372,24 @@ class MyState(object):
     def shoot_dribble_vers(self,p):  # OPTIMISER DRIBBLE A CE QU'IL EVITE ADVERSAIRE 
 	
 	s=p-self.ball_pos
-	s.norm=0.7
+	s.norm=0.5
 
 	adv=self.adv_plus_proche
 	moi= self.player_moi
 
-	print"distance"
-	print dist(self.ball_pos,self.pos_adv_plus_proche)
+
 	if dist(self.ball_pos,self.pos_adv_plus_proche)<14:
-		print"adv devant?"
-		print self.est_devant(moi,adv)
+	
 	  	if self.est_devant(moi,adv):         #Si adv est devant moi
-			print"adv vitesse dot ma vitesse"
-			print adv.vitesse.dot(moi.vitesse)
+		
 			if adv.vitesse.dot(moi.vitesse)<=0:  #Si nos vitesses ont direction opposées; il s'approche vers ball
 				
-				print"Adv en haut?"
-				print self.est_enhaut(moi,adv)
+				
 				if self.est_enhaut(moi,adv):	   # Il vient d'en haut donc moi je shoot un peu vers le bas
-					print"petit shoot en bas"					
+									
 					s.angle=s.angle-0.5
 				else:
-					print"petit shoot en haut"
+					
 					s.angle=s.angle+0.5 # Il vient d'en bas donc moi je shoote un peu vers le haut
 
 			#S'il s'eloigne on s'en fou
@@ -418,7 +398,7 @@ class MyState(object):
 
 			if adv.vitesse.dot(moi.vitesse)>0: # On a les meme directions de vitesse; il s'approche de derriere
 			
-				s.norm=s.norm+0.4    # shooter un peu plus fort pour l'esquiver    ( cas 1 vs 1 )      TOUT REDEFINIR SI ON VOULAIT FAIRE PASSE ICI ??
+				s.norm=s.norm+0.1    # shooter un peu plus fort pour l'esquiver    ( cas 1 vs 1 )      TOUT REDEFINIR SI ON VOULAIT FAIRE PASSE ICI ??
 
 	return SoccerAction(Vector2D(),s)
 	
@@ -442,6 +422,26 @@ class MyState(object):
 		return self.shoot_degager
 	else:
 		return self.courir_vers_ball
+
+    @property
+    def shoot_piquer(self):
+	 moi= self.player_moi
+	 balle=self.balle
+
+	 if self.est_enhaut(balle,moi):
+	 		cible=self.ball_pos+ Vector2D(x=0,y=1);
+	 else:
+	 		cible=self.ball_pos- Vector2D(x=0,y=1);
+		
+	 return self.shoot_vers_norm(cible,0.3)
+
+    @property
+    def piquer_balle(self): #Intercepter balle/la piquer
+	 if self.test_peut_shooter:
+	 	return self.shoot_piquer
+	 else:
+	 	return self.courir_vers_ball
+	
 
 
     ### QUI A LA BALLE ###

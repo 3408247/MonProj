@@ -17,7 +17,7 @@ def j_1vs1(me):
 
 	
 	if (me.ball_pos.x<GAME_WIDTH/2): #SI DANS MA MOITIER DE TERRAIN
-		print"ON EST DANS MOI MOITIE"
+	
 		if me.a_la_balle==3:  # SI ADV A LA BALLE
 			print "adversaire a la balle"
 
@@ -27,7 +27,10 @@ def j_1vs1(me):
 			return shooteur_malin(me)  
 
 	else: # DANS MOITIER ADV
-		return shooteur_malin(me)
+		if me.a_la_balle==3:	
+			return me.piquer_balle
+		else:
+			return shooteur_malin(me)
 
 
 #2vs2#

@@ -66,31 +66,17 @@ def fonceur_pass(me):
 #Attaquant 1_VS_1 ou 2_VS_2
 def shooteur_malin(me):
 
-    print"ma vitesse?"
-    print me.player_moi.vitesse
-
-    print"adv vitesse"
-    print me.adv_plus_proche.vitesse
-
     if me.test_peut_shooter:
 
 	if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/4):  #JE SUIS TRES PRES DES BUTS ADV
-		print "pres tres pres"
 
 		if dist(me.ball_pos,me.pos_adv_plus_proche)<12:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
-			print "adv est proche"
-
-			print "qq entre???"
-			print me.qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche) 
-
-			if me.qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
-				print"qq entre"
-				
-				
+		
+			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
+								
 				return me.shoot_dribble_vers(me.but_pos_adv)
  
 			else: 
-				print "personne entre donc shoot malin"
 				return me.shoot_malin  #SHOOT 
 		else:
 			print "continier a approcher dribbler"
@@ -98,12 +84,8 @@ def shooteur_malin(me):
 
 	else: 
 		if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/2): # JE SUIS ASSEZ PROCHE DES BUTS
-			print "je suis tres proche"
-			
-			print "qq entre???"
-			print me.qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche) 
- 
-			if me.qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
+	 
+			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
 				print "il y a qq donc continue a dribbler"
 	
 	 			return me.shoot_dribble_vers(me.but_pos_adv)  
@@ -173,9 +155,9 @@ def gardien_mouvement(me):
 
 
 
-def gardien_shoot_vers_but(me):
+def gardien_shoot_vers_centre(me):
 	if me.test_peut_shooter:
-		return me.shoot_vers_but_adv
+		return me.degager
 
 	else:
 		return gardien_mouvement(me)
@@ -184,7 +166,7 @@ def gardien_shoot_vers_but(me):
 	
 
 FonceurStrat = SousStrat(fonceur)
-Gard_shoot_but = SousStrat(gardien_shoot_vers_but)
+Gard_shoot_but = SousStrat(gardien_shoot_vers_centre)
 
 DefStrat = SousStrat(def_mouvement_et_shoot)
 
