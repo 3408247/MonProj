@@ -36,23 +36,20 @@ def j_1vs1(me):
 #2vs2#
 
 def j_2vs2(me):
-	flag = me.key[0]==1 
+
+	return j_1vs1(me)
+
+	"""flag = me.key[0]==1 
 	print me.state.step,me.key[1]
 
 	if(me.ball_pos.x<GAME_WIDTH/2): # DANS MA MOITIER
-		print "la1"
-		if me.a_la_balle==2:  # SI ADV A LA BALLE
-
-			if me.test_peut_shooter:
-				return me.shoot_degager
-
-			else:
-				print "la", me.courir_vers_ball
-				return me.courir_vers_ball
+	
+		if me.a_la_balle==3:  # SI ADV A LA BALLE
+			return me.degager
 
 		if me.a_la_balle==1: #JAI LA BALLE
 
-			print "labis"
+
 			if dist(me.my_pos,me.pos_adv_plus_proche)<BALL_RADIUS+PLAYER_RADIUS+6:  #ADV FONCE SUR MOI
 				return me.shoot_vers(pos_equi_plus_proche) # FAIRE PASSE
 			else:
@@ -68,9 +65,32 @@ def j_2vs2(me):
 			return me.shoot_vers_equi_proche # FAIRE PASSE
 		else:
 			print "ici",shooteur_malin(me)
-			return shooteur_malin(me) # CONTINUER NORMAL 
+			return shooteur_malin(me) # CONTINUER NORMAL """
 
+def g_2vs2(me):	
 
+	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_CLOSE):
+		
+	 	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_TOO_CLOSE):
+			if me.a_la_balle==3:
+				return me.degager
+			if me.a_la_balle==2:
+				return me.alligne_sur_demi_cercle
+
+			else:
+				if me.test_peut_shooter:
+					if (qui_entre(me.ball_pos,me.pos_equipier_plus_proche)==False) and (dist(me.ball_pos,me.pos_equi_proche)<GAME_WIDTH/4):
+						return shoot_vers(me.pos_equi_plus_proche)
+					else:
+						return me.degager
+				else:
+					return me.courir_vers_ball			
+
+		return me.alligne_sur_demi_cercle
+
+	return me.courir_vers_(me.but_pos)
+			
+	
 
 J_1vs1_Strat = SousStrat(j_1vs1)
 #Test_Strat = SousStrat(test)
@@ -79,6 +99,8 @@ J_2vs2_Strat = SousStrat(j_2vs2)
 J_2vs2_Strat_bis= SousStrat(j_2vs2)
 Hello = SousStrat(j_2vs2)
 Hey = SousStrat(j_2vs2)
+
+G_2vs2= SousStrat(g_2vs2)
 
 
 

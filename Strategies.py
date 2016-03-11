@@ -134,10 +134,6 @@ def def_mouvement_et_shoot(me):
 
 ### GARDIEN ###
 
-def revenir_au_but(me): #faire me revenir a la position milieu but 
-
-  	return me.courir_vers(me.but_pos)
-	
 	
 def gardien_mouvement(me):
 
@@ -151,7 +147,7 @@ def gardien_mouvement(me):
 			
 			return me.alligne_sur_demi_cercle
 
-	return revenir_au_but(me)
+	return me.courir_vers_(me.but_pos)
 
 
 

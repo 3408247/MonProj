@@ -10,9 +10,15 @@ fn=os.path.join(os.path.dirname(os.path.realpath(__file__)),"monarbre.pkl")
 tree = cPickle.load(file(fn))
 
 #tree = cPickle.load(file("./monarbre.pkl"))
-dic = {"dribbler": Strat_dribble,"shoot_sud":Strat_shoot_sud, "shoot_nord":Strat_shoot_nord, "rien":Strat_rien, "degager":Strat_degager}
-treeIA = DTreeStrategy(tree,dic,gen_features)
+#dic = {"dribbler": Strat_dribble,"shoot_sud":Strat_shoot_sud, "shoot_nord":Strat_shoot_nord, "rien":Strat_rien, "degager":Strat_degager}
+#treeIA = DTreeStrategy(tree,dic,gen_features)
 
+dic_2 = {"dribbler": Strat_dribble,"shoot_sud":Strat_shoot_sud, "shoot_nord":Strat_shoot_nord, "rien":Strat_rien, "degager":Strat_degager}
+IA_Strat= DTreeStragegy(tree_2,dic_2,gen_features)
+
+
+#### Team IA
+teamIA = SoccerTeam("teamIA",[Player("playerIA",IA_Strat),Player("GARD2",G_2vs2)])
 
 
 #### Mes tests

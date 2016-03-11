@@ -38,7 +38,7 @@ def miroir_state(etat):
 def dist(u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u et v
 	return u.distance(v)
 
-def qq_entre(src,dest,obs):
+def qq_entre(src,dest,obs): #src->Vector2D(pos) dest->Vector2D(pos) obs->Vector2D(pos)
 	vsrc_dest=dest-src
 	vsrc_obs=obs-src
 	return ((abs(vsrc_dest.angle-vsrc_obs.angle)<0.2 ) and (dist(src,obs)< dist(src,dest)))
@@ -168,6 +168,7 @@ class MyState(object):
 
     @property
     def alligne_sur_demi_cercle(self):
+
 	ux=(math.cos(self.angle_ball_but))*(DCERCLE_RAYON)
 	uy=(math.sin(self.angle_ball_but))*(DCERCLE_RAYON)
 	
@@ -199,7 +200,7 @@ class MyState(object):
 	y_2=self.but_pos_adv.y+GAME_GOAL_HEIGHT/2
 
 
-	dans_zone_1=(self.my_pos.x>=x_2)and(self.my_pos<=x_1)and(self.my_pos.y>=y_1)and(self.my_pos.y<=y_2)
+	dans_zone_1=(self.ball_pos.x>=x_2)and(self.ball_pos<=x_1)and(self.ball_pos.y>=y_1)and(self.ball_pos.y<=y_2)
 
 	#zone 2, rectangle plus loin et plus grand
 	X_1=GAME_WIDTH-GAME_WIDTH/8
@@ -208,7 +209,7 @@ class MyState(object):
 	Y_1=GAME_HEIGHT/4
 	Y_2=3*GAME_HEIGHT/4
 
-	dans_zone_2=(self.my_pos.x>=X_2)and(self.my_pos<X_1)and(self.my_pos.y>=Y_1)and(self.my_pos.y<=Y_2)
+	dans_zone_2=(self.ball_pos.x>=X_2)and(self.ball_pos<X_1)and(self.ball_pos.y>=Y_1)and(self.ball_pos.y<=Y_2)
 
 	return (self.dans_zone_1) and (self.dans_zone_2)
 
@@ -230,6 +231,15 @@ class MyState(object):
 	Y_2=3*GAME_HEIGHT/4
 
 	return Vector2D(x=(X_2-X_1)/2,y=(Y_2-Y_1)/2)
+
+
+    @property
+    def zone_tir(me):
+	if (dist(self.ball_pos,self.zone_1_centre)< dist(self.ball_pos,self.zone_2_centre)):
+		return self.zone_1_centre
+	else:
+		return self.zone_2_centre
+	
 	
 	
     @property
@@ -239,7 +249,7 @@ class MyState(object):
 		return self.courir_vers(self.zone_1_centre)
 
 	else:
-		return self.courir_vers(self.zone_1_centre)	
+		return self.courir_vers(self.zone_2_centre)	
 	
 
     ### RADAR ###
@@ -286,6 +296,18 @@ class MyState(object):
     def pos_equi_plus_proche(self):
 	
 	return self.equi_plus_proche.position
+
+    def qui_entre(self,src,dest):
+	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])]
+	for p in liste_adv:
+		obstacle=self.state.player(p[0],p[1])
+
+		#Si l'obstacle(l'adversaire) se trouve entre ma balle et but_adv
+		if qq_entre(src,dest,obstacle.position):
+			return ostacle
+		else:
+			return False
+		
 			
 
     ### SHOOTS ###
