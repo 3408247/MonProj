@@ -48,7 +48,7 @@ class SousStrat(BaseStrategy):
 def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'opposant
 	#print("Fonceur", me.shoot_vers_but_adv, me.state._configs[(me.key[0],me.key[1])]._last_shoot)
 	if me.test_peut_shooter:
-	   return me.shoot(me.but_pos_adv)
+	   return me.shoot_vers(me.but_pos_adv)
 	else:
 	   return me.courir_vers_ball
 
@@ -134,6 +134,17 @@ def def_mouvement_et_shoot(me):
 
 ### GARDIEN ###
 
+def protect_cage(me):
+	if me.test_peut_shooter:
+		return me.degager
+	else:
+		if me.ball_pos.y>me.but_pos.y+GAME_GOAL_HEIGHT/2:
+			return me.courir_vers(Vector2D(x=0.5,y=me.but_pos.y+GAME_GOAL_HEIGHT/2))
+		if me.ball_pos.y<me.but_pos.y-GAME_GOAL_HEIGHT/2:
+			return me.courir_vers(Vector2D(x=0.5,y=me.but_pos.y-GAME_GOAL_HEIGHT/2))
+		else:
+			return me.courir_vers(Vector2D(x=0.5,y=me.ball_pos.y))
+	
 	
 def gardien_mouvement(me):
 
@@ -147,7 +158,7 @@ def gardien_mouvement(me):
 			
 			return me.alligne_sur_demi_cercle
 
-	return me.courir_vers_(me.but_pos)
+	return me.courir_vers(me.but_pos)
 
 
 

@@ -34,12 +34,13 @@ def degager(me):
 	return me.degager
 
 def pos_defaut(me):
-	return courir_vers(me.ball_pos-Vector2D(x=5,y=0)
+	return me.placerEntre_A_B_x(me.ball_pos,me.but_pos,GAME_WIDTH/4)
+	#return me.courir_vers(me.ball_pos-Vector2D(x=5,y=0))
 
 keystrat_test= KeyboardStrategy()
 
 Strat_posdef = SousStrat(pos_defaut)
-keystrat_test.add("a",Strat_posdef)
+keystrat_test.add("q",Strat_posdef)
 
 Strat_shoot_nord = SousStrat(shoot_nord)
 keystrat_test.add("y",Strat_shoot_nord)
@@ -51,13 +52,16 @@ Strat_shoot_centre = SousStrat(shoot_centre)
 keystrat_test.add("g",Strat_shoot_centre)
 
 Strat_dribble_but = SousStrat(dribbler_vers_but)
-keystrat_test.add("q",Strat_dribble_but)
+keystrat_test.add("a",Strat_dribble_but)
 
 Strat_dribble_zonetir = SousStrat(dribbler_vers_zone_tir)
 keystrat_test.add("s",Strat_dribble_zonetir)
 
 Strat_degager = SousStrat(degager)
 keystrat_test.add("d",Strat_degager)
+
+Strat_piquer = SousStrat(piquer)
+keystrat_test.add("b",Strat_piquer)
 
 
 

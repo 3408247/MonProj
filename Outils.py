@@ -12,7 +12,7 @@ from soccersimulator import SoccerTeam, SoccerMatch
 from soccersimulator import Vector2D, Player, SoccerTournament
 from random import uniform
 from copy import deepcopy
-DCERCLE_RAYON = 10
+DCERCLE_RAYON = GAME_GOAL_HEIGHT/2
 
 def miroir_pos(p):
     return Vector2D(GAME_WIDTH-p.x,p.y)
@@ -76,7 +76,7 @@ class MyState(object):
     @property
     def but_pos(self): #retourne Vector2D->la position_milieu du but 
 	
-		return Vector2D(x=3,y=GAME_HEIGHT/2)
+		return Vector2D(x=1,y=GAME_HEIGHT/2)
 
 
     @property   
@@ -234,7 +234,7 @@ class MyState(object):
 
 
     @property
-    def zone_tir(me):
+    def zone_tir(self):
 	if (dist(self.ball_pos,self.zone_1_centre)< dist(self.ball_pos,self.zone_2_centre)):
 		return self.zone_1_centre
 	else:
@@ -251,6 +251,7 @@ class MyState(object):
 	else:
 		return self.courir_vers(self.zone_2_centre)	
 	
+    
 
     ### RADAR ###
 
@@ -273,6 +274,33 @@ class MyState(object):
     def pos_adv_plus_proche(self):
 	
 	return self.adv_plus_proche.position
+
+    @property
+    def pos_adv_pr_but(self):
+	d_min=999
+	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
+
+	for p in liste_adv:
+	
+		pl=self.state.player(p[0],p[1])
+		d=dist(pl.position,self.but_pos)
+		if d<d_min:
+			lui=pl.position
+	return lui
+
+    @property
+    def pos_adv_pr_ball(self):
+	d_min=999
+	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
+
+	for p in liste_adv:
+	
+		pl=self.state.player(p[0],p[1])
+		d=dist(pl.position,self.ball_pos)
+		if d<d_min:
+			lui=pl.position
+	return lui
+
 
     @property
     def vit_adv_plus_proche(self):
@@ -304,7 +332,7 @@ class MyState(object):
 
 		#Si l'obstacle(l'adversaire) se trouve entre ma balle et but_adv
 		if qq_entre(src,dest,obstacle.position):
-			return ostacle
+			return obstacle
 		else:
 			return False
 		
@@ -378,7 +406,10 @@ class MyState(object):
 
     @property 
     def shoot_vers_equi_proche(self):
-	return self.shoot_vers(self.pos_equi_plus_proche)
+	if self.test_peut_shooter:
+		return self.shoot_vers(self.pos_equi_plus_proche)
+	else:
+		return self.courir_vers_ball
 
 	
 
@@ -435,8 +466,21 @@ class MyState(object):
 
     @property
     def shoot_degager(self):
-
-	return self.shoot_vers_norm(self.centre,6)
+	
+	#Trouver un pt ou il n'y a personne entre	
+	for y_ in range (0,GAME_HEIGHT):
+		pt=Vector2D(x=GAME_WIDTH/2,y=y_)
+		if self.qui_entre(self.ball_pos,pt)==False:
+			return self.shoot_vers_norm(pt,6)
+	
+	#Si un tel pt n'est pas trouvE, shooter nord ou sud
+	pt_nord=Vector2D(x=(self.ball_pos.x)+10,y=GAME_HEIGHT)
+	pt_sud=Vector2D(x=(self.ball_pos.x)+10,y=0)
+	if dist(self.ball_pos,pt_nord)<dist(self.ball_pos,pt_sud):
+		return self.shoot_vers_norm(pt_nord,6)	
+	else:
+		return self.shoot_vers_norm(pt_sud,6)
+	
 
     @property
     def degager(self):
@@ -444,6 +488,14 @@ class MyState(object):
 		return self.shoot_degager
 	else:
 		return self.courir_vers_ball
+
+    @property
+    def degager_centre(self):
+	if self.test_peut_shooter:
+		return self.shoot_vers_norm(self.centre,6)
+	else:
+		return self.courir_vers_ball
+
 
     @property
     def shoot_piquer(self):

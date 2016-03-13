@@ -21,7 +21,7 @@ def j_1vs1(me):
 		if me.a_la_balle==3:  # SI ADV A LA BALLE
 			print "adversaire a la balle"
 
-			return me.degager
+			return me.degager_centre
 		else:
 			print"personne ou moi qui ai la balle"
 			return shooteur_malin(me)  
@@ -68,28 +68,66 @@ def j_2vs2(me):
 			return shooteur_malin(me) # CONTINUER NORMAL """
 
 def g_2vs2(me):	
+	
+	if dist(me.ball_pos,me.but_pos)<DCERCLE_RAYON+5:
+		print"BALL DANS DCERCLERAY+2"
+	#ADV encore loin
+		print "pos mon but euh"
+		print me.but_pos_adv
+		print "pos adv proche but"
+		print me.pos_adv_pr_but
+		print "adv encore loin? distance:"
+		print dist(me.but_pos_adv,me.pos_adv_pr_but)
+		if dist(me.but_pos_adv,me.pos_adv_pr_but)>2*DCERCLE_RAYON: 
+			print"adv encore loin"
 
-	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_CLOSE):
-		
-	 	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_TOO_CLOSE):
-			if me.a_la_balle==3:
-				return me.degager
-			if me.a_la_balle==2:
-				return me.alligne_sur_demi_cercle
-
+	 		if me.a_la_balle==0: #Personne n'a la balle
+					print " personne n'a la balle"
+					if (me.qui_entre(me.ball_pos,me.pos_equi_plus_proche)==False):
+						print "  il n'y a personne entre moi et equi"
+						print"   je peux shooter, je shoote vers equi"
+						return me.shoot_vers(me.pos_equi_plus_proche)
+			
+					else:
+						print "  il y a qq entre moi et equi"
+						print "  je vais degager la balle"
+						return me.degager
 			else:
 				if me.test_peut_shooter:
-					if (qui_entre(me.ball_pos,me.pos_equipier_plus_proche)==False) and (dist(me.ball_pos,me.pos_equi_proche)<GAME_WIDTH/4):
-						return shoot_vers(me.pos_equi_plus_proche)
+					print" je peux shooter je deg"
+					return me.degager
+				else:				
+					print " Adv ou mon equipe a la balle, demi cercle"
+					return me.alligne_sur_demi_cercle
+
+		#ADV proche...danger
+		else: 
+			print"adv proche, protect cage"
+			return protect_cage(me)
+	else:
+		print"BALL HYPER LOIn"
+		if dist(me.ball_pos,me.my_pos)<10:
+			if dist(me.but_pos_adv,me.pos_adv_pr_but)<20: 
+				print "mais adv proche de mes buts"
+				if dist(me.ball_pos,me.my_pos)<dist(me.ball_pos,me.pos_adv_pr_ball):
+					print"toutefois je suis plus proche de balle"
+					if (me.qui_entre(me.ball_pos,me.pos_equi_plus_proche)==False):
+						return me.shoot_vers(me.pos_equi_plus_proche)
 					else:
 						return me.degager
 				else:
-					return me.courir_vers_ball			
-
-		return me.alligne_sur_demi_cercle
-
-	return me.courir_vers_(me.but_pos)
-			
+					print"c'est adv plus proche de la balle, protect cage"
+					return protect_cage(me)
+			else:	
+				print "adv loin de mes buts"
+				if (me.qui_entre(me.ball_pos,me.pos_equi_plus_proche)==False):
+					return me.shoot_vers(me.pos_equi_plus_proche)
+				else:
+					return me.degager
+		else:
+			return me.alligne_sur_demi_cercle
+		
+					
 	
 
 J_1vs1_Strat = SousStrat(j_1vs1)
