@@ -160,11 +160,18 @@ class MyState(object):
     @property
     def courir_vers_ball(self):
 	ball = deepcopy(self.state.ball)
-	for i in range(0,10):
+	for i in range(0,5):
 		ball.next(Vector2D())
 
 	return self.courir_vers(ball.position)
 
+    @property 
+    def courir_vers_ball2(self):          # Utiliser ce courir ver ball dans dribbler
+	ball = deepcopy(self.state.ball)
+	for i in range(0,3):
+		ball.next(Vector2D())
+	return self.courir_vers(ball.position)
+	
 
     @property
     def alligne_sur_demi_cercle(self):
@@ -332,6 +339,7 @@ class MyState(object):
 
 		#Si l'obstacle(l'adversaire) se trouve entre ma balle et but_adv
 		if qq_entre(src,dest,obstacle.position):
+
 			return obstacle
 		else:
 			return False
@@ -431,7 +439,7 @@ class MyState(object):
 	moi= self.player_moi
 
 
-	if dist(self.ball_pos,self.pos_adv_plus_proche)<14:
+	if dist(self.ball_pos,self.pos_adv_plus_proche)<12:
 	
 	  	if self.est_devant(moi,adv):         #Si adv est devant moi
 		
@@ -462,7 +470,7 @@ class MyState(object):
 
 		return self.shoot_dribble_vers(p)
 	else:
-		return self.courir_vers_ball
+		return self.courir_vers_ball2
 
     @property
     def shoot_degager(self):

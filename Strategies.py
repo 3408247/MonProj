@@ -101,7 +101,7 @@ def shooteur_malin(me):
     else: # PEUT PAS SHOOTER
 	#print "peut pas shooter"
 	
-	return me.courir_vers_ball 
+	return me.courir_vers_ball2 
 
 
 ### DEFENSEUR ###

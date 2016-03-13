@@ -13,19 +13,20 @@ import os
 #dic = {"dribbler": Strat_dribble,"shoot_sud":Strat_shoot_sud, "shoot_nord":Strat_shoot_nord, "rien":Strat_rien, "degager":Strat_degager}
 #treeIA = DTreeStrategy(tree,dic,gen_features)
 
-#dic_2 = {"dribbler": Strat_dribble,"shoot_sud":Strat_shoot_sud, "shoot_nord":Strat_shoot_nord, "rien":Strat_rien, "degager":Strat_degager}
-#IA_Strat= DTreeStragegy(tree_2,dic_2,gen_features)
+tree_j2 = cPickle.load(file("./j2.pkl"))
+dic_2 = {"dribble vers but": Strat_dribble_but,"shoot_sud":Strat_shoot_sud, "shoot_nord":Strat_shoot_nord, "posdef":Strat_posdef, "degager":Strat_degager,"piquer":Strat_piquer}
+IA_Strat= DTreeStrategy(tree_j2,dic_2,gen_features)
 
 
 #### Team IA
-#teamIA = SoccerTeam("teamIA",[Player("playerIA",IA_Strat),Player("GARD2",G_2vs2)])
+TeamIA = SoccerTeam("teamIA",[Player("playerIA",IA_Strat),Player("GARD2",G_2vs2)])
 
 
 #### Mes tests
 Priya_1a = SoccerTeam("Priya_1a",[Player("Keystrat",keystrat_test)])
 Priya_1b =SoccerTeam("Priya_1b",[Player("j1vs1",J_1vs1_Strat)])
 
-Priya_2a = SoccerTeam("Priya_2a",[Player("j1",FonceurStrat),Player("Gard",Gard_shoot_but)])
+Priya_2a = SoccerTeam("Priya_2a",[Player("j1",J_2vs2_Strat),Player("Gard",G_2vs2)])
 Priya_2b =SoccerTeam("Priya_2b",[Player("Key",keystrat_test),Player("Gard",G_2vs2)])
 Priya_2bb = SoccerTeam("Priya_2bb",[Player("k1",J_2vs2_Strat),Player("k2",Gard_shoot_but)])
 

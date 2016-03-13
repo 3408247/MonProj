@@ -18,23 +18,23 @@ def gen_features(state,id_team,id_player):
 
     Etat=MyState(state,id_team,id_player)	
 
-    d_me_ball	 	= Etat.dist_player_ball(Etat.my_pos,Etat.ball_pos)
+    d_me_ball	 	= dist(Etat.my_pos,Etat.ball_pos)
     d_but_ball		= dist(Etat.ball_pos,Etat.but_pos)
     d_butadv_ball      = dist(Etat.ball_pos, Etat.but_pos_adv)
     d_me_butadv 	= dist(Etat.my_pos, Etat.but_pos_adv)
     d_ball_advproche   = dist(Etat.ball_pos,Etat.pos_adv_plus_proche)
-    qui_a_ball   	= Etat.a_la_balle
+    qui_a_ball   	= Etat.a_la_balle # renvoie 0,1,2 ou 3
     d_but_advproche     = dist(Etat.but_pos,Etat.pos_adv_plus_proche)
-    ball_danszonetir    = Etat.dans_zone_de_tir
+    #ball_danszonetir    = Etat.dans_zone_de_tir
    
 
 
-    return [d_me_ball,d_but_ball,d_butadv_ball,d_me_butadv,d_ball_advproche,qui_a_balle,d_but_advproche,ball_danszonetir]
+    return [d_me_ball,d_but_ball,d_butadv_ball,d_me_butadv,d_ball_advproche,qui_a_ball,d_but_advproche]
 
 
 
 #Nom des features (optionel)
-gen_features.names = ["d_me_ball","d_but_ball","d_butadv_ball","d_me_butadv","d_ball_advproche","qui_a_balle","d_but_advproche","ball_danszonetir"]
+gen_features.names = ["d_me_ball","d_but_ball","d_butadv_ball","d_me_butadv","d_ball_advproche","qui_a_ball","d_but_advproche"]
 
 # CAN CREATE OTHER GEN FEATURES FUNCTIONS AND HAVE TO CHANGE CERTAIN PARAMETERS (voir plus bas )
 

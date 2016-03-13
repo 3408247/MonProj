@@ -32,9 +32,9 @@ if __name__=="__main__":
 
     team_keyb = SoccerTeam("team_keyb",[Player("KBs", keystrat_test),Player("GARD2",G_2vs2)])
 
-    team_bad = SoccerTeam("team_bad",[Player("J_2vs2", J_2vs2_Strat),Player("GARD",G_2vs2)])  
+    team_bad = SoccerTeam("team_bad",[Player("def",DefStrat),Player("GARD",Gard_shoot_but)])  
 
 
-    match = SoccerMatch(team_keyb,team_bad,1000)
+    match = SoccerMatch(team_keyb,team_bad,2000)
     show(match)
     keystrat_test.write(prefix+".exp",True)
