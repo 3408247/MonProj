@@ -291,7 +291,9 @@ class MyState(object):
 	
 		pl=self.state.player(p[0],p[1])
 		d=dist(pl.position,self.but_pos)
+			
 		if d<d_min:
+			d_min=d
 			lui=pl.position
 	return lui
 
@@ -305,6 +307,7 @@ class MyState(object):
 		pl=self.state.player(p[0],p[1])
 		d=dist(pl.position,self.ball_pos)
 		if d<d_min:
+			d_min=d
 			lui=pl.position
 	return lui
 
@@ -520,7 +523,10 @@ class MyState(object):
     @property
     def piquer_balle(self): #Intercepter balle/la piquer
 	 if self.test_peut_shooter:
-	 	return self.shoot_piquer
+		if self.a_la_balle==3:
+			return self.shoot_piquer
+		else:
+			return self.dribbler_vers(self.but_pos_adv)
 	 else:
 	 	return self.courir_vers_ball
 	

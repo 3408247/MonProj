@@ -39,6 +39,9 @@ class SousStrat(BaseStrategy):
         #print action
         return action
     
+### SUIVRE BALL ###
+def suivre_ball(me):	
+	return 
 
 
 
@@ -79,23 +82,23 @@ def shooteur_malin(me):
 			else: 
 				return me.shoot_malin  #SHOOT 
 		else:
-			print "continier a approcher dribbler"
+			##print "continier a approcher dribbler"
 			return me.shoot_dribble_vers(me.but_pos_adv)  # CONTINUE A S'APPROCHER DES BUTS
 
 	else: 
 		if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/2): # JE SUIS ASSEZ PROCHE DES BUTS
 	 
 			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
-				print "il y a qq donc continue a dribbler"
+			##	print "il y a qq donc continue a dribbler"
 	
 	 			return me.shoot_dribble_vers(me.but_pos_adv)  
 			else:
-				print "il n y a personne donc shoot malin"
+				##print "il n y a personne donc shoot malin"
 
 				return me.shoot_malin
 
 		else:  # PAS ASSEZ PROCHE
-			print "pas assez proche donc continue a dribbler"
+			##print "pas assez proche donc continue a dribbler"
 			return me.shoot_dribble_vers(me.but_pos_adv)
 
     else: # PEUT PAS SHOOTER

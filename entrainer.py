@@ -1,16 +1,4 @@
-#euh#from soccersimulator import SoccerMatch, SoccerTournament,KeyboardStrategy
-#euh#from soccersimulator import SoccerTeam, Player, show
-#from strategies import RandomStrategy,FonceurStrategy,DefenseStrategy
-#euh#from soccersimulator import settings, Vector2D,DecisionTreeClassifier
-#euh#import cPickle
-#euh#from Outils import*
-#euh#from Strategies import *
-#euh#from keyb_strats import *
-
-
 ## Match d'entrainement et apprentissage de l'arbre
-
-# euh #
 
 #euh# match = SoccerMatch(team_keyb,team_bad,1000)  # On peut changer le nombre de Steps
 #euh#show(match)
@@ -35,6 +23,6 @@ if __name__=="__main__":
     team_bad = SoccerTeam("team_bad",[Player("def",DefStrat),Player("GARD",Gard_shoot_but)])  
 
 
-    match = SoccerMatch(team_keyb,team_bad,2000)
+    match = SoccerMatch(team_bad,team_keyb,2000)
     show(match)
     keystrat_test.write(prefix+".exp",True)
