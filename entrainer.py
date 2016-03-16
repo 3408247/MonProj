@@ -18,9 +18,9 @@ if __name__=="__main__":
         prefix = sys.argv[1]
 
 
-    team_keyb = SoccerTeam("team_keyb",[Player("KBs", keystrat_test),Player("GARD2",G_2vs2)])
+    team_keyb = SoccerTeam("team_keyb",[Player("KBs",keystrat_test),Player("GARD2",G_2vs2)])
 
-    team_bad = SoccerTeam("team_bad",[Player("def",DefStrat),Player("GARD",Gard_shoot_but)])  
+    team_bad = SoccerTeam("team_bad",[Player("J2",DefStrat),Player("GARD",Gard_shoot_but)])  
 
 
     match = SoccerMatch(team_bad,team_keyb,2000)

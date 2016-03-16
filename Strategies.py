@@ -40,8 +40,11 @@ class SousStrat(BaseStrategy):
         return action
     
 ### SUIVRE BALL ###
-def suivre_ball(me):	
-	return 
+def suivre_ball(me):
+    x_=me.ball_pos.x + 6
+    y_=me.ball_pos.y
+    point=Vector2D(x=x_,y=y_)
+    return me.courir_vers(point)
 
 
 

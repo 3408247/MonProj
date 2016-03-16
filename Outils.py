@@ -104,9 +104,6 @@ class MyState(object):
 	return dist(self.but_pos_adv,self.ball_pos)
 
 	
-    """def dist_player(self,no_team,no_player):
-	return dist(self.my_pos,self.state.player(no_team,no_player).position)
-"""
     ### ANGLES ###
     def angle_player_point(self,pos_point):
 	vecteur=pos_point-self.my_pos
@@ -518,7 +515,7 @@ class MyState(object):
 	 else:
 	 		cible=self.ball_pos- Vector2D(x=0,y=1);
 		
-	 return self.shoot_vers_norm(cible,0.3)
+	 return self.shoot_vers_norm(cible,0.5)
 
     @property
     def piquer_balle(self): #Intercepter balle/la piquer

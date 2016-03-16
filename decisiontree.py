@@ -18,26 +18,26 @@ def gen_features(state,id_team,id_player):
 
     Etat=MyState(state,id_team,id_player)	
 
-    d_me_ball	 	= dist(Etat.my_pos,Etat.ball_pos)
+    d_me_ball	 	= dist(Etat.ball_pos,Etat.my_pos)
+    d_ball_advproche_ball   = dist(Etat.ball_pos,Etat.pos_adv_pr_ball) 
+    diff_d_MeAdv_ball = d_me_ball - d_ball_advproche_ball
+
     d_but_ball		= dist(Etat.ball_pos,Etat.but_pos)
     d_butadv_ball      = dist(Etat.ball_pos, Etat.but_pos_adv)
-    d_me_butadv 	= dist(Etat.my_pos, Etat.but_pos_adv)
-    d_ball_advproche   = dist(Etat.ball_pos,Etat.pos_adv_plus_proche)
+    diff_d_ButButadv_ball = d_but_ball-d_butadv_ball
+
+
     qui_a_ball   	= Etat.a_la_balle # renvoie 0,1,2 ou 3
-    d_but_advproche     = dist(Etat.but_pos,Etat.pos_adv_plus_proche)
-    #ball_danszonetir    = Etat.dans_zone_de_tir
+    d_but_advproche_but     = dist(Etat.but_pos,Etat.pos_adv_pr_but)
    
+    #d_me_butadv = dist(Etat.my_pos,Etat.but_pos_adv)
 
-
-    return [d_me_ball,d_but_ball,d_butadv_ball,d_me_butadv,d_ball_advproche,qui_a_ball,d_but_advproche]
-
-
+    return [diff_d_ButButadv_ball,diff_d_MeAdv_ball,qui_a_ball]
 
 #Nom des features (optionel)
-gen_features.names = ["d_me_ball","d_but_ball","d_butadv_ball","d_me_butadv","d_ball_advproche","qui_a_ball","d_but_advproche"]
+gen_features.names = ["Dis moi-ball - Dis adv-ball","Dis ball-but - Dist ball-butadv ","qui a ball"]
 
 # CAN CREATE OTHER GEN FEATURES FUNCTIONS AND HAVE TO CHANGE CERTAIN PARAMETERS (voir plus bas )
-
 
 def build_apprentissage(fn,generator):
     ex_raw = KeyboardStrategy.read(fn)
