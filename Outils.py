@@ -95,49 +95,14 @@ class MyState(object):
     def dist_player_ball(self,player): #distance entre player et ball
 	return dist(player.position,self.ball_pos)
 
-    @property
-    def dist_but_ball(self): #distance entre but et ball
-	return dist(self.but_pos,self.ball_pos)
-
-    @property
-    def dist_but_adv_ball(self): #distance entre but_adv et ball
-	return dist(self.but_pos_adv,self.ball_pos)
-
+   
+ 
 	
     ### ANGLES ###
     def angle_player_point(self,pos_point):
 	vecteur=pos_point-self.my_pos
 	return vecteur.angle
 
-    @property
-    def angle_ball_but(self):
-
-	vecteur=self.ball_pos-(self.but_pos)
-
-	return vecteur.angle
-
-    @property
-    def angle_player_but_adv(self):
-
-	vecteur=self.my_pos-(self.but_pos_adv)
-
-	return vecteur.angle
-
-    @property
-    def angle_player_but(self):
-
-	vecteur=self.my_pos-(self.but_pos)
-
-	return vecteur.angle
-
-
-    @property
-    def angle_player_ball(self):
-
-	vecteur=self.ball_pos-(self.my_pos)
-
-	return vecteur.angle
-        
 
     ### MOUVEMENTS ###
 
@@ -168,17 +133,15 @@ class MyState(object):
 	for i in range(0,3):
 		ball.next(Vector2D())
 	return self.courir_vers(ball.position)
-	
 
-    @property
-    def alligne_sur_demi_cercle(self):
 
-	ux=(math.cos(self.angle_ball_but))*(DCERCLE_RAYON)
-	uy=(math.sin(self.angle_ball_but))*(DCERCLE_RAYON)
+    def courir_vers_point_step(self,point,step):
+	ball = deepcopy(self.state.ball)
+	for i in range(0,step):
+		ball.next(Vector2D())
+
+	return self.courir_vers(point)
 	
-	pos_x=self.but_pos.x+ux
-	pos_y=self.but_pos.y+uy
-	return self.courir_vers(Vector2D(pos_x,pos_y))
 
     def placerEntre_A_B_x(self,a,b,x_):
 	vecteur_A_B=a-b
@@ -511,9 +474,9 @@ class MyState(object):
 	 balle=self.balle
 
 	 if self.est_enhaut(balle,moi):
-	 		cible=self.ball_pos+ Vector2D(x=0,y=1);
+	 		cible=self.ball_pos+ Vector2D(x=0,y=2);
 	 else:
-	 		cible=self.ball_pos- Vector2D(x=0,y=1);
+	 		cible=self.ball_pos- Vector2D(x=0,y=2);
 		
 	 return self.shoot_vers_norm(cible,0.5)
 
@@ -525,7 +488,7 @@ class MyState(object):
 		else:
 			return self.dribbler_vers(self.but_pos_adv)
 	 else:
-	 	return self.courir_vers_ball
+	 	return self.courir_vers_point_step(self.ball_pos,5)
 	
 
 

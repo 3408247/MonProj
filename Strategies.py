@@ -46,6 +46,22 @@ def suivre_ball(me):
     point=Vector2D(x=x_,y=y_)
     return me.courir_vers(point)
 
+def suivre_balle(me):
+	balle= deepcopy(self.state.ball)
+	for i in range(0,5):
+		balle.next(Vector2D())
+
+	y_=balle.position.y
+	
+	if balle.position.x<=GAME_WIDTH/2:
+	 	x_=balle.position.x - 6
+   			
+	else:
+		x_=balle.position.x - 6
+   	
+    	
+	point=Vector2D(x=x_,y=y_)
+	return me.courir_vers(point)
 
 
 ### ATTAQUANT ###
@@ -150,8 +166,20 @@ def protect_cage(me):
 			return me.courir_vers(Vector2D(x=0.5,y=me.but_pos.y-GAME_GOAL_HEIGHT/2))
 		else:
 			return me.courir_vers(Vector2D(x=0.5,y=me.ball_pos.y))
+
+def alligne_demi_cercle(me):
+	vecteur=me.ball_pos-(me.but_pos)
+	angle_ball_but=vecteur.angle
+
+	ux=(math.cos(angle_ball_but))*(DCERCLE_RAYON)
+	uy=(math.sin(angle_ball_but))*(DCERCLE_RAYON)
 	
-	
+	pos_x=me.but_pos.x+ux
+	pos_y=me.but_pos.y+uy
+
+	return me.courir_vers(Vector2D(pos_x,pos_y))
+
+
 def gardien_mouvement(me):
 
 	
@@ -162,7 +190,7 @@ def gardien_mouvement(me):
 			return me.courir_vers_ball
 		else:
 			
-			return me.alligne_sur_demi_cercle
+			return alligne_demi_cercle(me)
 
 	return me.courir_vers(me.but_pos)
 
