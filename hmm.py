@@ -1,0 +1,77 @@
+from soccersimulator import *
+from Outils import*
+from Strategies import*
+
+def discretisation(state, id_team, id_player):   # Extraire les s des O
+	Etat=MyState(state,id_team,id_player)	
+	
+	liste=[]
+
+    	d_me_ball= dist(Etat.ball_pos,Etat.my_pos)
+
+	if d_me_ball<10:
+		x0=0
+	else:
+		x0=1
+
+	liste.append(x0)
+
+
+
+    	d_ball_advproche_ball = dist(Etat.ball_pos,Etat.pos_adv_pr_ball) 
+	
+	if d_ball_advproche_ball<30:
+		x1=0
+	else:
+		x1=1
+
+	liste.append(x1)
+	
+	return liste
+
+#une fonction π(s) renvoyant pour chaque etat une action ou une distribution de probabilites sur les actions 
+def pii(state,id_team,id_player):
+	etats=discretisation(state,id_team,id_player)
+
+	Matrice=[][] # ???
+
+	for s in etats:
+		
+		if s[0]==
+
+
+	
+
+
+
+
+def recompense(state, id_team, id_player):   # associe a un etat, une recompense 
+	Etat=MyState(state,id_team,id_player)	
+
+	if (Etat.ball_pos.x=Etat.but_pos_adv.x) and (Etat.ball_pos.y>=Etat.but_pos_adv.y-GOAL_HEIGHT/2) and (Etat.ball_pos.y<=Etat.but_pos_adv.y+GOAL_HEIGHT/2):
+		r=100
+
+	if (Etat.ball_pos.x=Etat.but_pos.x) and (Etat.ball_pos.y>=Etat.but_pos.y-GOAL_HEIGHT/2) and (Etat.ball_pos.y<=Etat.but_pos.y+GOAL_HEIGHT/2):
+		r=-100
+
+
+	if Etat.qui_a_la_balle==1 or Etat.qui_a_la_balle==2:
+		r=5
+	else:
+		r=-5
+
+	return r
+
+
+	
+
+	
+def MonteCarlo(...):
+	
+	for step in match..
+	
+	while step!=1000:
+		action=Matrice[  	
+
+
+
