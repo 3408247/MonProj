@@ -2,46 +2,7 @@ from soccersimulator import *
 from Outils import*
 from Strategies import*
 
-def discretisation(state, id_team, id_player):   # Extraire les s des O
-	Etat=MyState(state,id_team,id_player)	
-	
-	liste=[]
-
-    	d_me_ball= dist(Etat.ball_pos,Etat.my_pos)
-
-	if d_me_ball<10:
-		x0=0
-	else:
-		x0=1
-
-	liste.append(x0)
-
-
-
-    	d_ball_advproche_ball = dist(Etat.ball_pos,Etat.pos_adv_pr_ball) 
-	
-	if d_ball_advproche_ball<30:
-		x1=0
-	else:
-		x1=1
-
-	liste.append(x1)
-	
-	return liste
-
-#une fonction π(s) renvoyant pour chaque etat une action ou une distribution de probabilites sur les actions 
-#def pii(state,id_team,id_player):
-#	etats=discretisation(state,id_team,id_player)
-
-#	Matrice=[][] # ???
-
-#	for s in etats:
-		
-		#if s[0]==3
-	
-
-
-
+GAMMA=0.6
 
 def recompense(state, id_team, id_player):   # associe a un etat, une recompense 
 	Etat=MyState(state,id_team,id_player)	
@@ -61,25 +22,59 @@ def recompense(state, id_team, id_player):   # associe a un etat, une recompense
 	return r
 
 
-def fonction_q(state,idt,idp,match):
-	dic_1={}
+
+def discretisation(state, id_team, id_player):   # Extraire les s des O
+	Etat=MyState(state,id_team,id_player)	
+	
+	liste=[]
+
+    	d_me_ball= dist(Etat.ball_pos,Etat.my_pos)
+
+	if d_me_ball<10:
+		x0=0
+	else:
+		x0=1
+
+	liste.append(x0)
+
+
+    	d_ball_advproche_ball = dist(Etat.ball_pos,Etat.pos_adv_pr_ball) 
+	
+	if d_ball_advproche_ball<30:
+		x1=0
+	else:
+		x1=1
+
+	liste.append(x1)
 	
 	
-	for step in match:
+	return tuple(liste)
 
-		etat_dis=discretisation(state,idt,idp)
 
+	
+#initialisation des Q(s,a) a zero quoi
+def initialisation_q(etat_dis):  # etat_dis est le tuple d'etats discrets(entiers) renvoyE par la fonction discretisation 
+	
+	dic_s={}
+
+	for s in etat_dis:
+		dict_a={}	
 		
-		dic_2={}
+		dict_a["fonceur"]=0    # on met ici des string("gard")et apres on fera la correspondance string vers strat
+		dict_a["gard"]=0
+		
+		
+		dic_s[s]=dict_a    # Le s ?? c'est des etats discrets.. des 0,1,1,2... utiliser compteur i ?
+	
+	return dic_s
+				
 
 	
-			
-
-	
-def MonteCarlo(q,scenarios): #scenarios est une liste de couple etat,action  remarque: dernier etat none
+def MonteCarlo(q,scenarios,state,idt,idp): #scenarios est une liste de couple (etat,action)  remarque: dernier etat none
       # q est dico de dico 
       #parcurir liste a lenvers
 	
+
 	for sce in scenarios:
 		
 		while sce[0]!=None:
@@ -90,7 +85,22 @@ def MonteCarlo(q,scenarios): #scenarios est une liste de couple etat,action  rem
 		for t in range (MAX_STEP-1,0):
 			
 			
-			R= 
+			R= GAMMA*R + recompense(state,idt,idp)
+			q( )=q( ) + ALPHA*(R-q( ))
+ 
+
+
+		
+def letruc(match):
+
+	for step in match:
+
+		etat_discret=discretisation(state)
+
+		DIC_S=fonction_q(etat_discret)
+
 		
 
+	
+	
 
