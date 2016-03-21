@@ -30,16 +30,14 @@ def discretisation(state, id_team, id_player):   # Extraire les s des O
 	return liste
 
 #une fonction π(s) renvoyant pour chaque etat une action ou une distribution de probabilites sur les actions 
-def pii(state,id_team,id_player):
-	etats=discretisation(state,id_team,id_player)
+#def pii(state,id_team,id_player):
+#	etats=discretisation(state,id_team,id_player)
 
-	Matrice=[][] # ???
+#	Matrice=[][] # ???
 
-	for s in etats:
+#	for s in etats:
 		
-		if s[0]==
-
-
+		#if s[0]==3
 	
 
 
@@ -63,15 +61,36 @@ def recompense(state, id_team, id_player):   # associe a un etat, une recompense
 	return r
 
 
+def fonction_q(state,idt,idp,match):
+	dic_1={}
 	
+	
+	for step in match:
+
+		etat_dis=discretisation(state,idt,idp)
+
+		
+		dic_2={}
 
 	
-def MonteCarlo(...):
-	
-	for step in match..
-	
-	while step!=1000:
-		action=Matrice[  	
+			
 
+	
+def MonteCarlo(q,scenarios): #scenarios est une liste de couple etat,action  remarque: dernier etat none
+      # q est dico de dico 
+      #parcurir liste a lenvers
+	
+	for sce in scenarios:
+		
+		while sce[0]!=None:
+			
+
+		R=0
+	
+		for t in range (MAX_STEP-1,0):
+			
+			
+			R= 
+		
 
 
