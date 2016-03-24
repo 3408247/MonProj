@@ -64,10 +64,47 @@ def initialisation_q(etat_dis):  # etat_dis est le tuple d'etats discrets(entier
 		dict_a["gard"]=0
 		
 		
-		dic_s[s]=dict_a    # Le s ?? c'est des etats discrets.. des 0,1,1,2... utiliser compteur i ?
+		dic_s[s]=dict_a    # dic_s= { (0,0): {"fonceur": 0, "gard":0} , (0,1) : {"fonceur": 0, "gard":0} }
 	
 	return dic_s
+
 				
+def discretiser_match(match):
+
+	liste=[]
+	
+	for step in match:
+		LIRE LETAT COMPLET DU MATCH
+		s= discretisation(DE CET ETAT COMPLET)
+			
+		a= LIRE ACTION PRIS
+		couple=(s,a)
+
+		liste.append(couple)
+	
+	return liste
+
+		
+
+
+
+def MonteCarlo(q, scenarios, state, idt, idp):
+
+	etat_dis= discretisation(state, idt, idp)
+	Q_s_a = initialisation_q(etat_dis)
+
+	
+	for sce in scenarios:
+	
+		while sce[0]!=None:
+			for cle in Q_s_a:
+			
+				if sce[0]==cle:
+
+					
+		
+
+
 
 	
 def MonteCarlo(q,scenarios,state,idt,idp): #scenarios est une liste de couple (etat,action)  remarque: dernier etat none
