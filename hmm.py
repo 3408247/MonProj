@@ -68,8 +68,8 @@ def initialisation_q(etat_dis):  # etat_dis est le tuple d'etats discrets(entier
 	
 	return dic_s
 
-				
-def discretiser_match(match):
+"""				
+def discretiser_match(match):  # Lire fichier match ? .. 
 
 	liste=[]
 	
@@ -99,42 +99,51 @@ def MonteCarlo(q, scenarios, state, idt, idp):
 		while sce[0]!=None:
 			for cle in Q_s_a:
 			
-				if sce[0]==cle:
-
-					
+				if sce[0]==cle:  """ 
 		
 
 
 
 	
-def MonteCarlo(q,scenarios,state,idt,idp): #scenarios est une liste de couple (etat,action)  remarque: dernier etat none
+def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,action)  remarque: dernier etat none
       # q est dico de dico 
       #parcurir liste a lenvers
 	
+	
+
 
 	for sce in scenarios:
 		
 		while sce[0]!=None:
-			
 
-		R=0
+			
+			R = 0
+			act_choisi = sce[1]
 	
-		for t in range (MAX_STEP-1,0):
+			for t in range (MAX_STEP-1,0,-1):
+
+				st=sce[t]
 			
 			
-			R= GAMMA*R + recompense(state,idt,idp)
-			q( )=q( ) + ALPHA*(R-q( ))
+				R= GAMMA*R + recompense(st,idt,idp)
+				etat_discretise=discretisation(st,idt,idp)
+				q[etat_discretise][act_choisi]=q[etat_discretise][act_choisi] + ALPHA*(R-q[etat_discretise][act_choisi])
  
 
 
 		
-def letruc(match):
+def letruc(fichier_match):
 
-	for step in match:
+# C ici la ligne 4 du slide 
+	
+	"""liste=fichier_match.soccermatch.load 
+ 	
+
+	for etape in liste:
 
 		etat_discret=discretisation(state)
 
-		DIC_S=fonction_q(etat_discret)
+		DIC_S=fonction_q(etat_discret)"""
 
 		
 
