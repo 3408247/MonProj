@@ -22,6 +22,8 @@ SEUIL_BALL_FAR = 40
 SEUIL_BALL_CLOSE = 30
 SEUIL_BALL_TOO_CLOSE = 10
 
+RAYON = 8
+
 
 class SousStrat(BaseStrategy):
     def __init__(self,sous_strat):
@@ -40,14 +42,7 @@ class SousStrat(BaseStrategy):
         return action
     
 ### SUIVRE BALL ###
-"""def suivre_ball(me):
-    x_=me.ball_pos.x + 6
-    y_=me.ball_pos.y
-    point=Vector2D(x=x_,y=y_)
 
-    euh=Vector2D(x=me.ball_pos.x,y=me.ball_pos.y)
-    return me.courir_vers(euh)
-"""
 def suivre_balle(me):
 	balle= me.state.ball
 	for i in range(0,5):
@@ -66,7 +61,37 @@ def suivre_balle(me):
 	return me.courir_vers(point)
 
 
-# def demarquer
+### SE DEMARQUER: BIEN SE POSITIONNER POUR RECEVOIR UNE PASSE ###
+def demarquer(me):
+	v_ball_but= me.but_pos_adv-me.ball_pos
+	angle_ball_but = v_ball_but.angle
+	
+	# (pos_x, pos_y) : position entre ball et but se trouvant a une distance de RAYON de la balle
+	pos_x= (math.cos(angle_ball_but)*RAYON) + me.ball_pos.x
+	pos_y= (math.sin(angle_ball_but)*RAYON) + me.ball_pos.y
+
+	chosen_point=Vector2D(pos_x,pos_y)
+
+	# Chercher un/des points autour de (pos_x, pos_y) tel que il n'y ait pas d'adv entre ball et ce point
+	liste_points=[]  # Liste de Vector2D
+
+	for deltax in range (-7,7):
+		for deltay in range (-7,7):
+			point=Vector2D(x=pos_x+deltax,y=pos_y+deltay)
+			if me.obs_entre(point,me.ball_pos)==False:
+				good_point=point
+				liste_points.append(good_point)
+
+	# Parmi ces points trouves, chercher celui qui est le plus loin de l'adv le plus proche de moi	
+	d_max=0
+	for good_point in liste_points:
+		d=dist(good_point,me.pos_adv_pr_moi)
+		if d>d_max:
+			d_max=d
+			chosen_point=good_point
+	
+	return me.courir_vers(chosen_point)
+
 
 
 
@@ -77,7 +102,8 @@ def passe(me):
 	else:
 		return me.courir_vers_ball2
 
-
+def chercher(me):
+	
 
 
 

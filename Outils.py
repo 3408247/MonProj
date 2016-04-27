@@ -240,6 +240,10 @@ class MyState(object):
 	return self.pos_adv_pr_posobj(self.but_pos)
 
     @property
+    def pos_adv_pr_moi(self):		
+	return self.pos_adv_pr_posobj(self.my_pos)
+
+    @property
     def vit_adv_plus_proche(self):
 	return (self.adv_pr_posobj(self.ball_pos)).vitesse
 
@@ -252,7 +256,7 @@ class MyState(object):
 	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
 	for p in liste_equipiers:
 		pl=self.state.player(p[0],p[1])
-		d=dist(pl,posobj)
+		d=dist(pl.position,posobj)
 		if d<d_min:
 	           d_min=d
 		   lui=pl
@@ -264,7 +268,7 @@ class MyState(object):
 
     @property
     def pos_equi_pr_ball(self):
-	return self.pos_equi_pr_obj(self.ball_pos)
+	return self.pos_equi_pr_posobj(self.ball_pos)
 
 
 
