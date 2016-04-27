@@ -40,14 +40,16 @@ class SousStrat(BaseStrategy):
         return action
     
 ### SUIVRE BALL ###
-def suivre_ball(me):
+"""def suivre_ball(me):
     x_=me.ball_pos.x + 6
     y_=me.ball_pos.y
     point=Vector2D(x=x_,y=y_)
-    return me.courir_vers(point)
 
+    euh=Vector2D(x=me.ball_pos.x,y=me.ball_pos.y)
+    return me.courir_vers(euh)
+"""
 def suivre_balle(me):
-	balle= deepcopy(self.state.ball)
+	balle= me.state.ball
 	for i in range(0,5):
 		balle.next(Vector2D())
 
@@ -62,6 +64,22 @@ def suivre_balle(me):
     	
 	point=Vector2D(x=x_,y=y_)
 	return me.courir_vers(point)
+
+
+# def demarquer
+
+
+
+### FAIRE UNE PASSE ###
+def passe(me):
+	if me.test_peut_shooter:
+		return me.shoot_vers(me.pos_adv_plus_proche)
+	else:
+		return me.courir_vers_ball2
+
+
+
+
 
 
 ### ATTAQUANT ###
@@ -92,9 +110,9 @@ def shooteur_malin(me):
 
 	if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/4):  #JE SUIS TRES PRES DES BUTS ADV
 
-		if dist(me.ball_pos,me.pos_adv_plus_proche)<12:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
+		if dist(me.ball_pos,me.pos_adv_pr_ball)<12:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
 		
-			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
+			if (me.obs_entre(me.ball_pos,me.but_pos_adv)!=False):
 								
 				return me.shoot_dribble_vers(me.but_pos_adv)
  
@@ -107,7 +125,7 @@ def shooteur_malin(me):
 	else: 
 		if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/2): # JE SUIS ASSEZ PROCHE DES BUTS
 	 
-			if qq_entre(me.ball_pos,me.but_pos_adv,me.pos_adv_plus_proche):
+			if (me.obs_entre(me.ball_pos,me.but_pos_adv)!=False):
 			##	print "il y a qq donc continue a dribbler"
 	
 	 			return me.shoot_dribble_vers(me.but_pos_adv)  

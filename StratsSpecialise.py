@@ -67,6 +67,8 @@ def j_2vs2(me):
 			print "ici",shooteur_malin(me)
 			return shooteur_malin(me) # CONTINUER NORMAL """
 
+
+
 def g_2vs2(me):	
 	
 	
@@ -79,11 +81,11 @@ def g_2vs2(me):
 	 		if me.a_la_balle==0: 
 			# Personne n'a la balle
 
-				if (me.qui_entre(me.ball_pos,me.pos_equi_plus_proche)==False):
+				if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
 				# Personne entre moi et equipier plus proche
 
 					# Je shoote vers equipier
-					return me.shoot_vers(me.pos_equi_plus_proche)
+					return me.shoot_vers(me.pos_equi_pr_ball)
 								
 				else:
 				# Il y a quelqu'un entre moi et equipier plus proche
@@ -117,11 +119,11 @@ def g_2vs2(me):
 				if dist(me.ball_pos,me.my_pos)<dist(me.ball_pos,me.pos_adv_pr_ball):
 				# Toutefois je suis plus proche de la balle que lui
 								
-					if (me.qui_entre(me.ball_pos,me.pos_equi_plus_proche)==False):
+					if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
 					# Personne entre moi et equipier plus proche
 						
 						# Je shoote vers equipier
-						return me.shoot_vers(me.pos_equi_plus_proche)
+						return me.shoot_vers(me.pos_equi_pr_ball)
 
 					else:
 					# Il y a quelqu'un entre moi et equipier plus proche
@@ -136,9 +138,9 @@ def g_2vs2(me):
 			else:
 			# L'adversaire le plus proche est encore loin	
 		
-				if (me.qui_entre(me.ball_pos,me.pos_equi_plus_proche)==False):
+				if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
 				# Personne entre, shoot vers equi
-					return me.shoot_vers(me.pos_equi_plus_proche)
+					return me.shoot_vers(me.pos_equi_pr_ball)
 				else:
 			#		print " qq entre, degage"
 					return me.degager
@@ -146,6 +148,30 @@ def g_2vs2(me):
 			#"alligne sur demi cercle"
 			return alligne_demi_cercle(me)
 		
+
+
+
+# 4vs4#
+"""def d_4vs4(me):
+
+	if (me.ball_pos.x>GAME_WIDTH/2):
+		return def_pos_defaut(me)
+
+	else:
+		if me.a_la_balle==0: 
+			# Personne n'a la balle
+
+				if (me.qui_entre(me.ball_pos,me.pos_equi_plus_proche)==False):
+				# Personne entre moi et equipier plus proche
+
+					# Je shoote vers equipier
+					return me.shoot_vers(me.pos_equi_plus_proche)
+
+				else:
+					return me.shoot_degager
+		if me.a_la_balle==
+					
+"""		
 					
 	
 

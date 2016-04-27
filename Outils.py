@@ -89,14 +89,6 @@ class MyState(object):
 		return Vector2D(x=GAME_WIDTH/2,y=GAME_HEIGHT/2)
 
 
-    ### DISTANCES ###
-
-    
-    def dist_player_ball(self,player): #distance entre player et ball
-	return dist(player.position,self.ball_pos)
-
-   
- 
 	
     ### ANGLES ###
     def angle_player_point(self,pos_point):
@@ -117,7 +109,7 @@ class MyState(object):
     	v=p-self.my_pos
 	v.norm=1000
 
-	return self.aller(p)
+	return SoccerAction(v,Vector2D())
  
     @property
     def courir_vers_ball(self):
@@ -222,80 +214,61 @@ class MyState(object):
 
     ### RADAR ###
 
-    @property
-    def adv_plus_proche(self):
-	d_min=999
-	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
-
-	for p in liste_adv:
+    ## adv ## 
+   
+    def adv_pr_posobj(self,posobj):
+	d_min=999;
+	liste_adv=[(it,ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
 	
+	for p in liste_adv:
 		pl=self.state.player(p[0],p[1])
-		d=self.dist_player_ball(pl)
+		d=dist(pl.position,posobj)
 		if d<d_min:
-	           d_min=d
 		   lui=pl
-	
+		
 	return lui
 
-    @property
-    def pos_adv_plus_proche(self):
-	
-	return self.adv_plus_proche.position
-
-    @property
-    def pos_adv_pr_but(self):
-	d_min=999
-	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
-
-	for p in liste_adv:
-	
-		pl=self.state.player(p[0],p[1])
-		d=dist(pl.position,self.but_pos)
-			
-		if d<d_min:
-			d_min=d
-			lui=pl.position
-	return lui
+    def pos_adv_pr_posobj(self,posobj):
+	return (self.adv_pr_posobj(posobj)).position
 
     @property
     def pos_adv_pr_ball(self):
-	d_min=999
-	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
+	return self.pos_adv_pr_posobj(self.ball_pos)
 
-	for p in liste_adv:
-	
-		pl=self.state.player(p[0],p[1])
-		d=dist(pl.position,self.ball_pos)
-		if d<d_min:
-			d_min=d
-			lui=pl.position
-	return lui
-
+    @property
+    def pos_adv_pr_but(self):		
+	return self.pos_adv_pr_posobj(self.but_pos)
 
     @property
     def vit_adv_plus_proche(self):
-	return self.adv_plus_proche.vitesse
+	return (self.adv_pr_posobj(self.ball_pos)).vitesse
 
 
-    @property
-    def equi_plus_proche(self):
+
+    ## equipier ##
+	
+    def equi_pr_posobj(self,posobj):   #Vector2D (position d'un obj) --> Player
 	d_min=999
 	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
 	for p in liste_equipiers:
 		pl=self.state.player(p[0],p[1])
-		d=self.dist_player_ball(pl)
+		d=dist(pl,posobj)
 		if d<d_min:
 	           d_min=d
 		   lui=pl
 
 	return lui
 
-    @property
-    def pos_equi_plus_proche(self):
-	
-	return self.equi_plus_proche.position
+    def pos_equi_pr_posobj(self,posobj):  #Vector2D (position d'un obj) --> Vector2D (position player)
+	return (self.equi_pr_posobj(posobj)).position
 
-    def qui_entre(self,src,dest):
+    @property
+    def pos_equi_pr_ball(self):
+	return self.pos_equi_pr_obj(self.ball_pos)
+
+
+
+    def obs_entre(self,src,dest):
 	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])]
 	for p in liste_adv:
 		obstacle=self.state.player(p[0],p[1])
@@ -378,7 +351,7 @@ class MyState(object):
     @property 
     def shoot_vers_equi_proche(self):
 	if self.test_peut_shooter:
-		return self.shoot_vers(self.pos_equi_plus_proche)
+		return self.shoot_vers(self.pos_equi_pr_ball)
 	else:
 		return self.courir_vers_ball
 
@@ -398,11 +371,11 @@ class MyState(object):
 	s=p-self.ball_pos
 	s.norm=0.5
 
-	adv=self.adv_plus_proche
+	adv=self.adv_pr_posobj(self.ball_pos)
 	moi= self.player_moi
 
 
-	if dist(self.ball_pos,self.pos_adv_plus_proche)<12:
+	if dist(self.ball_pos,self.pos_adv_pr_ball)<12:
 	
 	  	if self.est_devant(moi,adv):         #Si adv est devant moi
 		
@@ -435,13 +408,14 @@ class MyState(object):
 	else:
 		return self.courir_vers_ball2
 
+
     @property
     def shoot_degager(self):
 	
 	#Trouver un pt ou il n'y a personne entre	
 	for y_ in range (0,GAME_HEIGHT):
 		pt=Vector2D(x=GAME_WIDTH/2,y=y_)
-		if self.qui_entre(self.ball_pos,pt)==False:
+		if self.obs_entre(self.ball_pos,pt)==False:
 			return self.shoot_vers_norm(pt,6)
 	
 	#Si un tel pt n'est pas trouvE, shooter nord ou sud
@@ -517,4 +491,82 @@ class MyState(object):
 
 		else: # PERSONNE
 			return 0
-    
+
+
+
+"""
+    @property
+    def adv_plus_proche(self):
+	d_min=999
+	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
+
+	for p in liste_adv:
+	
+		pl=self.state.player(p[0],p[1])
+		d=self.dist_player_ball(pl)
+		if d<d_min:
+	           d_min=d
+		   lui=pl
+	
+	return lui
+
+    @property
+    def pos_adv_plus_proche(self):
+	
+	return self.adv_plus_proche.position
+
+    @property
+    def pos_adv_pr_but(self):
+	d_min=999
+	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
+
+	for p in liste_adv:
+	
+		pl=self.state.player(p[0],p[1])
+		d=dist(pl.position,self.but_pos)
+			
+		if d<d_min:
+			d_min=d
+			lui=pl.position
+	return lui
+
+    @property
+    def pos_adv_pr_ball(self):
+	d_min=999
+	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
+
+	for p in liste_adv:
+	
+		pl=self.state.player(p[0],p[1])
+		d=dist(pl.position,self.ball_pos)
+		if d<d_min:
+			d_min=d
+			lui=pl.position
+	return lui
+
+"""
+
+
+"""
+    @property
+    def equi_plus_proche(self):
+	d_min=999
+	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
+	for p in liste_equipiers:
+		pl=self.state.player(p[0],p[1])
+		d=self.dist_player_ball(pl)
+		if d<d_min:
+	           d_min=d
+		   lui=pl
+
+	return lui
+
+    @property
+    def pos_equi_plus_proche(self):
+	
+	return self.equi_plus_proche.position
+
+
+
+
+"""
