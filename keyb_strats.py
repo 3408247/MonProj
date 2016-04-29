@@ -103,7 +103,10 @@ keystrat_test.add("b",Strat_piquer)
 KBS = KeyboardStrategy()
 Strat_demarquer= SousStrat(demarquer)
 KBS.add("d",Strat_demarquer)
-KBS.add("b",Strat_dribble_but)
+
+Strat_deg= SousStrat(degager)
+KBS.add("e",Strat_deg)
+
 
 
 

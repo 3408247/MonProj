@@ -148,10 +148,13 @@ class MyState(object):
     @property
     def dans_zone_de_tir(self):
 	
+
+
 	x=self.but_pos_adv.x
 	y=self.but_pos_adv.y
 	
 	#zone 1, rectangle délimité par le goal
+
 	x_1=GAME_WIDTH
 	x_2=GAME_WIDTH-GAME_WIDTH/8
 	
@@ -159,7 +162,8 @@ class MyState(object):
 	y_2=self.but_pos_adv.y+GAME_GOAL_HEIGHT/2
 
 
-	dans_zone_1=(self.ball_pos.x>=x_2)and(self.ball_pos<=x_1)and(self.ball_pos.y>=y_1)and(self.ball_pos.y<=y_2)
+	dans_zone_1=(((self.ball_pos.x>=x_2)and(self.ball_pos.x<=x_1))and((self.ball_pos.y>=y_1)and(self.ball_pos.y<=y_2)))
+
 
 	#zone 2, rectangle plus loin et plus grand
 	X_1=GAME_WIDTH-GAME_WIDTH/8
@@ -168,18 +172,25 @@ class MyState(object):
 	Y_1=GAME_HEIGHT/4
 	Y_2=3*GAME_HEIGHT/4
 
-	dans_zone_2=(self.ball_pos.x>=X_2)and(self.ball_pos<X_1)and(self.ball_pos.y>=Y_1)and(self.ball_pos.y<=Y_2)
 
-	return (self.dans_zone_1) and (self.dans_zone_2)
+	dans_zone_2=(((self.ball_pos.x>=X_2)and(self.ball_pos.x<X_1))and((self.ball_pos.y>=Y_1)and(self.ball_pos.y<=Y_2)))
+	
+
+	return ((dans_zone_1) or (dans_zone_2))
 
     @property
     def zone_1_centre(self):
 	x_1=GAME_WIDTH
+	
 	x_2=GAME_WIDTH-GAME_WIDTH/8
+	
 	y_1=self.but_pos_adv.y-GAME_GOAL_HEIGHT/2
-	y_2=self.but_pos_adv.y+GAME_GOAL_HEIGHT/2
+	
+	y_2=self.but_pos_adv.y+GAME_GOAL_HEIGHT/2	
+	
 
-	return Vector2D(x=(x_2-x_1)/2,y=(y_2-y_1)/2)
+
+	return Vector2D(x=(x_2+((x_1-x_2)/2)),y=(y_1+((y_2-y_1)/2)))
 
     @property
     def zone_2_centre(self):
@@ -189,7 +200,8 @@ class MyState(object):
 	Y_1=GAME_HEIGHT/4
 	Y_2=3*GAME_HEIGHT/4
 
-	return Vector2D(x=(X_2-X_1)/2,y=(Y_2-Y_1)/2)
+
+	return Vector2D(x=(X_2+((X_1-X_2)/2)),y=(Y_1+((Y_2-Y_1)/2)))
 
 
     @property
@@ -299,11 +311,23 @@ class MyState(object):
     def shoot_vers(self,p): #pas de mouvement; faire shooter dans la direction p - self
         return SoccerAction(Vector2D(),p-self.my_pos)
 
+    def shooter_vers(self,p):                 # Avec mouvement
+	if self.test_peut_shooter:
+		return self.shoot_vers(p)
+	else:
+		return self.courir_vers_ball2
+
     def shoot_vers_norm(self,p,n):
 	v=p-self.my_pos
 	v.norm=n
 
 	return SoccerAction(Vector2D(),v)
+
+    def shooter_vers_norm(self,p,n):
+	if self.test_peut_shooter:
+		return self.shoot_vers_norm(p,n)
+	else:
+		return self.courir_vers_ball2
 
     @property
     def shoot_but_nord(self):
@@ -350,7 +374,12 @@ class MyState(object):
 
 			return self.shoot_vers_norm(self.but_pos_adv,5.0)
     
-
+    @property
+    def shooter_malin(self):
+	if me.test_peut_shooter:
+		return self.shoot_malin
+	else:
+		return self.courir_vers_ball2
 
     @property 
     def shoot_vers_equi_proche(self):
@@ -479,7 +508,7 @@ class MyState(object):
 	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])]
 
 	for p in liste_adv:
-		if dist(self.ball_pos, self.state.player(p[0],p[1]).position)<BALL_RADIUS+PLAYER_RADIUS+5:
+		if dist(self.ball_pos, self.state.player(p[0],p[1]).position)<BALL_RADIUS+PLAYER_RADIUS+2:
 			return 3
 
 	# J'AI LA BALLE, QUE MOI 
@@ -490,7 +519,7 @@ class MyState(object):
 	liste_eq=[(it, ip) for (it, ip) in self.state.players if (it==self.key[0])]
 
 	for q in liste_eq:
-		if dist(self.ball_pos, self.state.player(q[0],q[1]).position)<BALL_RADIUS+PLAYER_RADIUS+5:
+		if dist(self.ball_pos, self.state.player(q[0],q[1]).position)<BALL_RADIUS+PLAYER_RADIUS+2:
 			return 2    
 
 		else: # PERSONNE

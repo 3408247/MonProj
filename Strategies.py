@@ -22,7 +22,7 @@ SEUIL_BALL_FAR = 40
 SEUIL_BALL_CLOSE = 30
 SEUIL_BALL_TOO_CLOSE = 10
 
-RAYON = 8
+RAYON = 15
 
 
 class SousStrat(BaseStrategy):
@@ -92,17 +92,17 @@ def demarquer(me):
 	
 	return me.courir_vers(chosen_point)
 
-
+Demarquer_Strat = SousStrat(demarquer)
 
 
 ### FAIRE UNE PASSE ###
 def passe(me):
 	if me.test_peut_shooter:
-		return me.shoot_vers(me.pos_adv_plus_proche)
+		return me.shoot_vers(me.pos_eq_pr_ball)
 	else:
 		return me.courir_vers_ball2
 
-def chercher(me):
+#def chercher(me):
 	
 
 
@@ -111,13 +111,22 @@ def chercher(me):
 ### ATTAQUANT ###
 
 
-def fonceur(me): #"me->objet state" #faire me bouger et shooter vers but de l'opposant
-	#print("Fonceur", me.shoot_vers_but_adv, me.state._configs[(me.key[0],me.key[1])]._last_shoot)
+def fonceur(me):
 	if me.test_peut_shooter:
-	   return me.shoot_vers(me.but_pos_adv)
+		return me.shoot_vers(me.but_pos_adv)
 	else:
-	   return me.courir_vers_ball
+		return me.courir_vers_ball
 
+"""
+#"me->objet state" faire me bouger et shooter vers but de l'opposant  print("Fonceur", me.shoot_vers_but_adv, me.state._configs[(me.key[0],me.key[1])]._last_shoot)
+
+def fonceur(me): 
+
+	if me.test_peut_shooter:
+		return me.shoot_vers(me.but_pos_adv)
+	else:
+	   	return me.courir_vers_ball
+"""
 def fonceur_pass(me):
 	#print(me.aller(me.ball_position))
 	#print(me.shoot_vers_equipier_proche())
@@ -130,44 +139,7 @@ def fonceur_pass(me):
 
 
 #Attaquant 1_VS_1 ou 2_VS_2
-def shooteur_malin(me):
 
-    if me.test_peut_shooter:
-
-	if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/4):  #JE SUIS TRES PRES DES BUTS ADV
-
-		if dist(me.ball_pos,me.pos_adv_pr_ball)<12:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
-		
-			if (me.obs_entre(me.ball_pos,me.but_pos_adv)!=False):
-								
-				return me.shoot_dribble_vers(me.but_pos_adv)
- 
-			else: 
-				return me.shoot_malin  #SHOOT 
-		else:
-			##print "continier a approcher dribbler"
-			return me.shoot_dribble_vers(me.but_pos_adv)  # CONTINUE A S'APPROCHER DES BUTS
-
-	else: 
-		if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/2): # JE SUIS ASSEZ PROCHE DES BUTS
-	 
-			if (me.obs_entre(me.ball_pos,me.but_pos_adv)!=False):
-			##	print "il y a qq donc continue a dribbler"
-	
-	 			return me.shoot_dribble_vers(me.but_pos_adv)  
-			else:
-				##print "il n y a personne donc shoot malin"
-
-				return me.shoot_malin
-
-		else:  # PAS ASSEZ PROCHE
-			##print "pas assez proche donc continue a dribbler"
-			return me.shoot_dribble_vers(me.but_pos_adv)
-
-    else: # PEUT PAS SHOOTER
-	#print "peut pas shooter"
-	
-	return me.courir_vers_ball2 
 
 
 ### DEFENSEUR ###
