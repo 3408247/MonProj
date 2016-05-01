@@ -2,8 +2,9 @@ from soccersimulator import *
 from Outils import*
 from Strategies import*
 
-GAMMA=0.6
-
+GAMMA  =0.6
+ALPHA  =0.9
+ 
 def recompense(state, id_team, id_player):   # associe a un etat, une recompense 
 	Etat=MyState(state,id_team,id_player)	
 
@@ -68,49 +69,11 @@ def initialisation_q(etat_dis):  # etat_dis est le tuple d'etats discrets(entier
 	
 	return dic_s
 
-"""				
-def discretiser_match(match):  # Lire fichier match ? .. 
 
-	liste=[]
-	
-	for step in match:
-		LIRE LETAT COMPLET DU MATCH
-		s= discretisation(DE CET ETAT COMPLET)
-			
-		a= LIRE ACTION PRIS
-		couple=(s,a)
-
-		liste.append(couple)
-	
-	return liste
-
-		
-
-
-
-def MonteCarlo(q, scenarios, state, idt, idp):
-
-	etat_dis= discretisation(state, idt, idp)
-	Q_s_a = initialisation_q(etat_dis)
-
-	
-	for sce in scenarios:
-	
-		while sce[0]!=None:
-			for cle in Q_s_a:
-			
-				if sce[0]==cle:  """ 
-		
-
-
-
-	
 def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,action)  remarque: dernier etat none
       # q est dico de dico 
       #parcurir liste a lenvers
 	
-	
-
 
 	for sce in scenarios:
 		
@@ -132,7 +95,7 @@ def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,ac
 
 
 		
-def letruc(fichier_match):
+def letruc(fichier_match,fichier_dic):
 
 # C ici la ligne 4 du slide 
 	
@@ -145,8 +108,57 @@ def letruc(fichier_match):
 
 		DIC_S=fonction_q(etat_discret)"""
 
+	
+	
+	
 		
 
+
+
+"""				
+def discretiser_match(match):  # Lire fichier match ? .. 
+
+
+	liste=[]
+	
+	for step in match:
+		LIRE LETAT COMPLET DU MATCH
+
+		s= discretisation(DE CET ETAT COMPLET)
+			
+		a= LIRE ACTION PRIS
+		couple=(s,a)
+
+
+		liste.append(couple)
+	
+	return liste
+
+
+		
+
+
+
+
+def MonteCarlo(q, scenarios, state, idt, idp):
+
+	etat_dis= discretisation(state, idt, idp)
+	Q_s_a = initialisation_q(etat_dis)
+
+
+	
+	for sce in scenarios:
+	
+		while sce[0]!=None:
+
+			for cle in Q_s_a:
+			
+				if sce[0]==cle:  """ 
+		
+
+
+
+	
 	
 	
 
