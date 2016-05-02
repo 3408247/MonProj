@@ -26,15 +26,15 @@ import os
 
 #### Mes tests
 Priya_1a = SoccerTeam("Priya_1a",[Player("Key",KBS)])
-Priya_1b =SoccerTeam("Priya_1b",[Player("J1VS1",J_1vs1_Strat)])
+Priya_1b =SoccerTeam("Priya_1b",[Player("gard",Gardien_Strat)])
 
-Priya_2a = SoccerTeam("Priya_2a",[Player("j1",Demarquer_Strat),Player("Gard",G_2vs2)])
-Priya_2b =SoccerTeam("Priya_2b",[Player("Key",keystrat_test),Player("Gard",G_2vs2)])
-Priya_2bb = SoccerTeam("Priya_2bb",[Player("k1",FonceurStrat),Player("k2",G_2vs2)])
+Priya_2a = SoccerTeam("Priya_2a",[Player("attack",Attack2vs2_Strat),Player("Aideur",Aideur2vs2_Strat)])
+Priya_2b =SoccerTeam("Priya_2b",[Player("att",Attack2vs2_Strat),Player("Gard",Gardien_Strat)])
+#Priya_2bb = SoccerTeam("Priya_2bb",[Player("k1",FonceurStrat),Player("k2",G_2vs2)])
+"""
+#Priya_4a = SoccerTeam("Priya_4a",[Player("MILIEU",J_2vs2_Strat),Player("GARDIENa",G_2vs2),Player("Demarquer",Demarquer_Strat),Player("1DEFa",DefStrat)])
 
-Priya_4a = SoccerTeam("Priya_4a",[Player("MILIEU",J_2vs2_Strat),Player("GARDIENa",G_2vs2),Player("Demarquer",Demarquer_Strat),Player("1DEFa",DefStrat)])
-
-Priya_4b =SoccerTeam("Priya_4b",[Player("1ATTb",FonceurStrat),Player("GARDIENb",G_2vs2),Player("2ATTb",FonceurStrat),Player("1DEFb",DefStrat)])
+#Priya_4b =SoccerTeam("Priya_4b",[Player("1ATTb",FonceurStrat),Player("GARDIENb",G_2vs2),Player("2ATTb",FonceurStrat),Player("1DEFb",DefStrat)])
 
 
 ### Pour le tournoi
@@ -50,4 +50,4 @@ team4 = SoccerTeam("team4",[Player("ATT1",FonceurStrat),Player("gk2",Gard_shoot_
 #playerIA = Player("IAtree",treeIA)
 #teamIA = SoccerTeam
 
-
+"""

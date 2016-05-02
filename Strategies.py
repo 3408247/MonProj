@@ -22,7 +22,7 @@ SEUIL_BALL_FAR = 40
 SEUIL_BALL_CLOSE = 30
 SEUIL_BALL_TOO_CLOSE = 10
 
-RAYON = 15
+RAYON = 20
 
 
 class SousStrat(BaseStrategy):
@@ -219,6 +219,96 @@ def gardien_shoot_vers_centre(me):
 	else:
 		return gardien_mouvement(me)
 		
+
+
+def gardien(me):	
+	
+	print "GAAAARDDDDDIIIIIIIIEEEEEEEENNNNN"
+	if dist(me.ball_pos,me.but_pos)<DCERCLE_RAYON+5:
+		#print "La balle est proche de mes buts"
+	
+		if dist(me.but_pos,me.pos_adv_pr_but)>5*DCERCLE_RAYON:
+			#print "L'adversaire le plus proche est encore loin "
+
+	 		if me.a_la_balle==0: 
+				#print" Personne n'a la balle"
+
+				if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
+					#print "Personne entre moi et equipier plus proche"
+
+					#print " Je shoote vers equipier"
+					return me.shoot_vers(me.pos_equi_pr_ball)
+								
+				else:
+					#print"Il y a quelqu'un entre moi et equipier plus proche"
+
+					#print" Je degage le ballon"
+					return me.degager
+			else:
+				if me.test_peut_shooter:
+					#print "je degage"
+					return me.degager
+				else:				
+					#print "jalligne"
+					return alligne_demi_cercle(me)
+
+		else: 
+			#print" L'adversaire le plus proche est pres des buts"
+
+			#print"Je protege mes buts"
+			return protect_cage(me)
+
+
+	else:
+		#print" La balle est encore tres loin"
+
+		if dist(me.ball_pos,me.my_pos)<10:
+			#print" La balle est assez proche"
+			
+			if dist(me.but_pos_adv,me.pos_adv_pr_but)<20: 
+				#print"L'adversaire le plus proche est pres des buts"
+
+				if dist(me.ball_pos,me.my_pos)<dist(me.ball_pos,me.pos_adv_pr_ball):
+					#print "Toutefois je suis plus proche de la balle que lui"
+								
+					if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
+						#print" Personne entre moi et equipier plus proche"
+						
+						#print" Je shoote vers equipier"
+						return me.shoot_vers(me.pos_equi_pr_ball)
+
+					else:
+						#print"Il y a quelqu'un entre moi et equipier plus proche"
+
+						#print" Je degage le ballon"
+						return me.degager
+				else:	
+					#print" Et c'est l'adversaire qui est plus proche de la balle"
+					
+					#print"Je protege mes cages"
+					return protect_cage(me)
+			else:
+				#print"L'adversaire le plus proche est encore loin"
+				#print "me.ball_pos, me.pos_equi_pr_ball, Obstacle entre?"
+				#print me.ball_pos
+				#print me.pos_equi_pr_ball
+		
+				print me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)
+		
+				if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
+					print"Personne entre, shoot vers equi"
+					return me.shoot_vers(me.pos_equi_pr_ball)
+				else:
+					print " qq entre, degage"
+					return me.degager
+		else:
+			print"alligne sur demi cercle"
+			return alligne_demi_cercle(me)
+		
+
+Gardien_Strat= SousStrat(gardien)
+
+
 
 	
 

@@ -122,7 +122,7 @@ class MyState(object):
     @property 
     def courir_vers_ball2(self):          # Utiliser ce courir ver ball dans dribbler
 	ball = deepcopy(self.state.ball)
-	for i in range(0,3):
+	for i in range(0,2):
 		ball.next(Vector2D())
 	return self.courir_vers(ball.position)
 
@@ -265,21 +265,24 @@ class MyState(object):
 	
     def equi_pr_posobj(self,posobj):   #Vector2D (position d'un obj) --> Player
 	d_min=999
-	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
+	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])]
+
 	for p in liste_equipiers:
 		pl=self.state.player(p[0],p[1])
 		d=dist(pl.position,posobj)
 		if d<d_min:
 	           d_min=d
 		   lui=pl
-
+		  
 	return lui
 
     def pos_equi_pr_posobj(self,posobj):  #Vector2D (position d'un obj) --> Vector2D (position player)
+
 	return (self.equi_pr_posobj(posobj)).position
 
     @property
     def pos_equi_pr_ball(self):
+	
 	return self.pos_equi_pr_posobj(self.ball_pos)
 
 
@@ -376,7 +379,7 @@ class MyState(object):
     
     @property
     def shooter_malin(self):
-	if me.test_peut_shooter:
+	if self.test_peut_shooter:
 		return self.shoot_malin
 	else:
 		return self.courir_vers_ball2
@@ -408,7 +411,7 @@ class MyState(object):
 	moi= self.player_moi
 
 
-	if dist(self.ball_pos,self.pos_adv_pr_ball)<12:
+	if dist(self.ball_pos,self.pos_adv_pr_ball)<10:
 	
 	  	if self.est_devant(moi,adv):         #Si adv est devant moi
 		
