@@ -25,8 +25,8 @@ import os
 
 
 #### Mes tests
-Priya_1a = SoccerTeam("Priya_1a",[Player("Key",KBS)])
-Priya_1b =SoccerTeam("Priya_1b",[Player("gard",Gardien_Strat)])
+Priya_1a = SoccerTeam("Priya_1a",[Player("a",J_1vs1_Strat)])
+Priya_1b =SoccerTeam("Priya_1b",[Player("b",Rien_Strat)])
 
 Priya_2a = SoccerTeam("Priya_2a",[Player("attack",Attack2vs2_Strat),Player("Aideur",Aideur2vs2_Strat)])
 Priya_2b =SoccerTeam("Priya_2b",[Player("att",Attack2vs2_Strat),Player("Gard",Gardien_Strat)])
