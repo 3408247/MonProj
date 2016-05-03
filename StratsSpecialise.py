@@ -90,7 +90,10 @@ def attack_2vs2(me):
 		#print "sa moitie"
 		if dist(me.my_pos,me.ball_pos)<dist(me.pos_equi_pr_ball,me.ball_pos):
 			#print "je fais j1vs1"
-			return j_1vs1(me)
+			if ((me.a_la_balle==1) and (dist(me.ball_pos,me.pos_adv_pr_ball)<10)):
+				return passe(me)
+			else:
+				return j_1vs1(me)
 		else:
 			#print "jfais demar"
 			return demarquer(me)
@@ -110,11 +113,33 @@ def aideur_2vs2(me):
 Aideur2vs2_Strat = SousStrat(aideur_2vs2)
 
 """
-def J2_vs2(me):
+a essayer
 """
-	
+
+def poly_2vs2(me):
+	if me.ball_pos.x<GAME_WIDTH/2:
+		if dist(me.my_pos,me.ball_pos)<dist(me.pos_equi_pr_ball,me.ball_pos):
+			return gardien(me)
+		else:
+			return demarquer(me)
+	else:
+		if dist(me.my_pos,me.ball_pos)<dist(me.pos_equi_pr_ball,me.ball_pos):
+
+			if ((me.a_la_balle==1) and (dist(me.ball_pos,me.pos_adv_pr_ball)<10)):
+						
+				return passe(me)
+			else:
+				return j_1vs1(me)
+		else:
+				return demarquer(me)
+
+Poly2vs2_Strat = poly_2vs2
+
+
+
 
 def rien(me):
+	print "rentre effectivement dans rien strat"
 	return SoccerAction(Vector2D(),Vector2D())
 
 Rien_Strat = SousStrat(rien)	

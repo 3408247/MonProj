@@ -51,3 +51,5 @@ team4 = SoccerTeam("team4",[Player("ATT1",FonceurStrat),Player("gk2",Gard_shoot_
 #teamIA = SoccerTeam
 
 """
+
+

@@ -62,8 +62,8 @@ def initialisation_q(etat_dis):  # etat_dis est le tuple d'etats discrets(entier
 	for s in etat_dis:
 		dict_a={}	
 		
-		dict_a["fonceur"]=0    # on met ici des string("gard")et apres on fera la correspondance string vers strat
-		dict_a["gard"]=0
+		dict_a["rien"]=0    # on met ici des string("gard")et apres on fera la correspondance string vers strat
+		dict_a["fonceur"]=0
 		
 		
 		dic_s[s]=dict_a    # dic_s= { (0,0): {"fonceur": 0, "gard":0} , (0,1) : {"fonceur": 0, "gard":0} }
@@ -92,7 +92,7 @@ def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,ac
 				R= GAMMA*R + recompense(st,idt,idp)
 				etat_discretise=discretisation(st,idt,idp)
 				q[etat_discretise][act_choisi]=q[etat_discretise][act_choisi] + ALPHA*(R-q[etat_discretise][act_choisi])  #Que faire la maj comme ca ou bien faire return q ?
- 	
+ 	return q
 
 
 		
@@ -102,14 +102,11 @@ def prendreaction_et_maj(le_match,idt,idp,fichier_dic):
 	
 
 	#SI LE DICTIONNAIRE EST VIDE, AU DEBUT, TOUT INITALISER A ZERO  (ou random??)
-	dico_dico= pickle.load(open(fichier_dic,"r")) 
+	dico_dico= pickle.load(open(fichier_dic,"r"))                                   #PROBLEME SI FICHIER EST FICHIER NORMAL VIDE
 	if dico_dico=={}:
 		dico_dico=initialisation(observations_allsteps)
 
 
-	
-
-	
 	scenarios=[]
 	
 	joueur_stattaken = le_match.strats
@@ -123,35 +120,47 @@ def prendreaction_et_maj(le_match,idt,idp,fichier_dic):
 		#CHOISIR ACTION A PRENDRE
 		actions_possibles=dico_dico(step_discretise)      #LES ACTIONS POSSIBLES(AVEC LEUR VALEUR AFFECTEE) CORRESPONDANT A LETAT COURANT
 		
-		valeur_max=0
+		valeur_max=-999999999999999
 		for action in actions_possibles:
-			strat=action[0]               #LA STRATEGIE
-			valeur_associe=action[1]      #LA VALEUR ASSOCIEE
-			if valeur_associe>=valeur_max
-				action_choisie=strat  # CHOISIR LACTION AYANT VALEUR MAX 
+			strat_name=action          		     #LA STRATEGIE  (clef du dic)
+			valeur_associe=actions_possibles[action]     #LA VALEUR ASSOCIEE               EST-CE QUE CA MARCHE COMME CA AVEC LES DICTIONNAIRES ?
+			if valeur_associe>=valeur_max:
+				nom_action_choisie=strat_name  # CHOISIR LACTION AYANT VALEUR MAX 
 		
 
 
 
 
 	        # LA MISE A JOUR 
-		for eachstate in joueur_strattaken
+		for eachstep in joueur_strattaken
 				
-			required_team=eachstate[idt]              #RECUPERER LES STRATS PRIS PAR LEQUIPE CONCERNEE
+			required_team=eachstep[idt]              #RECUPERER LES STRATS PRIS PAR LEQUIPE CONCERNEE
 			player_actiontaken= required_team[idp]	  #RECUPERER L'ACTION PRIS PAR LE JOUEUR CONCERNE
 			
 			scenarios.append((step_obs,player_action_taken))    #on ajoute couple (etatbrut,actionpris) a la liste scenarios
 
 
 
-		MonteCarlo(dico_dico,scenarios,idt,idp)               #Cette fonction met a jour le dico de dico .. est-ce que ca marche comme ca en python ?
+		dico_dico=MonteCarlo(dico_dico,scenarios,idt,idp)               #Cette fonction met a jour le dico de dico .. est-ce que ca marche comme ca en python ?
 
 		pickle.dump(dico_dico,open(fichier_dic,"w"))     # Le fichier s'appelera tout le temps fichierdic.pkl comment faire pour changer ?
 
 
-	return action_choisie
+	return nom_action_choisie
 
 
+def QStrategy(match,idt,idp,fichier_dic,dic_corresp):
+	nom_action= prendreaction_et_maj(match,idt,idp,fichier_dic)
+
+	for clef in dic_corresp:
+		if clef==nom_action:
+			return dic_corresp[clef]
+		else:
+			print "action pas dans dic_corresp.."
+			return
+
+	print "je sais pas"
+	return
 
 
 

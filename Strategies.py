@@ -112,10 +112,13 @@ def passe(me):
 
 
 def fonceur(me):
+	print "entre effectivement dans fonceur strat"
 	if me.test_peut_shooter:
 		return me.shoot_vers(me.but_pos_adv)
 	else:
 		return me.courir_vers_ball
+
+Fonceur_Strat = SousStrat(fonceur)
 
 """
 #"me->objet state" faire me bouger et shooter vers but de l'opposant  print("Fonceur", me.shoot_vers_but_adv, me.state._configs[(me.key[0],me.key[1])]._last_shoot)
