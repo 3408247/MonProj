@@ -78,7 +78,7 @@ def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,ac
 
 	#print"monte carlo"
 	#print"ici"
-	longeur=len(scenarios)     # recuperer le nombre de steps jouE dans le match ..
+	longeur=len(scenarios)     # recuperer le nombre de steps jouE dans le match? ..
 	#print "longeur", longeur
 
 	for sce in scenarios:
@@ -140,6 +140,7 @@ def prendreaction_et_maj(le_match,idt,idp,fichier_dic):
 			valeur_associe=actions_possibles[action]     #LA VALEUR ASSOCIEE  # eg 0
 			if valeur_associe>=valeur_max:
 				nom_action_choisie=strat_name        # CHOISIR LACTION AYANT VALEUR MAX  #eg "fonceur"  
+				valeur_max=valeur_associe
 		#		print "action",nom_action_choisie
 		#print "a la sortie action max", nom_action_choisie
 
