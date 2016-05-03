@@ -112,7 +112,7 @@ def passe(me):
 
 
 def fonceur(me):
-	print "entre effectivement dans fonceur strat"
+	#print "entre effectivement dans fonceur strat"
 	if me.test_peut_shooter:
 		return me.shoot_vers(me.but_pos_adv)
 	else:
@@ -226,7 +226,7 @@ def gardien_shoot_vers_centre(me):
 
 def gardien(me):	
 	
-	print "GAAAARDDDDDIIIIIIIIEEEEEEEENNNNN"
+	#print "GAAAARDDDDDIIIIIIIIEEEEEEEENNNNN"
 	if dist(me.ball_pos,me.but_pos)<DCERCLE_RAYON+5:
 		#print "La balle est proche de mes buts"
 	
@@ -299,13 +299,13 @@ def gardien(me):
 				print me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)
 		
 				if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
-					print"Personne entre, shoot vers equi"
+					#print"Personne entre, shoot vers equi"
 					return me.shoot_vers(me.pos_equi_pr_ball)
 				else:
-					print " qq entre, degage"
+					#print " qq entre, degage"
 					return me.degager
 		else:
-			print"alligne sur demi cercle"
+			#print"alligne sur demi cercle"
 			return alligne_demi_cercle(me)
 		
 

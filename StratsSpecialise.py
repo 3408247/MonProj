@@ -139,7 +139,7 @@ Poly2vs2_Strat = poly_2vs2
 
 
 def rien(me):
-	print "rentre effectivement dans rien strat"
+	#print "rentre effectivement dans rien strat"
 	return SoccerAction(Vector2D(),Vector2D())
 
 Rien_Strat = SousStrat(rien)	

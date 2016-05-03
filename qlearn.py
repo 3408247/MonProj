@@ -9,14 +9,14 @@ ALPHA  =0.9
 def recompense(state, id_team, id_player):   # associe a un etat, une recompense 
 	Etat=MyState(state,id_team,id_player)	
 
-	if (Etat.ball_pos.x=Etat.but_pos_adv.x) and (Etat.ball_pos.y>=Etat.but_pos_adv.y-GOAL_HEIGHT/2) and (Etat.ball_pos.y<=Etat.but_pos_adv.y+GOAL_HEIGHT/2):
+	if ((Etat.ball_pos.x==Etat.but_pos_adv.x) and (Etat.ball_pos.y>=Etat.but_pos_adv.y-GOAL_HEIGHT/2) and (Etat.ball_pos.y<=Etat.but_pos_adv.y+GOAL_HEIGHT/2)):
 		r=100
 
-	if (Etat.ball_pos.x=Etat.but_pos.x) and (Etat.ball_pos.y>=Etat.but_pos.y-GOAL_HEIGHT/2) and (Etat.ball_pos.y<=Etat.but_pos.y+GOAL_HEIGHT/2):
+	if ((Etat.ball_pos.x==Etat.but_pos.x) and (Etat.ball_pos.y>=Etat.but_pos.y-GOAL_HEIGHT/2) and (Etat.ball_pos.y<=Etat.but_pos.y+GOAL_HEIGHT/2)):
 		r=-100
 
 
-	if Etat.qui_a_la_balle==1 or Etat.qui_a_la_balle==2:
+	if ((Etat.a_la_balle==1) or (Etat.a_la_balle==2)):
 		r=5
 	else:
 		r=-5
@@ -62,11 +62,12 @@ def initialisation_q(etat_dis):  # etat_dis est le tuple d'etats discrets(entier
 	for s in etat_dis:
 		dict_a={}	
 		
-		dict_a["rien"]=0    # on met ici des string("gard")et apres on fera la correspondance string vers strat
+		dict_a["rien"]=0    # on met ici des string("rien")et apres on fera la correspondance string vers strat
 		dict_a["fonceur"]=0
+		dict_a["gardien"]=0
 		
 		
-		dic_s[s]=dict_a    # dic_s= { (0,0): {"fonceur": 0, "gard":0} , (0,1) : {"fonceur": 0, "gard":0} }
+		dic_s[s]=dict_a    # dic_s= { (0,0): {"rien": 0, "fonceur":0} , (0,1) : {"rien": 0, "fonceur":0} }
 	
 	return dic_s
 
@@ -74,7 +75,11 @@ def initialisation_q(etat_dis):  # etat_dis est le tuple d'etats discrets(entier
 def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,action)  remarque: dernier etat none
       # q est dico de dico 
       #parcurir liste a lenvers
-	
+
+	#print"monte carlo"
+	#print"ici"
+	longeur=len(scenarios)     # recuperer le nombre de steps jouE dans le match ..
+	#print "longeur", longeur
 
 	for sce in scenarios:
 		
@@ -84,9 +89,9 @@ def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,ac
 			R = 0
 			act_choisi = sce[1]
 	
-			for t in range (MAX_STEP-1,0,-1):
-
-				st=sce[t]
+			for t in range (longeur-1,0,-1):
+				
+				st=scenarios[t][0]
 			
 			
 				R= GAMMA*R + recompense(st,idt,idp)
@@ -97,56 +102,68 @@ def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,ac
 
 		
 def prendreaction_et_maj(le_match,idt,idp,fichier_dic):      
-	
-	observations_allsteps=le_match.states
+	#print "on passe ici"
+	observations_allsteps=le_match.states  # De la forme [ state_stp1, state_stp2, ..state_stpn ]
+	#print "on passe ici2"
+	liste_etatsdis=[]
+	for step in observations_allsteps:
+		liste_etatsdis.append(discretisation(step,idt,idp))
 	
 
 	#SI LE DICTIONNAIRE EST VIDE, AU DEBUT, TOUT INITALISER A ZERO  (ou random??)
-	dico_dico= pickle.load(open(fichier_dic,"r"))                                   #PROBLEME SI FICHIER EST FICHIER NORMAL VIDE
+	dico_dico= pickle.load(open(fichier_dic,"r"))                                   #PROBLEME SI FICHIER EST FICHIER NORMAL VIDE, .. donc deja ecrire un dico vide dans le fichier initial
 	if dico_dico=={}:
-		dico_dico=initialisation(observations_allsteps)
+		print "on rentre dans initialisation"
+		dico_dico=initialisation_q(liste_etatsdis)
+		print "maintenant on ecrit ce dico dans le fichier" 
+		pickle.dump(dico_dico,open(fichier_dic,"w"))      
 
-
+	
 	scenarios=[]
 	
-	joueur_stattaken = le_match.strats
+	joueur_strattaken = le_match.strats       
+	# De la forme [ (('team1_pl1_stp1','team1_pl2_stp1'), ('team2_pl1_stp1','team2_pl2_stp1')), (('team1_pl1_stp2','team1_pl2_stp2'), ('team2_pl1_stp2','team2_pl2_stp2')) ...]
 
 
 
-	for step_obs in observations_allsteps:      # observation pour un step du match
+	for step_obs in observations_allsteps:      # observation pour un step du match  De la forme state_stpi
+		#print "ici"
 		
-		step_discretise=discretisation(step_obs,idt,idp)
-	
+		step_discretise=discretisation(step_obs,idt,idp)  # Discretiser l'observation a ce step   # De la forme (0,1)
+		#print "et la"
 		#CHOISIR ACTION A PRENDRE
-		actions_possibles=dico_dico(step_discretise)      #LES ACTIONS POSSIBLES(AVEC LEUR VALEUR AFFECTEE) CORRESPONDANT A LETAT COURANT
-		
+		actions_possibles=dico_dico[step_discretise]      #LES ACTIONS POSSIBLES(AVEC LEUR VALEUR AFFECTEE) CORRESPONDANT A LETAT COURANT  # Pour la clef (0,1) on aura {"fonceur":0, "rien":0}
+	
 		valeur_max=-999999999999999
-		for action in actions_possibles:
-			strat_name=action          		     #LA STRATEGIE  (clef du dic)
-			valeur_associe=actions_possibles[action]     #LA VALEUR ASSOCIEE               EST-CE QUE CA MARCHE COMME CA AVEC LES DICTIONNAIRES ?
+		for action in actions_possibles:		     # Prenant les clefs de actions_possible, par ex la clef "fonceur"
+			strat_name=action          		     #LA STRATEGIE  # clef du dic eg "fonceur")
+			valeur_associe=actions_possibles[action]     #LA VALEUR ASSOCIEE  # eg 0
 			if valeur_associe>=valeur_max:
-				nom_action_choisie=strat_name  # CHOISIR LACTION AYANT VALEUR MAX 
-		
-
+				nom_action_choisie=strat_name        # CHOISIR LACTION AYANT VALEUR MAX  #eg "fonceur"  
+		#		print "action",nom_action_choisie
+		#print "a la sortie action max", nom_action_choisie
 
 
 
 	        # LA MISE A JOUR 
-		for eachstep in joueur_strattaken
-				
-			required_team=eachstep[idt]              #RECUPERER LES STRATS PRIS PAR LEQUIPE CONCERNEE
-			player_actiontaken= required_team[idp]	  #RECUPERER L'ACTION PRIS PAR LE JOUEUR CONCERNE
+		for eachstep in joueur_strattaken:		# De la forme (('team1_pl1_stp1','team1_pl2_stp1'), ('team2_pl1_stp1','team2_pl2_stp1'))
+			#print "ici"	
+			required_team=eachstep[idt]              #RECUPERER LES STRATS PRIS PAR LEQUIPE CONCERNEE    # ('team1_pl1_stp1','team1_pl2_stp1')
+			#print "la"
+			player_actiontaken= required_team[idp]	  #RECUPERER L'ACTION PRIS PAR LE JOUEUR CONCERNE    # 'team1_pl1_stp1'
+			#print "and fucking here"
 			
-			scenarios.append((step_obs,player_action_taken))    #on ajoute couple (etatbrut,actionpris) a la liste scenarios
+			scenarios.append((step_obs,player_actiontaken))    #on ajoute couple (etatbrut,actionpris) a la liste scenarios
+			#print "got here"
 
 
+	#print "faisons maj de dico dico"
+	dico_dico=MonteCarlo(dico_dico,scenarios,idt,idp)               #Cette fonction met a jour le dico de dico .. eg dico_dico sera desormais { (0,0): {"rien": 0, "fonceur":5} , (0,1) : {"rien": 3, "fonceur":0} }
+	#print "on est passe"
+	pickle.dump(dico_dico,open(fichier_dic,"w"))     # On ecrir dans le fichier_dic cette nouvelle dico mise a jour
 
-		dico_dico=MonteCarlo(dico_dico,scenarios,idt,idp)               #Cette fonction met a jour le dico de dico .. est-ce que ca marche comme ca en python ?
-
-		pickle.dump(dico_dico,open(fichier_dic,"w"))     # Le fichier s'appelera tout le temps fichierdic.pkl comment faire pour changer ?
-
-
-	return nom_action_choisie
+	#print "laction choisie", nom_action_choisie
+	return nom_action_choisie      # eg "fonceur"
 
 
 def QStrategy(match,idt,idp,fichier_dic,dic_corresp):
@@ -154,6 +171,7 @@ def QStrategy(match,idt,idp,fichier_dic,dic_corresp):
 
 	for clef in dic_corresp:
 		if clef==nom_action:
+			print "Il choisit laction", dic_corresp[clef]
 			return dic_corresp[clef]
 		else:
 			print "action pas dans dic_corresp.."
