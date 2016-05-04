@@ -75,48 +75,89 @@ def initialisation_q(etat_dis):  # etat_dis est le tuple d'etats discrets(entier
 def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,action)  remarque: dernier etat none
       # q est dico de dico 
       #parcurir liste a lenvers
-
+	print "DANS MONTE CARLO"
+	print "q est ", q
+	Q = q  # Travailler sur la copie de q
+	print "Copie Q est",Q
 	#print"monte carlo"
 	#print"ici"
 	longeur=len(scenarios)     # recuperer le nombre de steps jouE dans le match? ..
-	#print "longeur", longeur
-
+	print "longeur scenarios", longeur
+	i=0
 	for sce in scenarios:
 		
-		while sce[0]!=None:
+		print "SCENARIO NUMBER ", i
+		#print "couple (etatbrut,actionpris) ",i," est ", sce
 
+		#print "etat brut",sce[0]
+		
+		if sce[0]!=None:
+
+			print "entre ici"
+			print "est ce que etat est none ?"
+			print sce[0]==None
 			
 			R = 0
 			act_choisi = sce[1]
 	
+			print "action choisi", act_choisi
+
 			for t in range (longeur-1,0,-1):
-				
+				print "entree boucle t succes"				
 				st=scenarios[t][0]
+				print "etat au temps", t , "est", st
 			
 			
 				R= GAMMA*R + recompense(st,idt,idp)
+
+				print "R= GAMMA*R + recompense(st,idt,idp) et donc R est maintenant", R
 				etat_discretise=discretisation(st,idt,idp)
-				q[etat_discretise][act_choisi]=q[etat_discretise][act_choisi] + ALPHA*(R-q[etat_discretise][act_choisi])  #Que faire la maj comme ca ou bien faire return q ?
- 	return q
+				Q[etat_discretise][act_choisi]=Q[etat_discretise][act_choisi] + ALPHA*(R-Q[etat_discretise][act_choisi])  #Que faire la maj comme ca ou bien faire return q ?
+		i=i+1
+
+ 	return Q
 
 
 		
 def prendreaction_et_maj(le_match,idt,idp,fichier_dic):      
 	#print "on passe ici"
 	observations_allsteps=le_match.states  # De la forme [ state_stp1, state_stp2, ..state_stpn ]
+	print "Nombre de steps dans ce match.. observations allsteps:"
+	print len(observations_allsteps)
 	#print "on passe ici2"
 	liste_etatsdis=[]
 	for step in observations_allsteps:
 		liste_etatsdis.append(discretisation(step,idt,idp))
+
+	print "liste_etatsdis"
+	print liste_etatsdis
+
+	print "longueur liste_etatsdis"
+	print len(liste_etatsdis)
 	
 
 	#SI LE DICTIONNAIRE EST VIDE, AU DEBUT, TOUT INITALISER A ZERO  (ou random??)
-	dico_dico= pickle.load(open(fichier_dic,"r"))                                   #PROBLEME SI FICHIER EST FICHIER NORMAL VIDE, .. donc deja ecrire un dico vide dans le fichier initial
+	#print "on ouvre le fichier en lecture"
+	fichier_ouvert_lec= open(fichier_dic,"r")
+	#print "on stocke dans dico ce fichier"
+	dico_dico= pickle.load(fichier_ouvert_lec)                                   #PROBLEME SI FICHIER EST FICHIER NORMAL VIDE, .. donc deja ecrire un dico vide dans le fichier initial
 	if dico_dico=={}:
-		print "on rentre dans initialisation"
+	#	print "dico en effet vide"
+	#	print "on ferme ce fichier"
+		fichier_ouvert_lec.close()
+	#	print "on rentre dans initialisation"
 		dico_dico=initialisation_q(liste_etatsdis)
-		print "maintenant on ecrit ce dico dans le fichier" 
-		pickle.dump(dico_dico,open(fichier_dic,"w"))      
+	#	print " on ouvre le fichier en ecriture" 
+		fichier_ouvert_ecri = open(fichier_dic,"w")
+
+	#	print "on ecrit dans le fichier dico initial"
+		pickle.dump(dico_dico,fichier_ouvert_ecri) 
+
+	#print "on (re)ferme le fichier ouvert en lecture"	
+	fichier_ouvert_lec.close()
+	
+	#print "on ferme le fichier ouvert en ecriture"
+	fichier_ouvert_ecri.close()  
 
 	
 	scenarios=[]
@@ -154,16 +195,26 @@ def prendreaction_et_maj(le_match,idt,idp,fichier_dic):
 			player_actiontaken= required_team[idp]	  #RECUPERER L'ACTION PRIS PAR LE JOUEUR CONCERNE    # 'team1_pl1_stp1'
 			#print "and fucking here"
 			
-			scenarios.append((step_obs,player_actiontaken))    #on ajoute couple (etatbrut,actionpris) a la liste scenarios
-			#print "got here"
+		scenarios.append((step_obs,player_actiontaken))    #on ajoute couple (etatbrut,actionpris) a la liste scenarios
+		#print "got here"
 
 
-	#print "faisons maj de dico dico"
+	print "scenarios longueur ?"
+	print len(scenarios)
+
+	print "faisons maj de dico dico"
 	dico_dico=MonteCarlo(dico_dico,scenarios,idt,idp)               #Cette fonction met a jour le dico de dico .. eg dico_dico sera desormais { (0,0): {"rien": 0, "fonceur":5} , (0,1) : {"rien": 3, "fonceur":0} }
-	#print "on est passe"
-	pickle.dump(dico_dico,open(fichier_dic,"w"))     # On ecrir dans le fichier_dic cette nouvelle dico mise a jour
+	print "Monte carlo fini"
+	
+	print" on ouvre le fichier en ecriture"
+	fichier_reouvert_ecri = open(fichier_dic,"w")
+	print "on ecir dic maj dans fichier"
+	pickle.dump(dico_dico,fichier_reouvert_ecri)     # On ecrir dans le fichier_dic cette nouvelle dico mise a jour
 
-	#print "laction choisie", nom_action_choisie
+	print "on ferme fichier"
+	fichier_reouvert_ecri.close()
+	print "fichier fermE"
+	print "laction choisie", nom_action_choisie
 	return nom_action_choisie      # eg "fonceur"
 
 
@@ -171,14 +222,15 @@ def QStrategy(match,idt,idp,fichier_dic,dic_corresp):
 	nom_action= prendreaction_et_maj(match,idt,idp,fichier_dic)
 
 	for clef in dic_corresp:
+		print "clef", clef
 		if clef==nom_action:
 			print "Il choisit laction", dic_corresp[clef]
 			return dic_corresp[clef]
-		else:
-			print "action pas dans dic_corresp.."
-			return
+		#else:
+		#	print "action pas dans dic_corresp.."
+		#	return
 
-	print "je sais pas"
+	print "action pas dans dic_corresp"
 	return
 
 

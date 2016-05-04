@@ -27,15 +27,19 @@ team_b =SoccerTeam("team_b",[Player("rientb",Rien_Strat),Player("Gardb",Gardien_
 
 match = SoccerMatch(team_a, team_b)
 soccersimulator.show(match)
+
+
 """
 print "STRATS TAKEN"
 print match.strats
 """
 
-dic_corresp = {"fonceur":Fonceur_Strat, "rien":Rien_Strat,"gardien":Gardien_Strat}
-la_qstrat= QStrategy(match,1,1,"lala",dic_corresp)
+print "NEXT "
 
-PlayerQ= Player("plqyerQ",la_qastrat)
+dic_corresp = {'fonceur':Fonceur_Strat, 'rien':Rien_Strat,'gardien':Gardien_Strat}
+la_qstrat= QStrategy(match,1,1,"lala",dic_corresp)   #lala est dans un fichier contenant un dictionnaire vide au debut
+
+PlayerQ= Player("plqyerQ",la_qstrat)
 
 team_qa= SoccerTeam("teamq",[PlayerQ,Player("Garda",Gardien_Strat)])
 team_bb = SoccerTeam("team_bb",[Player("rientb",Rien_Strat),Player("Gardb",Gardien_Strat)])
