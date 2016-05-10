@@ -8,10 +8,15 @@ from Strategies import *
 
 from Outils import *
 
-
+################################################
 # SPECIALISATION DES JOUEURS POUR LES TOURNOIS #	
+################################################
 
-# 1vs1#
+
+#################
+# 1vs1###########
+#################
+
 
 def j_1vs1(me):
 
@@ -73,7 +78,9 @@ def j_1vs1(me):
 J_1vs1_Strat = SousStrat(j_1vs1)
 
 
-#2vs2#
+#################
+# 2vs2###########
+#################
 
 def attack_2vs2(me):
 	#print"Attack2vs2"
@@ -101,6 +108,7 @@ def attack_2vs2(me):
 
 Attack2vs2_Strat = SousStrat(attack_2vs2)
 
+
 def aideur_2vs2(me):
 	#print "AIdeur"
 	if me.ball_pos.x<GAME_WIDTH/4:
@@ -112,30 +120,32 @@ def aideur_2vs2(me):
 
 Aideur2vs2_Strat = SousStrat(aideur_2vs2)
 
-"""
-a essayer
-"""
+
 
 def poly_2vs2(me):
 	if me.ball_pos.x<GAME_WIDTH/2:
+		
 		if dist(me.my_pos,me.ball_pos)<dist(me.pos_equi_pr_ball,me.ball_pos):
+			
 			return gardien(me)
 		else:
+			
 			return demarquer(me)
 	else:
+		
 		if dist(me.my_pos,me.ball_pos)<dist(me.pos_equi_pr_ball,me.ball_pos):
-
+			
 			if ((me.a_la_balle==1) and (dist(me.ball_pos,me.pos_adv_pr_ball)<10)):
-						
+					
 				return passe(me)
 			else:
+				
 				return j_1vs1(me)
 		else:
+				
 				return demarquer(me)
 
-Poly2vs2_Strat = poly_2vs2
-
-
+Poly2vs2_Strat = SousStrat (poly_2vs2)
 
 
 def rien(me):
@@ -143,36 +153,56 @@ def rien(me):
 	return SoccerAction(Vector2D(),Vector2D())
 
 Rien_Strat = SousStrat(rien)	
-					
 
 
 
+#################
+# 4vs4###########
+################# 
 
-
-
-# 4vs4#
-"""def d_4vs4(me):
-
-	if (me.ball_pos.x>GAME_WIDTH/2):
-		return def_pos_defaut(me)
-
+def defenseur_4vs4(me):
+	if me.ball_pos.x>=GAME_WIDTH/2:
+		return me.placerEntre_A_B_x(me.ball_pos,me.but_pos,GAME_WIDTH/4)
 	else:
-		if me.a_la_balle==0: 
-			# Personne n'a la balle
+		if me.a_la_balle==2:
+			return demarquer_def(me)	
 
-				if (me.qui_entre(me.ball_pos,me.pos_equi_plus_proche)==False):
-				# Personne entre moi et equipier plus proche
+		if me.a_la_balle==0:
+			return me.courir_vers(me.ball_pos)
+		
+		if me.a_la_balle==3:
+			return me.degager
 
-					# Je shoote vers equipier
-					return me.shoot_vers(me.pos_equi_plus_proche)
+		if me.a_la_balle==1:
+			if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
+				return passe(me)
+			else:
+				return me.degager
 
-				else:
-					return me.shoot_degager
-		if me.a_la_balle==
-					
-"""		
-					
-	
+
+Def4vs4_Strat = SousStrat(defenseur_4vs4)
+			
+
+def attack_4vs4(me):
+	if me.ball_pos.x>=GAME_WIDTH/2:
+		return attack_2vs2(me)
+	else:
+		return me.placerEntre_A_B_x(me.ball_pos,me.but_pos_adv,3*GAME_WIDTH/4)
+
+Attack4vs4_Strat = SousStrat(attack_4vs4)
+
+
+def milieu_4vs4(me):
+	if me.ball_pos.x>GAME_WIDTH/2:
+		return aideur_2vs2(me)
+	else:
+		return defenseur_4vs4(me)
+
+Milieu4vs4_Strat = SousStrat(milieu_4vs4)
+
+
+
+
 """
 
 #Test_Strat = SousStrat(test)

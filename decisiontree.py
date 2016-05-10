@@ -32,10 +32,35 @@ def gen_features(state,id_team,id_player):
    
     #d_me_butadv = dist(Etat.my_pos,Etat.but_pos_adv)
 
-    return [diff_d_ButButadv_ball,diff_d_MeAdv_ball,qui_a_ball]
+    dans_zone_tir= Etat.dans_zone_de_tir
+
+    return [diff_d_ButButadv_ball,diff_d_MeAdv_ball,qui_a_ball,dans_zone_tir]
 
 #Nom des features (optionel)
-gen_features.names = ["Dis moi-ball - Dis adv-ball","Dis ball-but - Dist ball-butadv ","qui a ball"]
+gen_features.names = ["Dis moi-ball - Dis adv-ball","Dis ball-but - Dist ball-butadv ","qui a ball", "dans zone tir"]
+
+
+def gen_features_gardien(state,id_team,id_player):
+	Etat=MyState(state,id_team,id_player)
+	
+	d_me_ball	 	= dist(Etat.ball_pos,Etat.my_pos)
+    	d_ball_advproche_ball   = dist(Etat.ball_pos,Etat.pos_adv_pr_ball) 
+    	diff_d_MeAdv_ball = d_me_ball - d_ball_advproche_ball
+
+   	d_but_ball		= dist(Etat.ball_pos,Etat.but_pos)
+    	
+    	qui_a_ball   	= Etat.a_la_balle # renvoie 0,1,2 ou 3
+    	d_but_advproche_but     = dist(Etat.but_pos,Etat.pos_adv_pr_but)
+   
+    	#d_me_butadv = dist(Etat.my_pos,Etat.but_pos_adv)
+
+    	dans_zone_tir= Etat.dans_zone_de_tir
+
+    	return [diff_d_ButButadv_ball,diff_d_MeAdv_ball,qui_a_ball,dans_zone_tir]
+
+gen_features_gardien.names = [
+
+	
 
 # CAN CREATE OTHER GEN FEATURES FUNCTIONS AND HAVE TO CHANGE CERTAIN PARAMETERS (voir plus bas )
 
@@ -87,7 +112,7 @@ if __name__=="__main__":
     if len(sys.argv)>1:
         prefix = sys.argv[1]
     ## constitution de la base d'entrainement et des labels
-    train,labels = build_apprentissage(prefix+".exp",gen_features)  # ICI CHOISIR LES FNCTS GEN FEATURES VOULUES
+    train,labels = build_apprentissage(prefix+".exp",gen_features_gardien)  # ICI CHOISIR LES FNCTS GEN FEATURES VOULUES
     ## apprentissage de l'arbre
     tree = apprendre_arbre(train,labels)
     #print affiche_arbre(tree)

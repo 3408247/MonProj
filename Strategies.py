@@ -61,7 +61,7 @@ def suivre_balle(me):
 	return me.courir_vers(point)
 
 
-### SE DEMARQUER: BIEN SE POSITIONNER POUR RECEVOIR UNE PASSE ###
+### SE DEMARQUER: BIEN SE POSITIONNER POUR RECEVOIR UNE PASSE TOUT EN ETANT PROCHE DES BUTS ADV ###
 def demarquer(me):
 	v_ball_but= me.but_pos_adv-me.ball_pos
 	angle_ball_but = v_ball_but.angle
@@ -84,23 +84,87 @@ def demarquer(me):
 
 	# Parmi ces points trouves, chercher celui qui est le plus loin de l'adv le plus proche de moi	
 	d_max=0
+	d_min=999
+	found=False
 	for good_point in liste_points:
 		d=dist(good_point,me.pos_adv_pr_moi)
 		if d>d_max:
 			d_max=d
 			chosen_point=good_point
-	
+
+			dd=dist(good_point,me.but_pos_adv)
+			if dd<d_min:
+				d_min=dd
+				better_point=good_point       # better_point sera le point qui est le plus proche des buts adv
+				found=True
+	if (found):
+		if dist(chosen_point,me.but_pos_adv)<dist(better_point,me.but_pos_adv):
+			return me.courir_vers(chosen_point)
+		else:
+			return me.courir_vers(better_point)	
+
 	return me.courir_vers(chosen_point)
 
 Demarquer_Strat = SousStrat(demarquer)
 
 
+
+### DEMARQUER EN DEFENSE : COMME DEMARQUER MAIS TOUT EN ETAT PROCHE DE MES BUTS ###
+def demarquer_def(me):
+	v_ball_but= me.but_pos_adv-me.ball_pos
+	angle_ball_but = v_ball_but.angle
+	
+	# (pos_x, pos_y) : position entre ball et but se trouvant a une distance de RAYON de la balle
+	pos_x= (math.cos(angle_ball_but)*RAYON) + me.ball_pos.x
+	pos_y= (math.sin(angle_ball_but)*RAYON) + me.ball_pos.y
+
+	chosen_point=Vector2D(pos_x,pos_y)
+
+	# Chercher un/des points autour de (pos_x, pos_y) tel que il n'y ait pas d'adv entre ball et ce point
+	liste_points=[]  # Liste de Vector2D
+
+	for deltax in range (-7,7):
+		for deltay in range (-7,7):
+			point=Vector2D(x=pos_x+deltax,y=pos_y+deltay)
+			if me.obs_entre(point,me.ball_pos)==False:
+				good_point=point
+				liste_points.append(good_point)
+
+	# Parmi ces points trouves, chercher celui qui est le plus loin de l'adv le plus proche de moi	
+	d_max=0
+	d_min=999
+	found=False
+	for good_point in liste_points:
+		d=dist(good_point,me.pos_adv_pr_moi)
+		if d>d_max:
+			d_max=d
+			chosen_point=good_point
+
+			dd=dist(good_point,me.but_pos)
+			if dd<d_min:
+				d_min=dd
+				better_point=good_point       # better_point sera le point qui est le plus proche des buts adv
+				found=True
+	if (found):
+		if dist(chosen_point,me.but_pos)<dist(better_point,me.but_pos):
+			return me.courir_vers(chosen_point)
+		else:
+			return me.courir_vers(better_point)	
+
+	return me.courir_vers(chosen_point)
+	
+
+
 ### FAIRE UNE PASSE ###
 def passe(me):
+	res=SoccerAction(Vector2D(),Vector2D())
+	res.name="passe"
 	if me.test_peut_shooter:
-		return me.shoot_vers(me.pos_eq_pr_ball)
+		res=me.shoot_vers_norm(me.pos_equi_pr_ball,3.0)
+		return res
 	else:
-		return me.courir_vers_ball2
+		res=me.courir_vers_ball2
+		return res
 
 #def chercher(me):
 	
@@ -176,15 +240,21 @@ def def_mouvement_et_shoot(me):
 ### GARDIEN ###
 
 def protect_cage(me):
+	res=SoccerAction(Vector2D(),Vector2D())
+	res.name="protect cage"
 	if me.test_peut_shooter:
-		return me.degager
+		res=me.degager
+		return res
 	else:
 		if me.ball_pos.y>me.but_pos.y+GAME_GOAL_HEIGHT/2:
-			return me.courir_vers(Vector2D(x=0.5,y=me.but_pos.y+GAME_GOAL_HEIGHT/2))
+			res=me.courir_vers(Vector2D(x=0.5,y=me.but_pos.y+GAME_GOAL_HEIGHT/2))
+			return res
 		if me.ball_pos.y<me.but_pos.y-GAME_GOAL_HEIGHT/2:
-			return me.courir_vers(Vector2D(x=0.5,y=me.but_pos.y-GAME_GOAL_HEIGHT/2))
+			res=me.courir_vers(Vector2D(x=0.5,y=me.but_pos.y-GAME_GOAL_HEIGHT/2))
+			return res
 		else:
-			return me.courir_vers(Vector2D(x=0.5,y=me.ball_pos.y))
+			res=me.courir_vers(Vector2D(x=0.5,y=me.ball_pos.y))
+			return res
 
 def alligne_demi_cercle(me):
 	vecteur=me.ball_pos-(me.but_pos)
@@ -195,8 +265,11 @@ def alligne_demi_cercle(me):
 	
 	pos_x=me.but_pos.x+ux
 	pos_y=me.but_pos.y+uy
+	
+	res=me.courir_vers(Vector2D(pos_x,pos_y))
+	res.name="alligne sur demi"
 
-	return me.courir_vers(Vector2D(pos_x,pos_y))
+	return res
 
 
 def gardien_mouvement(me):

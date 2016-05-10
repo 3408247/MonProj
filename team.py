@@ -28,15 +28,15 @@ import os
 Priya_1a = SoccerTeam("Priya_1a",[Player("a",J_1vs1_Strat)])
 Priya_1b =SoccerTeam("Priya_1b",[Player("b",Rien_Strat)])
 
-Priya_2a = SoccerTeam("Priya_2a",[Player("attack",Attack2vs2_Strat),Player("Aideur",Aideur2vs2_Strat)])
-Priya_2b =SoccerTeam("Priya_2b",[Player("att",Attack2vs2_Strat),Player("Gard",Gardien_Strat)])
+Priya_2a = SoccerTeam("Priya_2a",[Player("aideur",Aideur2vs2_Strat),Player("Attack",Attack2vs2_Strat)])
+Priya_2b =SoccerTeam("Priya_2b",[Player("att",Attack2vs2_Strat),Player("def",Def4vs4_Strat)])
 #Priya_2bb = SoccerTeam("Priya_2bb",[Player("k1",FonceurStrat),Player("k2",G_2vs2)])
-"""
-#Priya_4a = SoccerTeam("Priya_4a",[Player("MILIEU",J_2vs2_Strat),Player("GARDIENa",G_2vs2),Player("Demarquer",Demarquer_Strat),Player("1DEFa",DefStrat)])
+
+Priya_4a = SoccerTeam("Priya_4a",[Player("MILIEU",Milieu4vs4_Strat),Player("GARDIEN",Gardien_Strat),Player("Attack",Attack4vs4_Strat),Player("Def",Def4vs4_Strat)])
 
 #Priya_4b =SoccerTeam("Priya_4b",[Player("1ATTb",FonceurStrat),Player("GARDIENb",G_2vs2),Player("2ATTb",FonceurStrat),Player("1DEFb",DefStrat)])
 
-
+"""
 ### Pour le tournoi
 team1 = SoccerTeam("team1",[Player("f1",J_1vs1_Strat)])
 team2 = SoccerTeam("team2",[Player("ATT1",J_2vs2_Strat_bis),Player("GARD",Gard_shoot_but)])
@@ -51,5 +51,9 @@ team4 = SoccerTeam("team4",[Player("ATT1",FonceurStrat),Player("gk2",Gard_shoot_
 #teamIA = SoccerTeam
 
 """
+
+
+
+
 
 

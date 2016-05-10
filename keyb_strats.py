@@ -30,6 +30,11 @@ def dribbler_vers_but(me):
 	else:	
 		return me.courir_vers_ball2
 
+def dribbler_vers_zone_tir(me):
+	if (me.dans_zone_de_tir==True):
+		print "DANS ZONE DE TIR"
+	return me.dribbler_vers(me.zone_tir)
+
 def esquive_en_haut(me):
 	s=me.but_pos_adv-me.ball_pos
 	s.norm=0.7
@@ -55,7 +60,12 @@ def piquer(me):
 	return me.piquer_balle
 
 def degager(me):
-	return me.degager
+	res=me.degager
+	res.name="degager"
+	return res
+
+Strat_deg= SousStrat(degager)
+
 
 def pos_defaut(me):
 	return me.placerEntre_A_B_x(me.ball_pos,me.but_pos,GAME_WIDTH/4)
@@ -65,41 +75,24 @@ def suivre_balle(me):
 
 def gardien(me):
 	return gardien_mouvement(me)
+
+
+Strat_protect= SousStrat(protect_cage)
+Strat_passe = SousStrat(passe)
+Strat_allign= SousStrat(alligne_demi_cercle)
 	
 
-keystrat_test= KeyboardStrategy()
+KBS_Gard= KeyboardStrategy()
+KBS_Gard.add("x", Strat_allign)
+KBS_Gard.add("c", Strat_protect)
 
-#Strat_posdef = SousStrat(pos_defaut)
-#keystrat_test.add("a",Strat_posdef)
-
-
-
-Strat_shoot_nord = SousStrat(shoot_nord)
-keystrat_test.add("y",Strat_shoot_nord)
-
-Strat_shoot_sud = SousStrat(shoot_sud)
-keystrat_test.add("h",Strat_shoot_sud)
+KBS_Gard.add("s", Strat_passe)
+KBS_Gard.add("d", Strat_deg)
 
 
-Strat_dribble_but = SousStrat(dribbler_vers_but)
-keystrat_test.add("d",Strat_dribble_but)
-
-Strat_esq_haut= SousStrat(esquive_en_haut)
-keystrat_test.add("u",Strat_esq_haut)
-
-Strat_esq_bas= SousStrat(esquive_en_bas)
-keystrat_test.add("j",Strat_esq_bas)
-
-Strat_pos_gard = SousStrat(gardien)
-keystrat_test.add("s",Strat_pos_gard)
-
-Strat_degager = SousStrat(degager)
-keystrat_test.add("f",Strat_degager)
-
-Strat_piquer = SousStrat(piquer)
-keystrat_test.add("b",Strat_piquer)
 
 
+"""
 KBS = KeyboardStrategy()
 Strat_demarquer= SousStrat(demarquer)
 KBS.add("d",Strat_demarquer)
@@ -107,6 +100,6 @@ KBS.add("d",Strat_demarquer)
 Strat_deg= SousStrat(degager)
 KBS.add("e",Strat_deg)
 
-
+"""
 
 

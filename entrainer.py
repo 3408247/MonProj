@@ -18,14 +18,12 @@ if __name__=="__main__":
         prefix = sys.argv[1]
 
 
-    team_keyb = SoccerTeam("team_keyb",[Player("KBs",keystrat_test),Player("GARD2",G_2vs2)])
-
-    team_bad = SoccerTeam("team_bad",[Player("J2",DefStrat),Player("GARD",Gard_shoot_but)])  
-
-    team_keyb1 = SoccerTeam("team_keyb",[Player("KBs",keystrat_test)])
-    team_bad1 = SoccerTeam("team_bad",[Player("J1",J_1vs1_Strat)])  
 
 
-    match = SoccerMatch(team_bad1,team_keyb1,2000)
+    team_keyb = SoccerTeam("team_keyb",[Player("KBGard",KBS_Gard),Player("joueur",Attack2vs2_Strat)])
+    team_bad = SoccerTeam("team_bad",[Player("aideur",Aideur2vs2_Strat),Player("Attack",Attack2vs2_Strat)])  
+
+
+    match = SoccerMatch(team_keyb,team_bad,2000)
     show(match)
-    keystrat_test.write(prefix+".exp",False)
+    KBS_Gard.write(prefix+".exp",True)

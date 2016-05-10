@@ -12,7 +12,7 @@ team1a =SoccerTeam("team1a",[Player("Gard",Gardien_Strat)])
 """
 
 
-match = SoccerMatch(Priya_1a, Priya_1b)
+match = SoccerMatch(Priya_4a, Priya_4a)
 #SoccerMatch.save(match,"fichier.match")
 soccersimulator.show(match)
 
@@ -20,7 +20,7 @@ soccersimulator.show(match)
 
 #soccersimulator.show(match2)
 
-
+"""
 print "STRATS"
 print match.strats
 
@@ -32,3 +32,6 @@ print match.states
 
 print "LENGTH"
 print len(match.states)
+"""
+
+
