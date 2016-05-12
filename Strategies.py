@@ -178,8 +178,10 @@ def passe(me):
 def fonceur(me):
 	#print "entre effectivement dans fonceur strat"
 	if me.test_peut_shooter:
+		print "FONCEUR EN EFFET CHOISI"
 		return me.shoot_vers(me.but_pos_adv)
 	else:
+		print "FONCEUR EN EFFET CHOISI"
 		return me.courir_vers_ball
 
 Fonceur_Strat = SousStrat(fonceur)
@@ -219,21 +221,24 @@ def def_pos_defaut(me):
 
 def def_mouvement_et_shoot(me):
 	#print me.state._configs[(me.key[0],me.key[1])]._last_shoot
-
+	print"IDT ET IDP",me.key[0],me.key[1]
+	res=SoccerAction(Vector2D(),Vector2D())
+	res.name="nouveauS"
 	if (me.ball_pos.x<GAME_WIDTH/2):
 	
 
 		if me.test_peut_shooter:
 		
-			
-			return me.shoot_degager
+			res=me.shoot_degager
+			return res
 		else:
-									
-			return me.courir_vers_ball
+			res=me.courir_vers_ball						
+			return res
 
 	else:	
-		
-		return def_pos_defaut(me)
+		res=def_pos_defaut(me)
+		res.name="nouveauSs"
+		return res
 
 
 
@@ -299,7 +304,7 @@ def gardien_shoot_vers_centre(me):
 
 def gardien(me):	
 	
-	#print "GAAAARDDDDDIIIIIIIIEEEEEEEENNNNN"
+	print "GAAAARDIEN EN FEET CHOISIE"
 	if dist(me.ball_pos,me.but_pos)<DCERCLE_RAYON+5:
 		#print "La balle est proche de mes buts"
 	
@@ -384,6 +389,16 @@ def gardien(me):
 
 Gardien_Strat= SousStrat(gardien)
 
+
+def euh(me):
+	print "idt, idp: ", me.key[0],me.key[1]
+	
+	if me.ball_pos.x>=GAME_WIDTH/2:
+		return fonceur(me)
+	else:
+		return gardien(me)
+
+Euh_Strat = SousStrat(eval('euh'))
 
 
 	

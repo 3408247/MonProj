@@ -104,8 +104,8 @@ def prendre_act(etatbrut_courant,idt,idp,nom_fichier_dic):
 		if valeur_associe>=valeur_max:
 			nom_action_choisie=strat_name        # CHOISIR LACTION AYANT VALEUR MAX  #eg "fonceur"  
 			valeur_max=valeur_associe
-	print "Au niveau prendre_act nom action max est", nom_action_choisie, " fin de prendre_act"
-	return nom_action_choisie
+	print "Au niveau prendre_act nom action max est", str(nom_action_choisie), " fin de prendre_act"
+	return str(nom_action_choisie)
 
 ##############################################################################################################
 
@@ -198,6 +198,7 @@ def maj(le_match,idt,idp,nom_fichier_dic):
 
 	etatsbruts_allsteps=le_match.states
 	joueur_stratstaken = le_match.strats 
+	print "joueur strats taken", joueur_stratstaken
 
 	scenarios=[]
 
@@ -208,14 +209,21 @@ def maj(le_match,idt,idp,nom_fichier_dic):
 	
 	step_num=0
 	for step_brut in etatsbruts_allsteps:
+
+		print "STEP NUM",step_num
 		liste_etatsdis.append(discretisation(step_brut,idt,idp))
 
 		required_step=joueur_stratstaken[step_num]
-		required_team=required_step[idt]
+		print "REquired strats", required_step
 		
+		required_team=required_step[idt-1]
+		print "required team", required_team
 		player_action_taken= required_team[idp]
+		print "ply action taken", player_action_taken
 
 		scenarios.append((step_brut,player_action_taken))
+
+		step_num=step_num+1
 
 
 	f_ouvert_lec= open(nom_fichier_dic,"r")
