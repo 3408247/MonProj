@@ -54,13 +54,22 @@ def gen_features_gardien(state,id_team,id_player):
    
     	#d_me_butadv = dist(Etat.my_pos,Etat.but_pos_adv)
 
-    	dans_zone_tir= Etat.dans_zone_de_tir
+    	#dans_zone_tir= Etat.dans_zone_de_tir
 
-    	return [diff_d_ButButadv_ball,diff_d_MeAdv_ball,qui_a_ball,dans_zone_tir]
+    	return [diff_d_MeAdv_ball,d_but_ball,d_but_advproche_but]
 
-gen_features_gardien.names = [
+gen_features_gardien.names = ["Dis_moiball - Dis_advprball","Dis_ballbut","Dis_but_advprbut"] 
 
+"""
+def gen_features_attack4vs4(state,id_team,id_player):
+	Etat=MyState(state,id_team,id_player)
 	
+	
+
+    	return [diff_d_MeAdv_ball,d_but_ball,d_but_advproche_but]
+
+#gen_features_attack4vs4.names = 
+"""	
 
 # CAN CREATE OTHER GEN FEATURES FUNCTIONS AND HAVE TO CHANGE CERTAIN PARAMETERS (voir plus bas )
 
@@ -120,7 +129,7 @@ if __name__=="__main__":
     cPickle.dump(tree,file(prefix+".pkl","w"))
     ## exporter l'arbre en .dot
     with file(prefix+".dot","w") as fn:
-        export_graphviz(tree,fn,class_names = tree.classes_,feature_names=getattr(gen_features,"names",None),
+        export_graphviz(tree,fn,class_names = tree.classes_,feature_names=getattr(gen_features_gardien,"names",None),
                         filled = True,rounded=True)
     ## puis utiliser ou dot -Tpdf -o tree.pdf tree.dot pour convertir
     ## ou aller sur http://www.webgraphviz.com/ et copier le fichier .dot

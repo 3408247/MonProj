@@ -9,55 +9,23 @@ from StratsSpecialise import*
 from Outils import *
 
 
-def shoot_nord(me):
-	return me.shoot_but_nord
 
-def shoot_sud(me):
-	return me.shoot_but_sud
 
 def shoot_malin(me):
 	return me.shoot_malin
 
-def shoot_centre(me):
-	return me.shoot_vers_norm(me.but_pos_adv,6.0)
-
-def dribbler_vers_but(me):
-	s=me.but_pos_adv-me.ball_pos
-	s.norm=0.5
-	
-	if me.test_peut_shooter:
-		return me.courir_vers_ball2+SoccerAction(Vector2D(),s)
-	else:	
-		return me.courir_vers_ball2
-
-def dribbler_vers_zone_tir(me):
-	if (me.dans_zone_de_tir==True):
-		print "DANS ZONE DE TIR"
-	return me.dribbler_vers(me.zone_tir)
-
-def esquive_en_haut(me):
-	s=me.but_pos_adv-me.ball_pos
-	s.norm=0.7
-
-	if me.test_peut_shooter:
-		s.angle=s.angle+0.6
-		return SoccerAction(Vector2D(),s)
+def demarque(me):
+	if me.ball_pos.x>=GAME_WIDTH/2:
+		return demarquer(me)
 	else:
-		return me.courir_vers_ball2
+		return me.placerEntre_A_B_x(me.ball_pos,me.but_pos_adv,3*GAME_WIDTH/4)
 
-def esquive_en_bas(me):
-	s=me.but_pos_adv-me.ball_pos
-	s.norm=0.7
-
-	if me.test_peut_shooter:
-		s.angle=s.angle-0.6
-		return SoccerAction(Vector2D(),s)
+def drib(me):
+	if me.dans_zone_de_tir:
+		return me.dribbler_vers(me.but_pos_adv)
 	else:
-		return me.courir_vers_ball2
+		return me.dribbler_vers(me.zone_tir)
 
-
-def piquer(me):
-	return me.piquer_balle
 
 def degager(me):
 	res=me.degager
@@ -77,10 +45,34 @@ def gardien(me):
 	return gardien_mouvement(me)
 
 
+#######################################
+
+KBS_Milieu = KeyboardStrategy()
+KBS_Milieu.add("d",Def4vs4_Strat)
+KBS_Milieu.add("g",Attack4vs4_Strat)
+
+
+#######################################
+
+Strat_Demarque= SousStrat(demarque)
+Strat_Drib = SousStrat(drib)
+Strat_Passe = SousStrat(passe)
+Strat_Shoot = SousStrat(shoot_malin)
+
+
+
+KBS_att4vs4 = KeyboardStrategy()
+KBS_att4vs4.add("b",Strat_Demarque)
+KBS_att4vs4.add("c",Strat_Passe)
+KBS_att4vs4.add("h",Strat_Drib)
+KBS_att4vs4.add("d",Strat_Shoot)
+
+
+########################################	
 Strat_protect= SousStrat(protect_cage)
 Strat_passe = SousStrat(passe)
 Strat_allign= SousStrat(alligne_demi_cercle)
-	
+
 
 KBS_Gard= KeyboardStrategy()
 KBS_Gard.add("x", Strat_allign)
@@ -89,17 +81,10 @@ KBS_Gard.add("c", Strat_protect)
 KBS_Gard.add("s", Strat_passe)
 KBS_Gard.add("d", Strat_deg)
 
+#######################################
 
 
 
-"""
-KBS = KeyboardStrategy()
-Strat_demarquer= SousStrat(demarquer)
-KBS.add("d",Strat_demarquer)
 
-Strat_deg= SousStrat(degager)
-KBS.add("e",Strat_deg)
-
-"""
 
 

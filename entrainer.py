@@ -20,10 +20,10 @@ if __name__=="__main__":
 
 
 
-    team_keyb = SoccerTeam("team_keyb",[Player("KBGard",KBS_Gard),Player("joueur",Attack2vs2_Strat)])
-    team_bad = SoccerTeam("team_bad",[Player("aideur",Aideur2vs2_Strat),Player("Attack",Attack2vs2_Strat)])  
+    team_keyb = SoccerTeam("team_keyb",[Player("gard",Gardien_Strat),Player("atta",Attack4vs4_Strat),Player("milieu",Milieu4vs4_Strat),Player("def",Def4vs4_Strat)])
+    team_bad = SoccerTeam("team_bad",[Player("atta",Attack4vs4_Strat),Player("def",Def4vs4_Strat),Player("gard",Gardien_Strat),Player("KBS_M",KBS_Milieu)])  
 
 
     match = SoccerMatch(team_keyb,team_bad,2000)
     show(match)
-    KBS_Gard.write(prefix+".exp",True)
+    KBS_att4vs4.write(prefix+".exp",True)

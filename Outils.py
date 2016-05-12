@@ -114,7 +114,7 @@ class MyState(object):
     @property
     def courir_vers_ball(self):
 	ball = deepcopy(self.state.ball)
-	for i in range(0,5):
+	for i in range(0,1):
 		ball.next(Vector2D())
 
 	return self.courir_vers(ball.position)
@@ -266,7 +266,8 @@ class MyState(object):
     def equi_pr_posobj(self,posobj):   #Vector2D (position d'un obj) --> Player
 	d_min=999
 	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])]
-
+	
+	lui=None
 	for p in liste_equipiers:
 		pl=self.state.player(p[0],p[1])
 		d=dist(pl.position,posobj)
@@ -429,9 +430,13 @@ class MyState(object):
 
 		else: #il est derriere moi
 
-			if adv.vitesse.dot(moi.vitesse)>0: # On a les meme directions de vitesse; il s'approche de derriere
+			if adv.vitesse.dot(moi.vitesse)>0 or dist(self.ball_pos,self.pos_adv_pr_ball)<5: # On a les meme directions de vitesse; il s'approche de derriere
+				if (self.equi_pr_posobj(self.ball_pos)!=None):
+					if dist(self.ball_pos,self.pos_equi_pr_ball)<17:
+						return self.shoot_vers_norm(self.pos_equi_pr_ball,3.0)
+				else:
 			
-				s.norm=s.norm+0.1    # shooter un peu plus fort pour l'esquiver    ( cas 1 vs 1 )      TOUT REDEFINIR SI ON VOULAIT FAIRE PASSE ICI ??
+					s.norm=s.norm+0.1    # shooter un peu plus fort pour l'esquiver    ( cas 1 vs 1 )      TOUT REDEFINIR SI ON VOULAIT FAIRE PASSE ICI ??
 
 	return SoccerAction(Vector2D(),s)
 	

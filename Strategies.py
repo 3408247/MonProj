@@ -152,7 +152,8 @@ def demarquer_def(me):
 			return me.courir_vers(better_point)	
 
 	return me.courir_vers(chosen_point)
-	
+
+Demarquerdef_Strat= SousStrat(demarquer_def)	
 
 
 ### FAIRE UNE PASSE ###
@@ -304,7 +305,7 @@ def gardien_shoot_vers_centre(me):
 
 def gardien(me):	
 	
-	print "GAAAARDIEN EN FEET CHOISIE"
+	#print "GAAAARDIEN EN FEET CHOISIE"
 	if dist(me.ball_pos,me.but_pos)<DCERCLE_RAYON+5:
 		#print "La balle est proche de mes buts"
 	

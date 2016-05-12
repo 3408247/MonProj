@@ -13,9 +13,9 @@ from Outils import *
 ################################################
 
 
-#################
-# 1vs1###########
-#################
+#################################
+# 1vs1 ##########################
+#################################
 
 
 def j_1vs1(me):
@@ -43,7 +43,7 @@ def j_1vs1(me):
 			if me.dans_zone_de_tir:
 		#		print"dans zone de tir"
 
-				if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/4):  #JE SUIS TRES PRES DES BUTS ADV
+				if (dist(me.ball_pos,me.but_pos_adv)<GAME_WIDTH/5):  #JE SUIS TRES PRES DES BUTS ADV
 		#			print "Tres proche des buts adv"
 					if dist(me.ball_pos,me.pos_adv_pr_ball)<12:   # SI ADV EST PROCHE/S'APPROCHE  DE MOI
 		#				print "adv s'approche de moi"
@@ -78,9 +78,9 @@ def j_1vs1(me):
 J_1vs1_Strat = SousStrat(j_1vs1)
 
 
-#################
-# 2vs2###########
-#################
+#################################
+# 2vs2 ##########################
+#################################
 
 def attack_2vs2(me):
 	#print"Attack2vs2"
@@ -156,9 +156,9 @@ Rien_Strat = SousStrat(rien)
 
 
 
-#################
-# 4vs4###########
-################# 
+#################################
+# 4vs4 ##########################
+#################################
 
 def defenseur_4vs4(me):
 	if me.ball_pos.x>=GAME_WIDTH/2:
@@ -174,10 +174,10 @@ def defenseur_4vs4(me):
 			return me.degager
 
 		if me.a_la_balle==1:
-			if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
-				return passe(me)
-			else:
-				return me.degager
+			#if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
+				#return passe(me)
+			#else:
+			return me.degager
 
 
 Def4vs4_Strat = SousStrat(defenseur_4vs4)
