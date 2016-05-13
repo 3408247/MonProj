@@ -8,14 +8,14 @@ from Strategies import *
 
 from Outils import *
 
-################################################
-# SPECIALISATION DES JOUEURS POUR LES TOURNOIS #	
-################################################
+##################################################################################################################
+# SPECIALISATION DES JOUEURS POUR LES EQUIPES ####################################################################	
+##################################################################################################################
 
 
-#################################
-# 1vs1 ##########################
-#################################
+###################################################################################################
+# 1vs1 ############################################################################################
+###################################################################################################
 
 
 def j_1vs1(me):
@@ -78,9 +78,9 @@ def j_1vs1(me):
 J_1vs1_Strat = SousStrat(j_1vs1)
 
 
-#################################
-# 2vs2 ##########################
-#################################
+###################################################################################################
+# 2vs2 ############################################################################################
+###################################################################################################
 
 def attack_2vs2(me):
 	#print"Attack2vs2"
@@ -97,7 +97,10 @@ def attack_2vs2(me):
 		#print "sa moitie"
 		if dist(me.my_pos,me.ball_pos)<dist(me.pos_equi_pr_ball,me.ball_pos):
 			#print "je fais j1vs1"
-			if ((me.a_la_balle==1) and (dist(me.ball_pos,me.pos_adv_pr_ball)<10)):
+
+
+			pos_eq=me.pos_equi_pr_ball
+			if ((me.a_la_balle==1) and (dist(me.ball_pos,me.pos_adv_pr_ball)<10)) and (pos_eq.x>me.my_pos.x):  # S'il un adversaire s'approche et qu'un equipier est devant moi
 				return passe(me)
 			else:
 				return j_1vs1(me)
@@ -148,17 +151,10 @@ def poly_2vs2(me):
 Poly2vs2_Strat = SousStrat (poly_2vs2)
 
 
-def rien(me):
-	#print "rentre effectivement dans rien strat"
-	return SoccerAction(Vector2D(),Vector2D())
 
-Rien_Strat = SousStrat(rien)	
-
-
-
-#################################
-# 4vs4 ##########################
-#################################
+###################################################################################################
+# 4vs4 ############################################################################################
+###################################################################################################
 
 def defenseur_4vs4(me):
 	if me.ball_pos.x>=GAME_WIDTH/2:
@@ -170,14 +166,9 @@ def defenseur_4vs4(me):
 		if me.a_la_balle==0:
 			return me.courir_vers(me.ball_pos)
 		
-		if me.a_la_balle==3:
+		if me.a_la_balle==3 or me.a_la_balle==1:
 			return me.degager
 
-		if me.a_la_balle==1:
-			#if (me.obs_entre(me.ball_pos,me.pos_equi_pr_ball)==False):
-				#return passe(me)
-			#else:
-			return me.degager
 
 
 Def4vs4_Strat = SousStrat(defenseur_4vs4)
@@ -203,17 +194,15 @@ Milieu4vs4_Strat = SousStrat(milieu_4vs4)
 
 
 
-"""
-
-#Test_Strat = SousStrat(test)
-
-J_2vs2_Strat = SousStrat(j_2vs2)
-J_2vs2_Strat_bis= SousStrat(j_2vs2)
-Hello = SousStrat(j_2vs2)
-Hey = SousStrat(j_2vs2)
+###################################################################################################
+###################################################################################################
 
 
-"""
 
+def rien(me):
+	#print "rentre effectivement dans rien strat"
+	return SoccerAction(Vector2D(),Vector2D())
+
+Rien_Strat = SousStrat(rien)	
 
 

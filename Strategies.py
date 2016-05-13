@@ -40,28 +40,27 @@ class SousStrat(BaseStrategy):
 
         #print action
         return action
+
+###################################################################################################
+### FONCEUR #######################################################################################
+###################################################################################################
     
-### SUIVRE BALL ###
-
-def suivre_balle(me):
-	balle= me.state.ball
-	for i in range(0,5):
-		balle.next(Vector2D())
-
-	y_=balle.position.y
-	
-	if balle.position.x<=GAME_WIDTH/2:
-	 	x_=balle.position.x - 6
-   			
+def fonceur(me):
+	#print "entre effectivement dans fonceur strat"
+	if me.test_peut_shooter:
+		print "FONCEUR EN EFFET CHOISI"
+		return me.shoot_vers(me.but_pos_adv)
 	else:
-		x_=balle.position.x - 6
-   	
-    	
-	point=Vector2D(x=x_,y=y_)
-	return me.courir_vers(point)
+		print "FONCEUR EN EFFET CHOISI"
+		return me.courir_vers_ball
+
+Fonceur_Strat = SousStrat(fonceur)
 
 
+###################################################################################################
 ### SE DEMARQUER: BIEN SE POSITIONNER POUR RECEVOIR UNE PASSE TOUT EN ETANT PROCHE DES BUTS ADV ###
+###################################################################################################
+
 def demarquer(me):
 	v_ball_but= me.but_pos_adv-me.ball_pos
 	angle_ball_but = v_ball_but.angle
@@ -108,8 +107,10 @@ def demarquer(me):
 Demarquer_Strat = SousStrat(demarquer)
 
 
+###################################################################################################
+### DEMARQUER EN DEFENSE : COMME DEMARQUER MAIS TOUT EN ETAT PROCHE DE MES BUTS ###################
+###################################################################################################
 
-### DEMARQUER EN DEFENSE : COMME DEMARQUER MAIS TOUT EN ETAT PROCHE DE MES BUTS ###
 def demarquer_def(me):
 	v_ball_but= me.but_pos_adv-me.ball_pos
 	angle_ball_but = v_ball_but.angle
@@ -155,8 +156,10 @@ def demarquer_def(me):
 
 Demarquerdef_Strat= SousStrat(demarquer_def)	
 
+###################################################################################################
+### FAIRE UNE PASSE ###############################################################################
+###################################################################################################
 
-### FAIRE UNE PASSE ###
 def passe(me):
 	res=SoccerAction(Vector2D(),Vector2D())
 	res.name="passe"
@@ -167,90 +170,16 @@ def passe(me):
 		res=me.courir_vers_ball2
 		return res
 
-#def chercher(me):
-	
-
-
-
-
-### ATTAQUANT ###
-
-
-def fonceur(me):
-	#print "entre effectivement dans fonceur strat"
-	if me.test_peut_shooter:
-		print "FONCEUR EN EFFET CHOISI"
-		return me.shoot_vers(me.but_pos_adv)
-	else:
-		print "FONCEUR EN EFFET CHOISI"
-		return me.courir_vers_ball
-
-Fonceur_Strat = SousStrat(fonceur)
-
-"""
-#"me->objet state" faire me bouger et shooter vers but de l'opposant  print("Fonceur", me.shoot_vers_but_adv, me.state._configs[(me.key[0],me.key[1])]._last_shoot)
-
-def fonceur(me): 
-
-	if me.test_peut_shooter:
-		return me.shoot_vers(me.but_pos_adv)
-	else:
-	   	return me.courir_vers_ball
-"""
-def fonceur_pass(me):
-	#print(me.aller(me.ball_position))
-	#print(me.shoot_vers_equipier_proche())
-
-        if me.test_peut_shooter:
- 	   return me.shoot_vers_equi_proche
-
-	else:
-	   return me.aller(me.ball_pos)
-
-
-#Attaquant 1_VS_1 ou 2_VS_2
-
-
-
-### DEFENSEUR ###
-
-# 1_VS_1 #
-
-def def_pos_defaut(me):
-	return me.placerEntre_A_B_x(me.ball_pos,me.but_pos,GAME_WIDTH/4)
-	
-
-def def_mouvement_et_shoot(me):
-	#print me.state._configs[(me.key[0],me.key[1])]._last_shoot
-	print"IDT ET IDP",me.key[0],me.key[1]
-	res=SoccerAction(Vector2D(),Vector2D())
-	res.name="nouveauS"
-	if (me.ball_pos.x<GAME_WIDTH/2):
-	
-
-		if me.test_peut_shooter:
-		
-			res=me.shoot_degager
-			return res
-		else:
-			res=me.courir_vers_ball						
-			return res
-
-	else:	
-		res=def_pos_defaut(me)
-		res.name="nouveauSs"
-		return res
-
-
-
-### GARDIEN ###
+###################################################################################################
+### PROTEGER CAGE #################################################################################
+###################################################################################################
 
 def protect_cage(me):
 	res=SoccerAction(Vector2D(),Vector2D())
-	res.name="protect cage"
+	#res.name="protect cage"
 	if me.test_peut_shooter:
-		res=me.degager
-		return res
+		
+		return me.degager
 	else:
 		if me.ball_pos.y>me.but_pos.y+GAME_GOAL_HEIGHT/2:
 			res=me.courir_vers(Vector2D(x=0.5,y=me.but_pos.y+GAME_GOAL_HEIGHT/2))
@@ -261,6 +190,11 @@ def protect_cage(me):
 		else:
 			res=me.courir_vers(Vector2D(x=0.5,y=me.ball_pos.y))
 			return res
+
+
+###################################################################################################
+### ALLIGNER SUR DEMI CERCLE ######################################################################
+###################################################################################################
 
 def alligne_demi_cercle(me):
 	vecteur=me.ball_pos-(me.but_pos)
@@ -278,28 +212,10 @@ def alligne_demi_cercle(me):
 	return res
 
 
-def gardien_mouvement(me):
 
-	
-	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_CLOSE):
-		
-	 	if (dist(me.but_pos,me.ball_pos)<SEUIL_BALL_TOO_CLOSE):
-			
-			return me.courir_vers_ball
-		else:
-			
-			return alligne_demi_cercle(me)
-
-	return me.courir_vers(me.but_pos)
-
-
-
-def gardien_shoot_vers_centre(me):
-	if me.test_peut_shooter:
-		return me.degager
-
-	else:
-		return gardien_mouvement(me)
+###################################################################################################
+### GARDIEN COMPLET ###############################################################################
+###################################################################################################
 		
 
 
@@ -391,6 +307,12 @@ def gardien(me):
 Gardien_Strat= SousStrat(gardien)
 
 
+
+
+###################################################################################################
+###################################################################################################
+
+
 def euh(me):
 	print "idt, idp: ", me.key[0],me.key[1]
 	
@@ -402,10 +324,5 @@ def euh(me):
 Euh_Strat = SousStrat(eval('euh'))
 
 
-	
 
-FonceurStrat = SousStrat(fonceur)
-Gard_shoot_but = SousStrat(gardien_shoot_vers_centre)
-
-DefStrat = SousStrat(def_mouvement_et_shoot)
 

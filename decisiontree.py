@@ -56,9 +56,9 @@ def gen_features_gardien(state,id_team,id_player):
 
     	#dans_zone_tir= Etat.dans_zone_de_tir
 
-    	return [diff_d_MeAdv_ball,d_but_ball,d_but_advproche_but]
+    	return [d_me_ball,d_ball_advproche_ball,d_but_ball]
 
-gen_features_gardien.names = ["Dis_moiball - Dis_advprball","Dis_ballbut","Dis_but_advprbut"] 
+gen_features_gardien.names = ["Dis_moiball","Dis_advprocheball","Dis_butball"] 
 
 """
 def gen_features_attack4vs4(state,id_team,id_player):

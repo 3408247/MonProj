@@ -24,6 +24,23 @@ import os
 #TeamIA = SoccerTeam("teamIA",[Player("playerIA",IA_Strat),Player("GARD2",G_2vs2)])
 
 
+### Pour le tournoi
+team1 = SoccerTeam("team1",[Player("j1",J_1vs1_Strat)])
+team2 = SoccerTeam("team2",[Player("ATT",Attack2vs2_Strat),Player("Aid",Aideur2vs2_Strat)])
+team4 = SoccerTeam("team4",[Player("ATT",Attack4vs4_Strat),Player("Gard",Gardien_Strat),Player("Milieu",Milieu4vs4_Strat),Player("Def",Def4vs4_Strat)])
+
+
+
+##### IA DecisionTree
+#tree = cPickle.load(file("./tree.pkl"))
+#dic = {"dribbler": Strat_dribble,"shoot_sud":Strat_shoot_sud, "shoot_nord":Strat_shoot_nord}
+#treeIA = DTreeStrategy(tree,dic,gen_features)
+#playerIA = Player("IAtree",treeIA)
+#teamIA = SoccerTeam
+
+
+
+"""
 #### Mes tests
 Priya_1a = SoccerTeam("Priya_1a",[Player("a",J_1vs1_Strat)])
 Priya_1b =SoccerTeam("Priya_1b",[Player("b",Rien_Strat)])
@@ -35,23 +52,7 @@ Priya_2b =SoccerTeam("Priya_2b",[Player("att",Attack2vs2_Strat),Player("def",Def
 Priya_4a = SoccerTeam("Priya_4a",[Player("MILIEU",Milieu4vs4_Strat),Player("GARDIEN",Gardien_Strat),Player("Attack",Attack4vs4_Strat),Player("Def",Def4vs4_Strat)])
 
 #Priya_4b =SoccerTeam("Priya_4b",[Player("1ATTb",FonceurStrat),Player("GARDIENb",G_2vs2),Player("2ATTb",FonceurStrat),Player("1DEFb",DefStrat)])
-
 """
-### Pour le tournoi
-team1 = SoccerTeam("team1",[Player("f1",J_1vs1_Strat)])
-team2 = SoccerTeam("team2",[Player("ATT1",J_2vs2_Strat_bis),Player("GARD",Gard_shoot_but)])
-team4 = SoccerTeam("team4",[Player("ATT1",FonceurStrat),Player("gk2",Gard_shoot_but),Player("ATT2",FonceurStrat),Player("DEF1",DefStrat)])
-
-
-##### IA DecisionTree
-#tree = cPickle.load(file("./tree.pkl"))
-#dic = {"dribbler": Strat_dribble,"shoot_sud":Strat_shoot_sud, "shoot_nord":Strat_shoot_nord}
-#treeIA = DTreeStrategy(tree,dic,gen_features)
-#playerIA = Player("IAtree",treeIA)
-#teamIA = SoccerTeam
-
-"""
-
 
 
 
