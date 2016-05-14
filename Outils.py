@@ -572,73 +572,6 @@ class MyState(object):
 
 
 
-"""
-    @property
-    def adv_plus_proche(self):
-	d_min=999
-	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
-
-	for p in liste_adv:
-	
-		pl=self.state.player(p[0],p[1])
-		d=self.dist_player_ball(pl)
-		if d<d_min:
-	           d_min=d
-		   lui=pl
-	
-	return lui
-
-    @property
-    def pos_adv_plus_proche(self):
-	
-	return self.adv_plus_proche.position
-
-    @property
-    def pos_adv_pr_but(self):
-	d_min=999
-	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
-
-	for p in liste_adv:
-	
-		pl=self.state.player(p[0],p[1])
-		d=dist(pl.position,self.but_pos)
-			
-		if d<d_min:
-			d_min=d
-			lui=pl.position
-	return lui
-
-    @property
-    def pos_adv_pr_ball(self):
-	d_min=999
-	liste_adv=[(it, ip) for (it, ip) in self.state.players if (it!=self.key[0])] 
-
-	for p in liste_adv:
-	
-		pl=self.state.player(p[0],p[1])
-		d=dist(pl.position,self.ball_pos)
-		if d<d_min:
-			d_min=d
-			lui=pl.position
-	return lui
-
-"""
-
-
-"""
-    @property
-    def equi_plus_proche(self):
-	d_min=999
-	liste_equipiers=[(it, ip) for (it, ip) in self.state.players if (it ==self.key[0] and ip!=self.key[1])] 
-	for p in liste_equipiers:
-		pl=self.state.player(p[0],p[1])
-		d=self.dist_player_ball(pl)
-		if d<d_min:
-	           d_min=d
-		   lui=pl
-
-	return lui
-
     @property
     def pos_equi_plus_proche(self):
 	
@@ -646,5 +579,64 @@ class MyState(object):
 
 
 
+###############################################################################################################
+    
+    @property
+    def qcourir_versball(self):
+	v=self.ball_pos-self.my_pos
+	v.norm=v.norm/2
+	return SoccerAction(v,Vector2D())
+	
 
-"""
+    @property
+    def qshootdribble_vers(self,p):
+	v=p-self.ball_pos
+	v.norm=0.3
+	
+	return SoccerAction(Vector2D(),v)
+
+    @property
+    def qpetitshootbas_vers(self,p)
+	v=p-self.ball_pos
+	v.norm=1.
+	v.angle=v.angle+0.7
+
+	return SoccerAction(Vector2D(),v)
+
+    @property
+     def qpetitshootbas_vers(self,p)
+	v=p-self.ball_pos
+	v.norm=1.
+	v.angle=v.angle-0.7	
+	
+	return SoccerAction(Vector2D(),v)
+
+    @property
+    def qshootfort_vers(self,p)
+   	v=p-self.ball_pos
+	v.norm=2.
+
+	return SoccerAction(Vector2D(),v)
+
+ 
+    @property
+    def qshoot_dansbut(self)
+   	v=self.but_pos_adv-self.my_pos
+	v.norm=4.5
+
+	return SoccerAction(Vector2D(),v)
+
+    @property
+    def qshoot_degager(self):
+	
+	for y in range(0,GAME_HEIGHT):
+		point= Vector2D(x=GAME_WIDTH/2,y)
+		if dist(self.my_pos,point)<dist(self.pos_adv_pr_ball,point):
+			chosen=point
+	
+	v=chosen-self.ball_pos
+	v.norm=5.
+
+	return SoccerAction(Vector2D(),v)
+
+	    

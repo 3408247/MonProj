@@ -1,9 +1,8 @@
 from soccersimulator import *
 from Outils import*
-from Strategies import*
 import pickle
 
-GAMMA  =0.6
+GAMMA  =0.7
 ALPHA  =0.9
  
 
@@ -13,7 +12,7 @@ ALPHA  =0.9
 
 
 def discretisation(state, id_team, id_player):   # Extraire les s des O
-	Etat=MyState(state,id_team,id_player)	
+	"""Etat=MyState(state,id_team,id_player)	
 	
 	liste=[]
 
@@ -35,9 +34,68 @@ def discretisation(state, id_team, id_player):   # Extraire les s des O
 		x1=1
 
 	liste.append(x1)
+	"""
+
+	S=MyState(state,id_team,id_player)
+
+	L=[]
 	
+     ### Dans ma moitie ou pas ####
+	if S.ball_pos.x<=GAME_WIDTH/2:
+		a=0	
+	else:
+		a=1
+	L.append(a)
+
+     ### qui a la balle, adv, moi ou personne ####
+	if S.a_la_balle==3:
+		b=3
+	if S.a_la_balle==1:
+		b=1
+	if S.a_la_balle==0:
+		b=0
+	L.append(b)
+
+     ### Dans zone de tir ou pas ####
+	if S.dans_zone_de_tir==False:
+		c=0
+	else:
+		c=1
+	L.append(c)
+
+     ### Quelqu'un entre ball et but adv ####
+	if S.obs_entre(S.ball_pos,S.but_pos_adv)==False:
+		d=0
+	else:
+		d=1
+	L.append(d)
+
+     ### Direction de l'adversaire ####
+	adv=S.adv_pr_posobj(S.ball_pos)
+	moi=S.player_moi
+	proche=dist(S.ball_pos,S.pos_adv_pr_ball)<7.
+	oppose=adv.vitesse.dot(moi.vitesse)<=0
+
+	if (proche and oppose and S.est_devant(S.balle,adv) and S.est_en_haut(S.balle,adv)):
+		e=0
+	if (proche and oppose and S.est_devant(S.balle,adv) and S.est_en_bas(S.balle,adv):
+		e=1
 	
-	return tuple(liste)
+	if (not(oppose) and not(S_est_devant(S.balle,adv))):
+		e=3
+	L.append(e)
+
+     ### 0 si adv plus proche de balle, 1 sinon ####
+	god=dist(S.pos_adv_pr_ball,S.ball_pos)-dist(S.my_pos,S.ball_pos)
+	
+	if god<0:
+		f=0
+	else:
+		f=1
+	L.append(f)	
+
+	
+	return tuple(L)
 
 ##############################################################################################################
 
@@ -48,11 +106,15 @@ def initialisation_q():  # etat_dis est le tuple d'un etat discretisE (renvoyE p
 
 	dict_a={}	
 		
-	dict_a["rien"]=0    # on met ici des string("rien")et apres on fera la correspondance string vers strat
-	dict_a["fonceur"]=0
-	dict_a["gardien"]=0
-		
-		
+	dict_a["qdribler_vers_but"]=0    # on met ici des string("rien")et apres on fera la correspondance string vers strat
+	dict_a["qdribler_vers_zone"]=0
+	dict_a["qdegager"]=0
+	dict_a["qshooter_bas"]=0
+	dict_a["qshooter_haut"]=0
+	dict_a["qshooter_fort"]=0
+	dict_a["qshooter_malin"]=0	
+	dict_a["qshooter_dansbut"]=0
+	
 	#dict_a = {"rien": 0, "fonceur":0, "gardien":0}
 	return dict_a
 
@@ -104,7 +166,7 @@ def prendre_act(etatbrut_courant,idt,idp,nom_fichier_dic):
 		if valeur_associe>=valeur_max:
 			nom_action_choisie=strat_name        # CHOISIR LACTION AYANT VALEUR MAX  #eg "fonceur"  
 			valeur_max=valeur_associe
-	print "Au niveau prendre_act nom action max est", str(nom_action_choisie), " fin de prendre_act"
+	#print "Au niveau prendre_act nom action max est", str(nom_action_choisie), " fin de prendre_act"
 	return str(nom_action_choisie)
 
 ##############################################################################################################
@@ -115,8 +177,8 @@ def corresp(nom_act,dic_corresp):
 	for clef in dic_corresp:
 		#print "clef", clef
 		if nom_act==clef:
-			print "Dans corresp Il choisit laction", dic_corresp[clef]
-			print "la clef serait", clef
+			#print "Dans corresp Il choisit laction", dic_corresp[clef]
+			#print "la clef serait", clef
 			return dic_corresp[clef]
 	
 	print "action pas dans dic_corresp"
@@ -198,7 +260,7 @@ def maj(le_match,idt,idp,nom_fichier_dic):
 
 	etatsbruts_allsteps=le_match.states
 	joueur_stratstaken = le_match.strats 
-	print "joueur strats taken", joueur_stratstaken
+	#print "joueur strats taken", joueur_stratstaken
 
 	scenarios=[]
 
@@ -214,12 +276,15 @@ def maj(le_match,idt,idp,nom_fichier_dic):
 		liste_etatsdis.append(discretisation(step_brut,idt,idp))
 
 		required_step=joueur_stratstaken[step_num]
-		print "REquired strats", required_step
+		#print "REquired strats", required_step
 		
 		required_team=required_step[idt-1]
-		print "required team", required_team
+		#print "required team", required_team
 		player_action_taken= required_team[idp]
 		print "ply action taken", player_action_taken
+		if player_action_taken=="qstrat":
+			player_action_taken=joueur_stratstaken[step_num+1][idt-1][idp] #Car il y a un ptit prob dans match.strats, il affiche la premiere strategie comme qstrat tout le tmeps
+		print "new pl action taken", player_action_taken
 
 		scenarios.append((step_brut,player_action_taken))
 
