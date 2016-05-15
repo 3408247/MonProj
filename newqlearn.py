@@ -213,6 +213,7 @@ def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,ac
 	Q = q  # Travailler sur la copie de q
 
 	i=0
+	longeur=len(scenarios)
    
 	for sce in scenarios:
 
