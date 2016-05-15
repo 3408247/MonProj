@@ -9,59 +9,70 @@ from newqlearn import *
 
 from Outils import *
 
-NOM_FICHIER_DIC = "learningdic"
+NOM_FICHIER_DIC = "newdic"
 #DIC_CORRESP = {'fonceur':Fonceur_Strat, 'rien':Rien_Strat,'gardien':Gardien_Strat}
-def piquer(me):
+#def piquer(me):
+
+
+########################################################################################
+### REDEF DE QQS STRATEGIES A UTILISER DANS QLEARNING ##################################
+########################################################################################
+
+"""Il s'agit des actions possibles a prendre par le joueur utilisant apprentissage supervise;
+"""
+
 
 def qdribler_vers_but(me):
 	if me.test_peut_shooter:
-		return me.qshootdribble_vers(me.ball_pos)
+		return (me.qshootdribble_vers(me.but_pos_adv),"qdribler_vers_but")
 	else:
-		return me.qcourir_versball
+		return (me.qcourir_versball,"qdribler_vers_but")
 
 def qdribler_vers_zone(me):
 	if me.test_peut_shooter:
-		return me.qshootdribble_vers(me.zone_tir)
+		return (me.qshootdribble_vers(me.zone_tir),"qdribler_vers_zone")
 	else:
-		return me.qcourir_versball
+		return (me.qcourir_versball,"qdribler_vers_zone")
 
 def qdegager(me):
 	if me.test_peut_shooter:
-		return me.qshoot_degager
+		return (me.qshoot_degager,"qdegager")
 	else:
-		return me.qcourir_versball
+		return (me.qcourir_versball,"qdegager")
 
 def qshooter_bas(me):
 	if me.test_peut_shooter:
-		return me.qpetitshootbas_vers(me.ball_pos)
+		return (me.qpetitshootbas_vers(me.but_pos_adv),"qshooter_bas")
 	else:
-		return me.qcourir_versball
+		return (me.qcourir_versball,"qshooter_bas")
 
 def qshooter_haut(me):
 	if me.test_peut_shooter:
-		return me.qpetitshoothaut_vers(me.ball_pos)
+		return (me.qpetitshoothaut_vers(me.but_pos_adv),"qshooter_haut")
 	else:
-		return me.qcourir_versball
+		return (me.qcourir_versball,"qshooter_haut")
 
 def qshooter_fort(me):
 	if me.test_peut_shooter:
-		return me.qshootfort_vers(me.ball_pos)
+		return (me.qshootfort_vers(me.but_pos_adv),"qshooter_fort")
 	else:
-		return me.qcourir_versball
+		return (me.qcourir_versball,"qshooter_fort")
 
 def qshooter_malin(me):
 	if me.test_peut_shooter:
-		return me.shoot_malin
+		return (me.shoot_malin,"qshooter_malin")
 	else:
-		return me.qcourir_versball
+		return (me.qcourir_versball,"qshooter_malin")
 
 def qshooter_dansbut(me):
 	if me.test_peut_shooter:
-		return me.qshoot_dansbut
+		return (me.qshoot_dansbut,"qshooter_dansbut")
 	else:
-		return me.qcourir_versball	
+		return (me.qcourir_versball,"qshooter_dansbut")
+	
 
-
+########################################################################################
+########################################################################################
 
 
 class SurStrat(BaseStrategy):
@@ -79,27 +90,20 @@ class SurStrat(BaseStrategy):
 
         #print action
         return action
-	
+
+
+########################################################################################
+### La Strategie QStrat adoptE par joueur IA ###########################################
+########################################################################################	
 
 def qstrat(me):
-	print "##########################################"
-	print "ETAT"
-	etatcour_brut= me.state
-	print"DISCRETISE:",discretisation(etatcour_brut,me.key[0],me.key[1])
-	print "##########################################"
-	
-	mon_idt= me.key[0]
-	print"monidt:",mon_idt
-	mon_idp= me.key[1]
-	print"monidp:",mon_idp
 
+	etatcour_brut= me.state
+	mon_idt= me.key[0]
+	mon_idp= me.key[1]
+	
 	nom_act_choisie= prendre_act(etatcour_brut,mon_idt,mon_idp,NOM_FICHIER_DIC)
 	
-
-	#print "action choisie est:", nom_act_choisie
-
-	#strat_corresp= corresp(nom_act_choisie,DIC_CORRESP)
-	#print "Result de la correspondance", strat_corresp
 	variable=eval(nom_act_choisie)	
 
 	return variable(me)

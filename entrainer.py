@@ -1,9 +1,7 @@
 ## Match d'entrainement et apprentissage de l'arbre
 
-#euh# match = SoccerMatch(team_keyb,team_bad,1000)  # On peut changer le nombre de Steps
-#euh#show(match)
 ## Sauvegarde des exemples, mettre False a True si concatenation des fichiers
-#euh#keystrat_test.write("test.exp",False) # METTRE A TRUE FOR APPENDING 
+#  keystrat_test.write("test.exp",False) # METTRE A TRUE FOR APPENDING 
 
 
 from soccersimulator import SoccerMatch, show, SoccerTeam,Player,KeyboardStrategy

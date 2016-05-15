@@ -1,40 +1,21 @@
 from soccersimulator import *
 from Outils import*
 import pickle
+import random 
 
-GAMMA  =0.7
-ALPHA  =0.9
+GAMMA  =0.9    # Poids/facteur de recompense avec temps
+ALPHA  =0.2    # Facteur de convergence 
  
 
 
 ##############################################################################################################
-
+#### DISCRETISATION ##########################################################################################
+##############################################################################################################
 
 
 def discretisation(state, id_team, id_player):   # Extraire les s des O
-	"""Etat=MyState(state,id_team,id_player)	
-	
-	liste=[]
-
-    	d_me_ball= dist(Etat.ball_pos,Etat.my_pos)
-
-	if d_me_ball<10:
-		x0=0
-	else:
-		x0=1
-
-	liste.append(x0)
-
-
-    	d_ball_advproche_ball = dist(Etat.ball_pos,Etat.pos_adv_pr_ball) 
-	
-	if d_ball_advproche_ball<30:
-		x1=0
-	else:
-		x1=1
-
-	liste.append(x1)
-	"""
+        """ Discretiser un etat pour in id_t et id_p donnE
+        """
 
 	S=MyState(state,id_team,id_player)
 
@@ -76,13 +57,15 @@ def discretisation(state, id_team, id_player):   # Extraire les s des O
 	proche=dist(S.ball_pos,S.pos_adv_pr_ball)<7.
 	oppose=adv.vitesse.dot(moi.vitesse)<=0
 
-	if (proche and oppose and S.est_devant(S.balle,adv) and S.est_en_haut(S.balle,adv)):
+	if (proche and oppose and S.est_devant(S.balle,adv) and S.est_enhaut(S.balle,adv)):
 		e=0
-	if (proche and oppose and S.est_devant(S.balle,adv) and S.est_en_bas(S.balle,adv):
+	if (proche and oppose and S.est_devant(S.balle,adv) and not(S.est_enhaut(S.balle,adv))):
 		e=1
 	
-	if (not(oppose) and not(S_est_devant(S.balle,adv))):
+	if (not(oppose) and not(S.est_devant(S.balle,adv))):
 		e=3
+	else:
+		e=4
 	L.append(e)
 
      ### 0 si adv plus proche de balle, 1 sinon ####
@@ -98,198 +81,204 @@ def discretisation(state, id_team, id_player):   # Extraire les s des O
 	return tuple(L)
 
 ##############################################################################################################
+#### INITIALISATION ##########################################################################################
+##############################################################################################################
 
-	
-#initialisation des Q(s,a) a zero quoi
-def initialisation_q():  # etat_dis est le tuple d'un etat discretisE (renvoyE par la fonction discretisation)
-	
+def initialisation_q():  
 
+	""" Initialiser les valeurs associEs au choix d'actions possibles a 0 ou valeur aleatoire
+        """
+	
 	dict_a={}	
 		
-	dict_a["qdribler_vers_but"]=0    # on met ici des string("rien")et apres on fera la correspondance string vers strat
-	dict_a["qdribler_vers_zone"]=0
-	dict_a["qdegager"]=0
-	dict_a["qshooter_bas"]=0
-	dict_a["qshooter_haut"]=0
-	dict_a["qshooter_fort"]=0
-	dict_a["qshooter_malin"]=0	
-	dict_a["qshooter_dansbut"]=0
+	dict_a["qdribler_vers_but"]=random.uniform(0,3)   
+	dict_a["qdribler_vers_zone"]=random.uniform(0,3)
+	dict_a["qdegager"]=random.uniform(0,3)
+	dict_a["qshooter_bas"]=random.uniform(0,3)
+	dict_a["qshooter_haut"]=random.uniform(0,3)
+	dict_a["qshooter_fort"]=random.uniform(0,3)
+	dict_a["qshooter_malin"]=random.uniform(0,3)	
+	dict_a["qshooter_dansbut"]=random.uniform(0,3)
 	
-	#dict_a = {"rien": 0, "fonceur":0, "gardien":0}
 	return dict_a
 
 
-
+##############################################################################################################
+#### PRENDRE_ACT #############################################################################################
+##############################################################################################################
 
 		
-def prendre_act(etatbrut_courant,idt,idp,nom_fichier_dic):      
-	
+def prendre_act(etatbrut_courant,idt,idp,nom_fichier_dic):
+        """ Etant donnE un etatbrut, prendre l'action ayant la valeur maximale associE (valeurs stockEs dans nom_fichier_dic
+        """
+
 	if etatbrut_courant==None:
-		print "dernier etat_brut"
+		
 		return
-
-	etatdis_courant= discretisation(etatbrut_courant,idt,idp)
 	
+        # Discretiser l'etat brut courant
+	etatdis_courant= discretisation(etatbrut_courant,idt,idp)
 
-	#SI LE DICTIONNAIRE EST VIDE, AU DEBUT, TOUT INITALISER A ZERO  (ou random??)
-	#print "on ouvre le fichier en lecture"
+	# Ouvrir nom_fichier_dic en lecture, stocker dans dico_dico
 	fichier_ouvert_lec= open(nom_fichier_dic,"r")
-	#print "on stocke dans dico ce fichier"
-	dico_dico= pickle.load(fichier_ouvert_lec)                                   #PROBLEME SI FICHIER EST FICHIER NORMAL VIDE, .. donc deja ecrire un dico vide dans le fichier initial
+	dico_dico= pickle.load(fichier_ouvert_lec)
+
+	# Si l'etat discret courant ne se trouve pas dans dico_dico, on initialise les valeurs associEs aux actions possible pour cet etat 
 	if etatdis_courant not in dico_dico.keys():
-	#	print "dico en effet vide"
-	#	print "on ferme ce fichier"
+
 		fichier_ouvert_lec.close()
-	#	print "on rentre dans initialisation"
 		dico_dico[etatdis_courant]=initialisation_q()
-	#	print " on ouvre le fichier en ecriture" 
 		fichier_ouvert_ecri = open(nom_fichier_dic,"w")
-
-	#	print "on ecrit dans le fichier dico initial"
 		pickle.dump(dico_dico,fichier_ouvert_ecri) 
+		fichier_ouvert_ecri.close()
+	#else:
+        #        print "etat est deja dans dic , donc no init"
 
-		fichier_ouvert_ecri.close() 
-
-	#print "on (re)ferme le fichier ouvert en lecture"	
+	
 	fichier_ouvert_lec.close()
 	
-	#print "on ferme le fichier ouvert en ecriture"
-	#fichier_ouvert_ecri.close()  
 
-
+        # On choisit maintenant l'action ayant la plus grande valeur associE a cet etat courant
 	actions_possibles=dico_dico[etatdis_courant]
 
 	valeur_max=-999999999999999
+	nom_action_choisie="qdribler_vers_but"
 	for action in actions_possibles:     # Prenant les clefs de actions_possible, par ex la clef "fonceur"
 		strat_name=action          		     #LA STRATEGIE  # clef du dic eg "fonceur"
 		valeur_associe=actions_possibles[action]     #LA VALEUR ASSOCIEE  # eg 0
 		if valeur_associe>=valeur_max:
 			nom_action_choisie=strat_name        # CHOISIR LACTION AYANT VALEUR MAX  #eg "fonceur"  
 			valeur_max=valeur_associe
-	#print "Au niveau prendre_act nom action max est", str(nom_action_choisie), " fin de prendre_act"
+
+	# On retourne cette action 
+	
 	return str(nom_action_choisie)
 
-##############################################################################################################
-
-
-def corresp(nom_act,dic_corresp):
-
-	for clef in dic_corresp:
-		#print "clef", clef
-		if nom_act==clef:
-			#print "Dans corresp Il choisit laction", dic_corresp[clef]
-			#print "la clef serait", clef
-			return dic_corresp[clef]
-	
-	print "action pas dans dic_corresp"
-	return
-
 
 ##############################################################################################################
+#### RECOMPENSE ##############################################################################################
 ##############################################################################################################
 
-def recompense(state, id_team, id_player):   # associe a un etat, une recompense 
+def recompense(state, id_team, id_player):   
+        """ Associer a un etat, une recompense
+        """
 	Etat=MyState(state,id_team,id_player)	
-
+	r=0
+	
+        ### J'ai marquE un but ####
 	if ((Etat.ball_pos.x==Etat.but_pos_adv.x) and (Etat.ball_pos.y>=Etat.but_pos_adv.y-GOAL_HEIGHT/2) and (Etat.ball_pos.y<=Etat.but_pos_adv.y+GOAL_HEIGHT/2)):
-		r=100
-
+		r+=100
+		
+        ### Adversaire a marquE un but ####
 	if ((Etat.ball_pos.x==Etat.but_pos.x) and (Etat.ball_pos.y>=Etat.but_pos.y-GOAL_HEIGHT/2) and (Etat.ball_pos.y<=Etat.but_pos.y+GOAL_HEIGHT/2)):
-		r=-100
+		r+=-150
 
+        ### Personne n'a la balle ####
+	if (Etat.a_la_balle==0):
+		r+=5
 
-	if ((Etat.a_la_balle==1) or (Etat.a_la_balle==2)):
-		r=5
+        ### J'ai la balle ####
+	if (Etat.a_la_balle==1): 
+		r+=50
+
+        ### Adversaire a la balle ####		
+	if (Etat.a_la_balle==3):
+		r+=-50
+
+        ### Balle dans zone de tir ####
+	if Etat.dans_zone_de_tir==True:
+		r+=10
+
+        ### Balle dans moitiE adverse ####	
+	if Etat.ball_pos.x>=GAME_WIDTH/2:
+		r+=5
+        ### Balle dans ma moitiE ####
 	else:
-		r=-5
+		r+=-1
+		
 
 	return r
 
 
 ##############################################################################################################
+#### MONTECARLO ##############################################################################################
+##############################################################################################################
 
 def MonteCarlo(q,scenarios,idt,idp): #scenarios est une liste de couple (etat,action)  remarque: dernier etat none
-      # q est dico de dico 
-      #parcurir liste a lenvers
-	print "DANS MONTE CARLO"
-	#print "q est ", q
+        """ q est le dictionnaire de dictionnaire
+            scenarios est le couple(etatbrut,action)
+        """
+        
+	
 	Q = q  # Travailler sur la copie de q
-	#print "Copie Q est",Q
-	#print"monte carlo"
-	#print"ici"
-	longeur=len(scenarios)     # recuperer le nombre de steps jouE dans le match? ..
-	print "longeur scenarios", longeur
+
 	i=0
+   
 	for sce in scenarios:
-		
-		print "SCENARIO NUMBER ", i
-		#print "couple (etatbrut,actionpris) ",i," est ", sce
 
-		#print "etat brut",sce[0]
-		
-		if sce[0]!=None:
+		if sce[0]!=None:   # Ne sert a rien ici 
 
-			#print "entre ici"
-			#print "est ce que etat est none ?"
-			#print sce[0]==None
-			
 			R = 0
 			act_choisi = sce[1]
 	
-			#print "action choisi", act_choisi
 
-			for t in range (longeur-1,0,-1):
-			#	print "entree boucle t succes"				
+
+			for t in range (longeur-1,-1,-1):      # Parcourir les scenarios a l'envers
+				
 				st=scenarios[t][0]
-			#	print "etat au temps", t , "est", st
-			
-			
+				
 				R= GAMMA*R + recompense(st,idt,idp)
 
-			#	print "R= GAMMA*R + recompense(st,idt,idp) et donc R est maintenant", R
 				etat_discretise=discretisation(st,idt,idp)
-				Q[etat_discretise][act_choisi]=Q[etat_discretise][act_choisi] + ALPHA*(R-Q[etat_discretise][act_choisi])  #Que faire la maj comme ca ou bien faire return q ?
+
+                                # Mettre a jour le dictionnaire utilisant methode MonteCarlo 
+				Q[etat_discretise][act_choisi]=Q[etat_discretise][act_choisi] + ALPHA*(R-Q[etat_discretise][act_choisi])  
 
 		i=i+1
+
 
  	return Q
 
 ##############################################################################################################
+#### MISE A JOUR##############################################################################################
+##############################################################################################################
 
 def maj(le_match,idt,idp,nom_fichier_dic):
-
+        """ Lire les etats et les actions pris pendant le_match, mettre a jour le dictionnaire de dictionnaire 
+        """
+        
 	etatsbruts_allsteps=le_match.states
+        print "longueur des etats bruts", len(le_match.states)
 	joueur_stratstaken = le_match.strats 
 	#print "joueur strats taken", joueur_stratstaken
+        print "longueur des strats taken", len(le_match.strats)
 
 	scenarios=[]
 
-
-	print len(etatsbruts_allsteps)
 
 	liste_etatsdis=[]
 	
 	step_num=0
 	for step_brut in etatsbruts_allsteps:
 
-		print "STEP NUM",step_num
 		liste_etatsdis.append(discretisation(step_brut,idt,idp))
 
+                # Obtenir l'action pris par joueur de idt et idp lors de cet etat du match 
 		required_step=joueur_stratstaken[step_num]
-		#print "REquired strats", required_step
-		
 		required_team=required_step[idt-1]
-		#print "required team", required_team
 		player_action_taken= required_team[idp]
-		print "ply action taken", player_action_taken
+	
 		if player_action_taken=="qstrat":
 			player_action_taken=joueur_stratstaken[step_num+1][idt-1][idp] #Car il y a un ptit prob dans match.strats, il affiche la premiere strategie comme qstrat tout le tmeps
-		print "new pl action taken", player_action_taken
-
+		
+                # Construire la liste (etatbrut, action) petit a petit 
 		scenarios.append((step_brut,player_action_taken))
 
 		step_num=step_num+1
 
+		
+
+        print "longeur scenarios", len(scenarios)
 
 	f_ouvert_lec= open(nom_fichier_dic,"r")
 
@@ -297,6 +286,7 @@ def maj(le_match,idt,idp,nom_fichier_dic):
 
 	f_ouvert_lec.close()
 
+        # MAJ du dictionnaire avec MonteCarlo 
 	new_dic= MonteCarlo(old_dic,scenarios,idt,idp)
 
 	f_ouvert_ecri= open(nom_fichier_dic,"w")
@@ -304,8 +294,14 @@ def maj(le_match,idt,idp,nom_fichier_dic):
 	pickle.dump(new_dic,f_ouvert_ecri)
 
 	f_ouvert_ecri.close()
+        
 	
-	print" FIN MAJ ET ECRITURE DANS FICHIER"
+	print" FIN  MAJ ET ECRITURE DANS FICHIER"
+
+        print "#############"
+        print "FIN MAJ"
+        print "##############"
+
 
 	return 
 	

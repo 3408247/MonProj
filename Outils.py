@@ -14,6 +14,11 @@ from random import uniform
 from copy import deepcopy
 DCERCLE_RAYON = GAME_GOAL_HEIGHT/2
 
+##########################################################################################
+#### FONCTIONS DE MIROIR UTILES POUR LA SYMMETRIE DES EQUIPES ############################
+##########################################################################################
+
+
 def miroir_pos(p):
     return Vector2D(GAME_WIDTH-p.x,p.y)
 
@@ -35,6 +40,10 @@ def miroir_state(etat):
     
     return etatcpy
 
+##########################################################################################
+#### PETITES FONCTIONS UTILES ############################################################
+##########################################################################################
+
 def dist(u,v): #"u->Vector2D, v->Vector2D" #retourne float->la distance entre u et v
 	return u.distance(v)
 
@@ -43,7 +52,10 @@ def qq_entre(src,dest,obs): #src->Vector2D(pos) dest->Vector2D(pos) obs->Vector2
 	vsrc_obs=obs-src
 	return ((abs(vsrc_dest.angle-vsrc_obs.angle)<0.2 ) and (dist(src,obs)< dist(src,dest)))
 
-
+##########################################################################################
+#### ENCAPSULATION #######################################################################
+##########################################################################################
+    
 class MyState(object):
     def __init__(self,state,idteam,idplayer):
         self.state = state    #ajouter le miroir ici option 1
@@ -61,8 +73,9 @@ class MyState(object):
     def balle(self):
 	return self.state.ball
 
-
-    ### POSITIONS ###
+    ########################################################################################
+    ### POSITIONS ##########################################################################
+    ########################################################################################
 
     @property
     def my_pos(self): #retourne Vector2D->la position de self (ici joueur)
@@ -89,14 +102,17 @@ class MyState(object):
 		return Vector2D(x=GAME_WIDTH/2,y=GAME_HEIGHT/2)
 
 
-	
-    ### ANGLES ###
+    ########################################################################################
+    ### ANGLES #############################################################################
+    ########################################################################################	
+  
     def angle_player_point(self,pos_point):
 	vecteur=pos_point-self.my_pos
 	return vecteur.angle
 
-
-    ### MOUVEMENTS ###
+    ########################################################################################
+    ### MOUVEMENTS #########################################################################
+    ########################################################################################
 
     def aller(self,p): #"self->vector2D, p->vector2D" #retourne SoccerAction->faire bouger self jusqu'a p ; pas de shoot
         return SoccerAction(p-self.my_pos,Vector2D())
@@ -146,7 +162,9 @@ class MyState(object):
 	return self.courir_vers(vect)
 
 
-    ###  ZONES ###
+    ########################################################################################
+    ### ZONES ##############################################################################
+    ########################################################################################
 
     @property 
     def pos_dans_zone_de_tir(self,pos):   # retourne vraie si une position est dans zone de tir
@@ -259,9 +277,9 @@ class MyState(object):
 	else:
 		return self.courir_vers(self.zone_2_centre)	
 	
-    
-
-    ### RADAR ###
+    ########################################################################################
+    ### RADAR ##############################################################################
+    ########################################################################################
 
     ## adv ## 
    
@@ -339,7 +357,9 @@ class MyState(object):
 		
 			
 
-    ### SHOOTS ###
+    ########################################################################################
+    ### SHOOT ET SHOOT + MOUVEMENT #########################################################
+    ########################################################################################
 
     @property 
     def test_peut_shooter(self):
@@ -542,9 +562,9 @@ class MyState(object):
 	 else:
 	 	return self.courir_vers_point_step(self.ball_pos,5)
 	
-
-
-    ### QUI A LA BALLE ###
+    ########################################################################################
+    ### QUI A LA BALLE #####################################################################
+    ########################################################################################
 
     @property
     def a_la_balle(self):
@@ -579,7 +599,9 @@ class MyState(object):
 
 
 
-###############################################################################################################
+    ########################################################################################
+    ### REDEFINITIONS DE QUELQUES OUTILS A UTILISER DANS LE QLEARNING ######################
+    ########################################################################################
     
     @property
     def qcourir_versball(self):
@@ -588,39 +610,40 @@ class MyState(object):
 	return SoccerAction(v,Vector2D())
 	
 
-    @property
+    
     def qshootdribble_vers(self,p):
 	v=p-self.ball_pos
 	v.norm=0.3
 	
 	return SoccerAction(Vector2D(),v)
 
-    @property
-    def qpetitshootbas_vers(self,p)
+
+   
+    def qpetitshoothaut_vers(self,p):
 	v=p-self.ball_pos
 	v.norm=1.
 	v.angle=v.angle+0.7
 
 	return SoccerAction(Vector2D(),v)
 
-    @property
-     def qpetitshootbas_vers(self,p)
+    
+    def qpetitshootbas_vers(self,p):
 	v=p-self.ball_pos
 	v.norm=1.
 	v.angle=v.angle-0.7	
 	
 	return SoccerAction(Vector2D(),v)
 
-    @property
-    def qshootfort_vers(self,p)
+    
+    def qshootfort_vers(self,p):
    	v=p-self.ball_pos
-	v.norm=2.
+	v.norm=3.
 
 	return SoccerAction(Vector2D(),v)
 
  
     @property
-    def qshoot_dansbut(self)
+    def qshoot_dansbut(self):
    	v=self.but_pos_adv-self.my_pos
 	v.norm=4.5
 
@@ -628,9 +651,9 @@ class MyState(object):
 
     @property
     def qshoot_degager(self):
-	
-	for y in range(0,GAME_HEIGHT):
-		point= Vector2D(x=GAME_WIDTH/2,y)
+	chosen=Vector2D(x=GAME_WIDTH/2,y=GAME_HEIGHT/2)
+	for yy in range(0,GAME_HEIGHT):
+		point= Vector2D(x=GAME_WIDTH/2,y=yy)
 		if dist(self.my_pos,point)<dist(self.pos_adv_pr_ball,point):
 			chosen=point
 	
