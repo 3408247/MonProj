@@ -19,6 +19,8 @@ while cpt<=0:
     print "BEGIN match.play()"
     #mat.play()
     soccersimulator.show(mat)
+    SoccerMatch.save(mat,"matchQlearn4")
+
     print "      "
     print "### FIn match.play Now MAJ ##"
 

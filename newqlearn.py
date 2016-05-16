@@ -67,7 +67,7 @@ def discretisation(state, id_team, id_player):   # Extraire les s des O
 	else:
 		e=4
 	L.append(e)
-
+     	
      ### 0 si adv plus proche de balle, 1 sinon ####
 	god=dist(S.pos_adv_pr_ball,S.ball_pos)-dist(S.my_pos,S.ball_pos)
 	
@@ -76,7 +76,15 @@ def discretisation(state, id_team, id_player):   # Extraire les s des O
 	else:
 		f=1
 	L.append(f)	
-
+    	"""
+     ### 1 si balle est a une distance de <=30 des buts adv, 0 sinon ####
+	if dist(S.ball_pos,S.but_pos_adv)<=30:
+		g=1
+	else:
+		g=0
+	"""
+	L.append(g)
+	
 	
 	return tuple(L)
 
@@ -195,6 +203,10 @@ def recompense(state, id_team, id_player):
         ### Balle dans ma moitiE ####
 	else:
 		r+=-1
+
+        ### Balle proche des buts adv ###
+	if dist(Etat.ball_pos,Etat.but_pos_adv)<=30:
+		r+=10
 		
 
 	return r

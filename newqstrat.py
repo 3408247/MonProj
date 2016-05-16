@@ -9,7 +9,7 @@ from newqlearn import *
 
 from Outils import *
 
-NOM_FICHIER_DIC = "newdic"
+NOM_FICHIER_DIC = "learningdic"
 #DIC_CORRESP = {'fonceur':Fonceur_Strat, 'rien':Rien_Strat,'gardien':Gardien_Strat}
 #def piquer(me):
 
